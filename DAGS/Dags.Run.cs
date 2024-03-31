@@ -571,7 +571,15 @@ public partial class Dags
                 case SET:
                     // set a value
                     CheckParamCount(token, p, 2);
-                    Set(p[0], p[1]);
+                    if (p[1].StartsWith(' ') && p[1].TrimStart().StartsWith('@'))
+                    {
+                        // remove leading spaces in script
+                        Set(p[0], p[1].TrimStart());
+                    }
+                    else
+                    {
+                        Set(p[0], p[1]);
+                    }
                     return;
                 case SETARRAY:
                     // set a name,x,y,value

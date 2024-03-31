@@ -25,3 +25,5 @@
 1.2.6 - Removed thrown errors from PrettyScript() and SplitTokens().
 
 1.2.7 - Null check on resource stream
+
+1.2.8 - Check for leading spaces on script values in @set(key,value)

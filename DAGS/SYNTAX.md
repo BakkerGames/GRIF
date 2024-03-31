@@ -1,14 +1,20 @@
 # DAGS Syntax
 
-DAGS, or Data Access Game Scripts, uses a dictionary of (key,value) pairs. Both the keys and values are strings.
+DAGS scripts consist of functions starting with "@" with zero or more parameters defined for each. Parameter values can be strings or other functions returning strings. Strings are anything not starting with "@", and don't need quotes around them if they have no spaces or special symbols. Some functions, such as arithmetic functions, expect the string parameters to be numbers or functions returning numbers.
 
-Keys cannot be null, "", or contain only whitespace. Values which are null or "null" or undefined are returned as "". Integer values which would be "" are returned as "0".
+DAGS uses a dictionary of (key, value) pairs. Both the keys and values are strings.
 
-Below, "key" specifies the key of a pair in the dictionary, and "value" refers to the value stored for that key.
+Keys cannot be null, "", or contain only whitespace, and should not have leading or trailing spaces. Values which are null or "null" or undefined are returned as "". Integer values which would be "" are returned as "0". Text values containing spaces and some special characters need to be surrounded by double quotes. Quotes within quoted strings must be escaped `\"` and so do other some other characters.
 
-"Raw value" refers to the value from the dictionary with no processing. "Processed value" will run "value" as a script if it starts with "@" and returns the final result.
+Keys and values as function parameters can be text values or strings built out of other functions.
 
-Scripts are processed by RunScript(script, result), with "result" a StringBuilder parameter that will return all output.
+"Raw value" refers to the value from the dictionary with no processing. Everything else will run "value" as a script if it starts with "@" and returns the final result.
+
+Some functions take keys and operate directly on the dictionary, while other take values and operate on those values. Be careful of this, as `@true(key)` is always false (with no error) while `@true(@get(key))` gets the correct answer. `@truedata(key)` will work unless "key" contains a script that returns true or false.
+
+At times it might be necessary to add a leading space before the first `@` in a script value so it doesn't execute immediately. `@set(key,value)` is one such situation, when the value is to be stored as a script and not the answer. The value will need to be surrounded by double quotes and internal quotes escaped. The leading space is removed so it is later recognized as a script.
+
+Scripts are processed by Dags.RunScript(script, result), with "result" a StringBuilder parameter that will return all output.
 
 There is an "InChannel" queue and an "OutChannel" queue which are used for passing string values between DAGS and the calling program. Strings placed on the queues would be handled by the other end as appropriate.
 
@@ -38,11 +44,11 @@ There is an "InChannel" queue and an "OutChannel" queue which are used for passi
 
 @set(key,value)
 
->Sets the value for "key" in the dictionary to "value".
+>Sets the value for "key" in the dictionary to "value". If "value" is a script, it stores the final result. If "value" is a script but is quoted and has leading spaces, they are removed and the script stored directly.
 
 @swap(key1,key2)
 
->Swaps the values stored in "key1" and "key2".
+>Swaps the raw values stored in "key1" and "key2".
 
 
 ## Numeric Statements
@@ -107,7 +113,7 @@ There is an "InChannel" queue and an "OutChannel" queue which are used for passi
 
 @get(key)
 
->Returns the data value for "key" from the dictionary.
+>Returns the raw value for "key" from the dictionary.
 
 @getvalue(key)
 
@@ -195,7 +201,7 @@ Any functions which returns truthy or falsey values may be defined and used as "
 
 @falsedata(key)
 
->Returns true if the data value for "key" is falsey. Returns false if the value is truthy or isn't boolean.
+>Returns true if the raw value for "key" is falsey. Returns false if the value is truthy or isn't boolean.
 
 @ge(value1,value2)
 
@@ -211,7 +217,7 @@ Any functions which returns truthy or falsey values may be defined and used as "
 
 @isbooldata(key)
 
->Returns true if the data value for "key" is truthy or falsey.
+>Returns true if the raw value for "key" is truthy or falsey.
 
 @isnull(value)
 
@@ -219,7 +225,7 @@ Any functions which returns truthy or falsey values may be defined and used as "
 
 @isnulldata(key)
 
->Returns true if the data value for "key" is "" or "null",
+>Returns true if the raw value for "key" is "" or "null",
 
 @isnumber(value)
 
@@ -227,7 +233,7 @@ Any functions which returns truthy or falsey values may be defined and used as "
 
 @isnumberdata(key)
 
->Returns true if the data value for "key" is an integer number.
+>Returns true if the raw value for "key" is an integer number.
 
 @isscript(value)
 
@@ -235,7 +241,7 @@ Any functions which returns truthy or falsey values may be defined and used as "
 
 @isscriptdata(key)
 
->Checks if the data value for "key" starts with "@".
+>Checks if the raw value for "key" starts with "@".
 
 @le(value1,value2)
 
@@ -259,7 +265,7 @@ Any functions which returns truthy or falsey values may be defined and used as "
 
 @truedata(key)
 
->Returns true if the data value for "key" is truthy. Returns false if the value is falsey or isn't boolean.
+>Returns true if the raw value for "key" is truthy. Returns false if the value is falsey or isn't boolean.
 
 
 ## Condition Connectors/Modifiers
@@ -326,7 +332,7 @@ These commands allow named lists of values to be stored as a single group instea
 
 @getlist(name,pos)
 
->Gets the value at position "pos" (starting at 0) for the list "name". If "pos" is beyond the end of the list, "" is returned.
+>Gets the raw value at position "pos" (starting at 0) for the list "name". If "pos" is beyond the end of the list, "" is returned.
 
 @insertatlist(name,pos,value)
 
@@ -357,7 +363,7 @@ Note that the array values are referenced by row (y) first and then column (x), 
 
 @getarray(name,y,x)
 
->Gets the value at position "y,x" (starting at 0,0) for the array "name". If either "y" or "x" is beyond the edge of the stored values, "" is returned.
+>Gets the raw value at position "y,x" (starting at 0,0) for the array "name". If either "y" or "x" is beyond the edge of the stored values, "" is returned.
 
 @setarray(name,y,x,value)
 
