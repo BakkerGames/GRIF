@@ -6,19 +6,25 @@
 ```
 GRIF
 	[filename[.grif] | directorypath]
-	[(-o | --output) logfilename]
 	[(-i | --input) inputfilename]
+	[(-o | --output) logfilename]
 	[(-m | --mod) filename[.grif] | directorypath]
 ```
 
 If no parameters are giving, GRIF will load all the `*.grif` files from the current directory. If there are more than one (such as for a large game), it will combine them all in memory. If a directory path is given, it will do the same with all the `*.grif` files in that directory.
 
+The input filename would contain a list of commands to execute. These only work as long as there are no random events, but are handy for walkthroughs and debugging.
+
+The output filename will store a log of the entire game session. It will be cleared before starting the game.
+
 The modification file(s) specified will be loaded after the base data files and will overwrite any values loaded so far. This is a great way to handle `Localization` (see below) or patches/modifications to the base game.
 
 
-## Sample game
+## Sample games
 
 The information mentioned below can be seen in the "Cloak of Darkness" sample game. The "CloakOfDarkness.grif" file contains the entire set of values and scripts to run the game using GRIF. "Cloak of Darkness" is a "Hello world!" starting point for Interactive Fiction engines. Take a look at the code there, and try running it using GRIF. Enjoy!
+
+Another sample game "TicTacToe.grif" is included to show features of GRIF for something other than Interactive Fiction.
 
 
 ## Data files
@@ -34,6 +40,8 @@ GRIF data files are simple text files with a ".grif" extension. They hold a JSON
 ```
 
 The whitespace around the keys and values doesn't matter, but it helps if it is consistant and readable. The last key/value pair may end with a comma or not. The order of keys doesn't matter, but keeping them alphabetical is helpful.
+
+Comments may be included for readability. Both "// ..." and "/* ... */" are supported. They may appear anywhere whitespace is allowed outside of keys and values, and are ignored while loading.
 
 Any special characters within the keys or values must be escaped. For a double-quote, it would be `\"` with a backslash. A backslash itself would be `\\`. Any non-ASCII characters (chars 0-31 and 127+) must be escaped 4-digit hexadecimal values, `\u####`.
 
@@ -70,7 +78,7 @@ GRIF can handle saving and restoring game state data from a save file. It is con
 
 GRIF uses GROD (Game Resource Overlay Dictionary) to hold information about the current state. The overlay dictionary will contain everything which changed since the game started. It is exported to the save file when saving, and cleared and filled from the save file when restoring. It is cleared if the game is being restarted to the beginning.
 
-The directory used for saving in Windows is in `Documents` for the current user, in `Documents\GRIF\<gamename>`, and the default save file is `save.dat`.
+The directory used for saving is in `Documents` for the current user, in `Documents\GRIF\<gamename>`, and the default save file is `save.dat`.
 
 See `InChannel and OutChannel Queues` for information on handling saving, restoring, and restarting in the game data files.
 
@@ -108,7 +116,7 @@ One for each allowed verb and verb/noun combination allowed during the game. The
 
 The noun part can be replaced with "*" to mean any noun which is not specifically covered in another command. (See "input.noun" for info on processing these.)
 
-The noun part can be replaced with "#" to mean any number. Some commands need a number but there could be many possibilities. The value in "input.noun" will be "#" and "input.nounword" will contain the entered number. Note that if you have `command.<verb>.#` it will supercede all other commands for a verb with numeric values, so `noun.thirty=30` would not be necessary anymore and have to be handled in the `command.<verb>.#` script.
+The noun part can be replaced with "#" to mean any number. Some commands need a number but there could be many possibilities. The value in "input.noun" will be "#" and "input.nounword" will contain the entered number. Note that if you have `command.<verb>.#` it will supercede all other commands for a verb with numeric values.
 
 The noun part can also be replaced with "?" to mean any word, known or unknown. Some commands need some value, such as "SAVE filename". The value in "input.noun" will be "?" and "input.nounword" will contain the value. Note that if you have `command.verb.?` it will supercede all other commands for that verb with a noun.
 
@@ -183,7 +191,7 @@ There is also a queue GRIF can use to send information to the scripts. See "InCh
 
 ## Other prefixes and functions
 
-It can be useful to have a standard for keys so that they begin with a prefix indicating their purpose. All of these are only referenced by scripts, not by GRIF. Obviously these are suggestions and you can use your own as you wish.
+It can be useful to have a standard for keys so that they begin with a prefix indicating their purpose. These are only referenced by scripts, not by GRIF. Obviously these are suggestions and you can use your own as you wish.
 
 `value.???`
 
@@ -235,12 +243,12 @@ These functions are shortcuts for moving an object into inventory or putting it 
 
 `goto(x)`
 
-Another handy function for moving the player to a specified room. It might have logic for adding 1 to the number of moves and running `@look` afterwards.
+Another handy function for moving the player to a specified room. It might have logic for incrementing the number of moves and running `@look` afterwards.
 
 
 ## InChannel and OutChannel Queues
 
-Scripts often need to send commands to GRIF or to get information from the player or the outside world. There are two queues used for these purposes, called InChannel and OutChannel for sending data into and out of DAGS. Queues are lists of information in a first-in, first-out format.
+Scripts often need to send commands to GRIF or to get information from the player or the outside world. There are two queues used for these purposes, called InChannel and OutChannel, for sending data into and out of DAGS. Queues are lists of information in a first-in, first-out format.
 
 OutChannel is used by game scripts to send information to GRIF. These are specific values which GRIF will look for as special commands, or values starting with `@` indicating DAGS scripts to be run.
 
@@ -282,9 +290,7 @@ Scripts in the OutChannel queue starting with `@` are run directly using DAGS. T
 
 Occasionally there will be a game which has a mismatch between nouns and item names/numbers. For example, the Scott Adams "Pirate's Adventure" game has four different bottle items all using the noun "BOT". The game logic prevents more than one being available at the same time but it does make it difficult in `command.take.bot` or `command.take.*` to know which one is being referenced.
 
-One way to handle this is to use a special set of data lines, `nounitem.???`. The "???" is the noun name/number, and the value holds a list of all items with this noun. A `@foreachlist` loop checks each value in the list to see if that item is here. The code (this game uses numbers, not names) looks something like this.
-
-Do something similar for dropping or any other uses.
+One way to handle this is to use a special set of data lines, `nounitem.???`. The "???" is the noun name/number, and the value holds a list of all items with this noun. A `@foreachlist` loop checks each value in the list to see if that item is here. The code (this game uses numbers, not names) looks something like this. Do something similar for dropping or any other uses.
 
 ```
 	"verb.10": "get,tak",
@@ -318,11 +324,6 @@ Start GRIF with a base data file (with one language, or not) and indicate the la
 GRIF basegame.grif -m spanish.grif
 ```
 
-The current parser does expect a VERB followed by a NOUN. The verb words and noun words can be in any languages, but the pattern must be maintained. It also doesn't handle multi-word verbs or nouns (yet). Maybe soon...
+The current parser does expect VERB or VERB NOUN commands. The verb words and noun words can be in any languages, but the pattern must be maintained. It also doesn't handle multi-word verbs or nouns (yet). Maybe soon...
 
 When using other languages for vocabulary, `system.wordsize` will probably need to be zero and all verbs and nouns given as full words.
-
-
-## GRIFEdit
-
-An editor program `GRIFEdit` is available in Windows for creating, modifying, and saving GRIF game data files. It takes a lot of the work out of editing the JSON file format directly. It does all of the formatting and escaping of characters for you. It validates script syntax and the game file when saving. See the [GRIFEdit](https://github.com/BakkerGames/GRIFEdit) GitHub site for more information.
