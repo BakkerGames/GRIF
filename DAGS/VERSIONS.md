@@ -16,7 +16,7 @@
 
 1.2.2 - Changed RunScript() to return error messages in "result" instead of throwing an error. Fixed some error text.
 
-1.2.3 - Added ReadMe(), License(), Syntax(), and VersionHistory() for retriving that information.
+1.2.3 - Added ReadMe(), Syntax(), and VersionHistory() for retriving that information.
 
 1.2.4 - New DebugLog() command, for tracking each step during script processing.
 

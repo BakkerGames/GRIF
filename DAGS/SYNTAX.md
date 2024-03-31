@@ -423,10 +423,6 @@ string ReadMe()
 
 >Returns the README.md file for this project.
 
-string License()
-
->Returns the LICENSE.md file for this project.
-
 string Syntax()
 
 >Returns the full SYNTAX.md file for this project (this file).

@@ -9,11 +9,6 @@ public partial class Grod
         return GetResourceText("GROD.README.md");
     }
 
-    public static string License()
-    {
-        return GetResourceText("GROD.LICENSE.md");
-    }
-
     public static string VersionHistory()
     {
         return GetResourceText("GROD.VERSIONS.md");

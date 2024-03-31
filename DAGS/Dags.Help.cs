@@ -133,14 +133,6 @@ public partial class Dags
     }
 
     /// <summary>
-    /// License text from the DAGS project.
-    /// </summary>
-    public static string License()
-    {
-        return GetResourceText("DAGS.LICENSE.md");
-    }
-
-    /// <summary>
     /// Full syntax reference document for DAGS commands.
     /// </summary>
     public static string Syntax()
