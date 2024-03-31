@@ -12,7 +12,7 @@ Keys and values as function parameters can be text values or strings built out o
 
 Some functions take keys and operate directly on the dictionary, while other take values and operate on those values. Be careful of this, as `@true(key)` is always false (with no error) while `@true(@get(key))` gets the correct answer. `@truedata(key)` will work unless "key" contains a script that returns true or false.
 
-At times it might be necessary to add a leading space before the first `@` in a script value so it doesn't execute immediately. `@set(key,value)` is one such situation, when the value is to be stored as a script and not the answer. The value will need to be surrounded by double quotes and internal quotes escaped. The leading space is removed so it is later recognized as a script.
+At times it might be necessary to add quotes around script values so they don't execute immediately. `@set(key,value)` is one such situation, when the value is to be stored as a script and not the answer. The value will need to be surrounded by quotes and internal quotes escaped.
 
 Scripts are processed by Dags.RunScript(script, result), with "result" a StringBuilder parameter that will return all output.
 
@@ -44,7 +44,7 @@ There is an "InChannel" queue and an "OutChannel" queue which are used for passi
 
 @set(key,value)
 
->Sets the value for "key" in the dictionary to "value". If "value" is a script, it stores the final result. If "value" is a script but is quoted and has leading spaces, they are removed and the script stored directly.
+>Sets the value for "key" in the dictionary to "value". If "value" is a script, it stores the final result. If "value" is a script but is quoted, the script is stored directly.
 
 @swap(key1,key2)
 
@@ -422,6 +422,10 @@ string Help()
 string ReadMe()
 
 >Returns the README.md file for this project.
+
+string License()
+
+>Returns the LICENSE.md file for this project.
 
 string Syntax()
 
