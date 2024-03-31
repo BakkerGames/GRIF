@@ -22,6 +22,6 @@ grif <filename.grif|directory>
    [-o|--output <filename>]
    [-m|--mod    <filename.grif|directory>]
 
-   If no files or directiories are specified, GRIF will load all the "*.grif" files in the current directory.
+   If nothing is specified, GRIF will load all the "*.grif" files in the current directory.
    There may be more than one -m|--mod parameter.
 ```

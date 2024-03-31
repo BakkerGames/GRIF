@@ -156,7 +156,7 @@ public static class SystemData
         result.AppendLine("   [-o|--output <filename>]");
         result.AppendLine("   [-m|--mod    <filename.grif|directory>]");
         result.AppendLine();
-        result.AppendLine("   If no files or directiories are specified, GRIF will load all the \"*.grif\" files in the current directory.");
+        result.AppendLine("   If nothing is specified, GRIF will load all the \"*.grif\" files in the current directory.");
         result.AppendLine("   There may be more than one -m|--mod parameter.");
         return result.ToString();
     }
