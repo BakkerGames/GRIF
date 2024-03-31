@@ -10,7 +10,7 @@ Keys and values as function parameters can be text values or strings built out o
 
 "Raw value" refers to the value from the dictionary with no processing. Everything else will run "value" as a script if it starts with "@" and returns the final result.
 
-Some functions take keys and operate directly on the dictionary, while other take values and operate on those values. Be careful of this, as `@true(key)` is always false (with no error) while `@true(@get(key))` gets the correct answer. `@truedata(key)` will work unless "key" contains a script that returns true or false.
+Some functions take keys and operate directly on the dictionary, while other take values and operate on those values. Be careful of this, as `@true(key)` is always false (with no error, as non-boolean values are false) while `@true(@get(key))` gets the correct answer. `@truedata(key)` will work unless "key" contains a script that returns true or false.
 
 At times it might be necessary to add quotes around script values so they don't execute immediately. `@set(key,value)` is one such situation, when the value is to be stored as a script and not the answer. The value will need to be surrounded by quotes and internal quotes escaped.
 
@@ -36,7 +36,7 @@ There is an "InChannel" queue and an "OutChannel" queue which are used for passi
 
 @exec(value)
 
->Executes the script specified by "value".
+>Executes the script specified by "value". The value should be quoted.
 
 @script(key)
 
@@ -181,13 +181,13 @@ There is an "InChannel" queue and an "OutChannel" queue which are used for passi
 
 ## If Conditions
 
-Conditions return true/false values, or values that are "truthy" or "falsey".
+Conditions return string "true"/"false" values, or values that are "truthy" or "falsey".
 
 "true", "t", "on", "yes", "y", "1", and "-1" are truthy.
 
-"false", "f", "off", "no", "n", "0", "null", and "" are falsey.
+"false", "f", "off", "no", "n", "0", "null", and "" are falsey. This includes undefined values.
 
-Conditions are processed strictly left-to-right, with no parenthesis used for grouping. They are connected with "@and" and "@or", which short-circuit when possible. "@not" preceeding the condition will reverse it.
+Conditions are processed strictly left-to-right with no parenthesis used for grouping. They are connected with "@and" and "@or", which short-circuit when possible. "@not" preceeding the condition will reverse it. It is recommended that "@and" and "@or" not be mixed in the same "@if" condition.
 
 Any functions which returns truthy or falsey values may be defined and used as "@if" conditions.
 
@@ -374,7 +374,7 @@ Note that the array values are referenced by row (y) first and then column (x), 
 
 @setoutchannel(value)
 
->Adds the value to the OutChannel queue. The calling program would be looking for these values and know how to process them.
+>Adds the value to the OutChannel queue. The calling program would be looking for these values and know how to process them. If "value" is a script it must be quoted.
 
 @getinchannel
 

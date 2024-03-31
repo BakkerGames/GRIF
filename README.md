@@ -12,16 +12,17 @@ GRIF is written in C# .NET 8. The full source is available, including the sub-pr
 
 See the GRIF/DETAILS.md file for complete information on using GRIF, as well as the various README.md files in the sub-projects. DAGS/SYNTAX.md contains the full specification for DAGS scripts.
 
-Check out the included "Cloak Of Darkness" and "TicTacToe" demo games which show some of the features of GRIF and DAGS.
+Check out the "Cloak Of Darkness" and "TicTacToe" demo games which show some of the features of GRIF and DAGS.
 
 Syntax:
 
 ```
 grif <filename.grif|directory>
-   [-i|--input  <filename>]
-   [-o|--output <filename>]
-   [-m|--mod    <filename.grif|directory>]
+     [-i|--input  <filename>]
+     [-o|--output <filename>]
+     [-m|--mod    <filename.grif|directory>]
 
-   If nothing is specified, GRIF will load all the "*.grif" files in the current directory.
-   There may be more than one -m|--mod parameter.
+If nothing is specified, GRIF will load all the "*.grif" files in the current directory.
+
+There may be more than one -m|--mod parameter.
 ```
