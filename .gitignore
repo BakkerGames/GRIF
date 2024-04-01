@@ -367,3 +367,6 @@ binaries/
 
 # batch files
 *.bat
+
+# launch settings
+/GRIF/Properties/launchSettings.json
