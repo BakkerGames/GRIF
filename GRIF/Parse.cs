@@ -69,39 +69,31 @@ public static class Parse
                     result.VerbWord = words[0];
                     break;
                 }
-                else if (tempWord1 != "" && verb.Equals(tempWord1, OIC))
-                {
-                    result.Verb = key[VERB_PREFIX.Length..];
-                    result.VerbWord = words[1];
-                    break;
-                }
             }
             if (result.Verb != "") break;
         }
-        foreach (string key in grod.Keys.Where(x => x.StartsWith(NOUN_PREFIX, OIC)))
+
+        if (tempWord1 != "")
         {
-            var nounList = grod[key].Split(',', SPLIT_OPTIONS);
-            foreach (string n in nounList)
+            foreach (string key in grod.Keys.Where(x => x.StartsWith(NOUN_PREFIX, OIC)))
             {
-                var noun = n;
-                if (SystemData.WordSize() > 0 && noun.Length > SystemData.WordSize())
+                var nounList = grod[key].Split(',', SPLIT_OPTIONS);
+                foreach (string n in nounList)
                 {
-                    noun = noun[..SystemData.WordSize()];
+                    var noun = n;
+                    if (SystemData.WordSize() > 0 && noun.Length > SystemData.WordSize())
+                    {
+                        noun = noun[..SystemData.WordSize()];
+                    }
+                    if (noun.Equals(tempWord1, OIC))
+                    {
+                        result.Noun = key[NOUN_PREFIX.Length..];
+                        result.NounWord = words[1];
+                        break;
+                    }
                 }
-                if (noun.Equals(tempWord0, OIC))
-                {
-                    result.Noun = key[NOUN_PREFIX.Length..];
-                    result.NounWord = words[0];
-                    break;
-                }
-                else if (tempWord1 != "" && noun.Equals(tempWord1, OIC))
-                {
-                    result.Noun = key[NOUN_PREFIX.Length..];
-                    result.NounWord = words[1];
-                    break;
-                }
+                if (result.Noun != "") break;
             }
-            if (result.Noun != "") break;
         }
 
         if (result.Verb == "")
@@ -116,11 +108,6 @@ public static class Parse
                 result.Error = SystemData.DontUnderstand(input);
                 return result;
             }
-        }
-        else if (words.Length > 1 && result.Noun == "")
-        {
-            result.Error = SystemData.DontUnderstand(input);
-            return result;
         }
 
         if (words.Length > 1)
@@ -169,6 +156,7 @@ public static class Parse
     #region Private
 
     private static Grod grod = [];
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members")]
     private static Dags dags = new(grod);
 
     #endregion
