@@ -148,7 +148,7 @@
 	"system.dont_understand": "I don't understand that.",
 	"system.gamename": "TicTacToe",
 	"system.prompt":
-		"@if @isnull(@get(value.winner)) @then
+		"@if @false(@get(value.gameover)) @then
 			@write(\"\\n\",@piece(@get(value.player)),\"'s turn>\")
 		@else
 			@write(\"\\n>\")
