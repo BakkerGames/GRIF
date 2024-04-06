@@ -37,11 +37,6 @@ public static class DataIO
                 {
                     (string key, string value) = GetKeyValue(data, ref index);
                     if (key == "") continue;
-                    if (value.StartsWith('@'))
-                    {
-                        // not necessary but helpful in debugging
-                        value = Dags.PrettyScript(value);
-                    }
                     grod[key] = value;
                 }
             }
@@ -169,28 +164,59 @@ public static class DataIO
     {
         string key = "";
         string value = "";
-        SkipWhitespace(data, ref index);
-        if (index < data.Length && data[index] == '"')
+        try
         {
+            SkipWhitespace(data, ref index);
+            while (data[index] == ',')
+            {
+                index++;
+                SkipWhitespace(data, ref index);
+            }
+            if (data[index] == '}')
+            {
+                return (key, value);
+            }
+            if (data[index] != '"')
+            {
+                throw new InvalidDataException($"Invalid char at {index} - \"{data[index]}\" should be quote");
+            }
             key = GetString(data, ref index);
             SkipWhitespace(data, ref index);
-            if (index < data.Length && data[index] != ':')
+            if (data[index] != ':')
             {
                 throw new InvalidDataException($"Invalid char at {index} - \"{data[index]}\" should be \":\"");
             }
             index++;
             SkipWhitespace(data, ref index);
-            if (index < data.Length && data[index] == '"')
+            if (data[index] != '"')
             {
-                value = GetString(data, ref index);
-                SkipWhitespace(data, ref index);
-                if (index < data.Length && data[index] == ',')
-                {
-                    index++;
-                }
+                throw new InvalidDataException($"Invalid char at {index} - \"{data[index]}\" should be quote");
             }
+            value = GetString(data, ref index);
+            SkipWhitespace(data, ref index);
+            if (data[index] != ',' && data[index] != '}')
+            {
+                throw new InvalidDataException($"Invalid char at {index} - \"{data[index]}\" should be comma or \"}}\"");
+            }
+            while (data[index] == ',')
+            {
+                index++;
+                SkipWhitespace(data, ref index);
+            }
+            return (key, value);
         }
-        return (key, value);
+        catch (Exception ex)
+        {
+            if (index >= data.Length)
+            {
+                throw new InvalidDataException("Unexpected end of file");
+            }
+            if (key != "")
+            {
+                throw new InvalidDataException($"Key \"{key}\": {ex.Message}");
+            }
+            throw;
+        }
     }
 
     private static string GetString(string data, ref int index)
@@ -198,7 +224,7 @@ public static class DataIO
         StringBuilder result = new();
         var lastSlash = false;
         index++; // skip first quote
-        while (index < data.Length && (lastSlash || data[index] != '"'))
+        while (lastSlash || data[index] != '"')
         {
             var c = data[index++];
             if (lastSlash)
