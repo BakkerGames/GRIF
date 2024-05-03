@@ -177,6 +177,13 @@ public partial class Dags
                 inToken = true;
                 continue;
             }
+            if (c == '@')
+            {
+                result.Add(token.ToString());
+                token.Clear();
+                token.Append(c);
+                continue;
+            }
             if (c == '(')
             {
                 if (token.Length > 0)

@@ -27,3 +27,7 @@
 1.2.7 - Null check on resource stream
 
 1.2.8 - Check for leading spaces on script values in @set(key,value)
+
+1.2.9 - SYNTAX.md changes
+
+1.2.10 - Fixed SplitTokens
