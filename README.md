@@ -12,7 +12,7 @@ GRIF is written in C# .NET 8. The full source is available, including the sub-pr
 
 See the GRIF/DETAILS.md file for complete information on using GRIF, as well as the various README.md files in the sub-projects. DAGS/SYNTAX.md contains the full specification for DAGS scripts.
 
-Check out the "Cloak Of Darkness" demo game which shows some of the features of GRIF and DAGS.
+Check out the "Cloak Of Darkness" and "Tic Tac Toe" demo games which shows some of the features of GRIF and DAGS.
 
 Syntax:
 
