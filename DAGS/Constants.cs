@@ -84,4 +84,5 @@ public static class Constants
     public const string TRUEDATA = "@truedata(";
     public const string UPPER = "@upper(";
     public const string WRITE = "@write(";
+    public const string WRITELINE = "@writeline(";
 }

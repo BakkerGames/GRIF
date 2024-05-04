@@ -1,3 +1,7 @@
 # Versions
 
 1.0.0 - Initial Version, merging all sub-projects together.
+
+1.0.1 - DAGS - Fixed SplitTokens
+
+1.0.2 - DAGS - Add @writeline()

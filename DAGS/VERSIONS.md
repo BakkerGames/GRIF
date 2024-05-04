@@ -31,3 +31,5 @@
 1.2.9 - SYNTAX.md changes
 
 1.2.10 - Fixed SplitTokens
+
+1.2.11 - Add @writeline()

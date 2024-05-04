@@ -732,6 +732,21 @@ public partial class Dags
                         result.Append(temp1);
                     }
                     return;
+                case WRITELINE:
+                    // write out each value with a NL at the end
+                    foreach (string s in p)
+                    {
+                        temp1 = s;
+                        while (temp1.StartsWith('@'))
+                        {
+                            StringBuilder tempResult = new();
+                            RunScript(temp1, tempResult);
+                            temp1 = tempResult.ToString();
+                        }
+                        result.Append(temp1);
+                    }
+                    result.Append("\\n");
+                    return;
                 default:
                     // run a defined function with any number of replaceable parameters
                     // @func(x)=...$x...

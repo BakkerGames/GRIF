@@ -16,9 +16,9 @@ A simple scripting language for handling game data in a dictionary object.</Desc
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/BakkerGames/DAGS</RepositoryUrl>
     <Title>DAGS - Data Access Game Scripts</Title>
-    <Version>1.2.10</Version>
-    <AssemblyVersion>1.2.10</AssemblyVersion>
-    <FileVersion>1.2.10</FileVersion>
+    <Version>1.2.11</Version>
+    <AssemblyVersion>1.2.11</AssemblyVersion>
+    <FileVersion>1.2.11</FileVersion>
     <PackageTags>dags;scripting;game;development;engine;text;adventure;if;interactive;fiction</PackageTags>
     <PackageReleaseNotes></PackageReleaseNotes>
     <AssemblyName>dags</AssemblyName>

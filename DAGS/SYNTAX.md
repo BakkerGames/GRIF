@@ -88,6 +88,10 @@ There is an "InChannel" queue and an "OutChannel" queue which are used for passi
 
 >Writes all the values concatinated to result.
 
+@writeline(value1,value2...)
+
+>Writes all the values concatinated to result, followed by "\n".
+
 
 ## Functions
 

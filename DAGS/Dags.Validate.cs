@@ -310,6 +310,7 @@ public partial class Dags
         TRUEDATA,
         UPPER,
         WRITE,
+        WRITELINE,
     ];
 
     #endregion
