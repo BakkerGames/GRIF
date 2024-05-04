@@ -5,3 +5,5 @@
 1.0.1 - DAGS - Fixed SplitTokens
 
 1.0.2 - DAGS - Add @writeline()
+
+1.0.3 - Show Syntax if no command-line parameters are specified.

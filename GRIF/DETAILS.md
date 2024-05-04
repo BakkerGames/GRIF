@@ -327,3 +327,16 @@ GRIF basegame.grif -m spanish.grif
 The current parser does expect VERB or VERB NOUN commands. The verb words and noun words can be in any languages, but the pattern must be maintained. It also doesn't handle multi-word verbs or nouns (yet). Maybe soon...
 
 When using other languages for vocabulary, `system.wordsize` will probably need to be zero and all verbs and nouns given as full words.
+
+
+## Meta Commands
+
+There are two meta commands available while running a GRIF game, for debugging purposes. These are only enabled if a command line option `--meta` is added when running. They are very useful for displaying or modifying data and for testing scripts.
+
+`#exec <script>`
+
+This will execute the script specified. It must start with `@`.
+
+`#debug <script>`
+
+This will execute the script specified and display script text and various values as it runs. It must start with `@`.

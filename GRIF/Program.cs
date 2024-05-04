@@ -17,6 +17,14 @@ internal class Program
             var modFilenames = new List<string>();
             var allowMeta = false;
 
+            // Nothing specified
+            if (args.Length == 0)
+            {
+                UserIO.Output(SystemData.Syntax());
+                Console.ReadLine();
+                return;
+            }
+
             // Parse command-line arguments
             int argIndex = 0;
             while (argIndex < args.Length)

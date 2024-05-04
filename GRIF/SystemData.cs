@@ -151,14 +151,12 @@ public static class SystemData
         StringBuilder result = new();
         result.AppendLine("GRIF - Game Runner for Interactive Fiction");
         result.AppendLine();
-        result.AppendLine("grif <filename.grif|directory>");
-        result.AppendLine("     [-i|--input  <filename>]");
-        result.AppendLine("     [-o|--output <filename>]");
-        result.AppendLine("     [-m|--mod    <filename.grif|directory>]");
+        result.AppendLine("grif <filename.grif | directory>");
+        result.AppendLine("     [-i | --input  <filename>]");
+        result.AppendLine("     [-o | --output <filename>]");
+        result.AppendLine("     [-m | --mod    <filename.grif | directory>]");
         result.AppendLine();
-        result.AppendLine("If nothing is specified, GRIF will load all the \"*.grif\" files in the current directory.");
-        result.AppendLine();
-        result.AppendLine("There may be more than one -m|--mod parameter.");
+        result.AppendLine("There may be multiple \"-m\" or \"--mod\" parameters.");
         return result.ToString();
     }
 

@@ -10,12 +10,6 @@ public static class UserIO
         foreach (string line in lines)
         {
             var tempLine = line.Trim();
-            if (tempLine.Contains("//"))
-            {
-                var comment = tempLine[tempLine.IndexOf("//")..].Trim();
-                tempLine = tempLine[..tempLine.IndexOf("//")].Trim();
-                InputQueue.Enqueue(comment);
-            }
             if (tempLine != "")
             {
                 InputQueue.Enqueue(tempLine);
@@ -56,6 +50,15 @@ public static class UserIO
         do
         {
             result = Console.ReadLine() ?? "";
+            if (result.TrimStart().StartsWith("//"))
+            {
+                if (LogFilename != "")
+                {
+                    // can't use Output() here
+                    File.AppendAllText(LogFilename, result + Environment.NewLine);
+                }
+                result = "";
+            }
         } while (result == "" && !emptyAllowed);
         LastLen = 0; // moved to new line
         if (LogFilename != "")

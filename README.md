@@ -4,7 +4,7 @@ GRIF is a game runner for playing Interactive Fiction games from the console. It
 
 GRIF handles player input, text output, file loading and saving, and parsing. Everything else is done by the game scripts.
 
-The game data may be stored in one or many data files. There may also be extra modification files to add addtional features to the game. Game data my be localized into different written languages by translating the text strings and storing in modification files, one per language. These files are in JSON-formatted plain text.
+The game data may be stored in one or many data files. There may also be extra modification files to add addtional features to the game. Game data my be localized into different written languages by translating the text strings and storing in modification files, one per language. These data files are in JSON-formatted plain text.
 
 GRIF uses the DAGS scripting language, which was developed specifically for Interactive Fiction text games.
 
@@ -17,12 +17,10 @@ Check out the "Cloak Of Darkness" and "Tic Tac Toe" demo games which shows some 
 Syntax:
 
 ```
-grif <filename.grif|directory>
-     [-i|--input  <filename>]
-     [-o|--output <filename>]
-     [-m|--mod    <filename.grif|directory>]
+grif <filename.grif | directory>
+     [-i | --input  <filename>]
+     [-o | --output <filename>]
+     [-m | --mod    <filename.grif | directory>]
 
-If nothing is specified, GRIF will load all the "*.grif" files in the current directory.
-
-There may be more than one -m|--mod parameter.
+There may be multiple "-m" or "--mod" parameters.
 ```

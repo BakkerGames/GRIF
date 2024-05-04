@@ -26,6 +26,12 @@ public static class Parse
     {
         var result = new ParseResult();
 
+        // remove comments
+        if (input.Contains("//"))
+        {
+            input = input[..input.IndexOf("//")].Trim();
+        }
+
         // Clear verb/noun
         grod[$"{INPUT_PREFIX}verb"] = "";
         grod[$"{INPUT_PREFIX}verbword"] = "";
