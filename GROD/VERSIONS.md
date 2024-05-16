@@ -19,3 +19,5 @@
 1.1.1 - Added Added ReadMe() and VersionHistory() for retriving that information.
 
 1.1.2 - Null check on resource stream
+
+1.1.3 - Added MergeOverlay()
