@@ -152,6 +152,22 @@ public partial class Grod : IDictionary<string, string>
         return (IEnumerator<KeyValuePair<string, string>>)result;
     }
 
+    /// <summary>
+    /// Merge all overlay key/values into base and clears overlay.
+    /// </summary>
+    public void MergeOverlay()
+    {
+        if (UseOverlay)
+        {
+            foreach (string key in _overlay.Keys)
+            {
+                if (!_base.TryAdd(key, _overlay[key]))
+                    _base[key] = _overlay[key];
+            }
+            _overlay.Clear();
+        }
+    }
+
     public bool Remove(string key)
     {
         if (string.IsNullOrWhiteSpace(key))

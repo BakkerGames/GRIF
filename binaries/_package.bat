@@ -1,12 +1,12 @@
 @echo off
 
-set VER=103
+set VER=104
 
-del grif-linux-arm-%VER%.tgz
-del grif-linux-arm64-%VER%.tgz
-del grif-linux-x64-%VER%.tgz
-del grif-win-x64-%VER%.zip
-del grif-win-x86-%VER%.zip
+del grif-linux-arm-*.tgz
+del grif-linux-arm64-*.tgz
+del grif-linux-x64-*.tgz
+del grif-win-x64-*.zip
+del grif-win-x86-*.zip
 
 copy /y ..\LICENSE.md linux-arm
 copy /y ..\LICENSE.md linux-arm64

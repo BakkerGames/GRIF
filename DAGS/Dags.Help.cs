@@ -33,6 +33,7 @@ public partial class Dags
         result.AppendLine($"   {NL}");
         result.AppendLine($"   {MSG}key)");
         result.AppendLine($"   {WRITE}x,...)");
+        result.AppendLine($"   {WRITELINE}x,...)");
         result.AppendLine();
 
         result.AppendLine("Functions:");
