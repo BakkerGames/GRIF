@@ -126,27 +126,11 @@ public partial class Dags
     }
 
     /// <summary>
-    /// ReadMe text from the DAGS project.
-    /// </summary>
-    public static string ReadMe()
-    {
-        return GetResourceText("DAGS.README.md");
-    }
-
-    /// <summary>
     /// Full syntax reference document for DAGS commands.
     /// </summary>
     public static string Syntax()
     {
         return GetResourceText("DAGS.SYNTAX.md");
-    }
-
-    /// <summary>
-    /// Version history for the DAGS project.
-    /// </summary>
-    public static string VersionHistory()
-    {
-        return GetResourceText("DAGS.VERSIONS.md");
     }
 
     #region Private

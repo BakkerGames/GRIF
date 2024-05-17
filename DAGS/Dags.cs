@@ -78,22 +78,22 @@ public partial class Dags(IDictionary<string, string> dict)
             switch (s)
             {
                 case ELSEIF:
-                    indent--;
+                    if (indent > 0) indent--;
                     break;
                 case ELSE:
-                    indent--;
+                    if (indent > 0) indent--;
                     break;
                 case ENDIF:
-                    indent--;
+                    if (indent > 0) indent--;
                     break;
                 case ENDFOR:
-                    indent--;
+                    if (indent > 0) indent--;
                     break;
                 case ENDFOREACHKEY:
-                    indent--;
+                    if (indent > 0) indent--;
                     break;
                 case ENDFOREACHLIST:
-                    indent--;
+                    if (indent > 0) indent--;
                     break;
             }
             if (parens == 0)
@@ -146,7 +146,7 @@ public partial class Dags(IDictionary<string, string> dict)
             }
             else if (s == ")")
             {
-                parens--;
+                if (parens > 0) parens--;
                 if (forLine && parens == 0)
                 {
                     forLine = false;

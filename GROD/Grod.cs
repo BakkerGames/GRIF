@@ -188,6 +188,17 @@ public partial class Grod : IDictionary<string, string>
         return result;
     }
 
+    /// <summary>
+    /// Revert the overlay value back to the base value
+    /// </summary>
+    public void Revert(string key)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+            throw new ArgumentNullException(nameof(key));
+        if (UseOverlay)
+            _overlay.Remove(key);
+    }
+
     public bool TryGetValue(string key, [MaybeNullWhen(false)] out string value)
     {
         if (string.IsNullOrWhiteSpace(key))
