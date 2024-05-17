@@ -10,17 +10,17 @@
     <Copyright>Copyright 2023-2024 Scott Bakker</Copyright>
     <Description>GROD - Game Resource Overlay Dictionary
 An in-memory key-value dictionary for handling beginning data and subsequent changes. Designed for games needing save/restore ability.</Description>
-    <PackageLicenseExpression>MIT-0</PackageLicenseExpression>
-    <PackageOutputPath></PackageOutputPath>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageOutputPath>..\NuGet\</PackageOutputPath>
     <PackageProjectUrl>https://github.com/BakkerGames/GROD</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/BakkerGames/GROD</RepositoryUrl>
     <Title>GROD - Game Resource Overlay Dictionary</Title>
-    <Version>1.1.3</Version>
-    <AssemblyVersion>1.1.3</AssemblyVersion>
-    <FileVersion>1.1.3</FileVersion>
+    <Version>1.1.4</Version>
+    <AssemblyVersion>1.1.4</AssemblyVersion>
+    <FileVersion>1.1.4</FileVersion>
     <PackageTags>grod;data;overlay;game;resources;gamedev;development</PackageTags>
-    <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageReleaseNotes>1.1.4 - Added Revert()</PackageReleaseNotes>
     <AssemblyName>grod</AssemblyName>
   </PropertyGroup>
 
@@ -31,16 +31,5 @@ An in-memory key-value dictionary for handling beginning data and subsequent cha
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>embedded</DebugType>
   </PropertyGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </EmbeddedResource>
-    <EmbeddedResource Include="VERSIONS.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </EmbeddedResource>
-  </ItemGroup>
 
 </Project>

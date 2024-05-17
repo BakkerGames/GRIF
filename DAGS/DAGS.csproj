@@ -10,17 +10,17 @@
     <Copyright>Copyright 2023-2024 Scott Bakker</Copyright>
     <Description>DAGS - Data Access Game Scripts
 A simple scripting language for handling game data in a dictionary object.</Description>
-    <PackageLicenseExpression>MIT-0</PackageLicenseExpression>
-    <PackageOutputPath></PackageOutputPath>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageOutputPath>..\NuGet\</PackageOutputPath>
     <PackageProjectUrl>https://github.com/BakkerGames/DAGS</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/BakkerGames/DAGS</RepositoryUrl>
     <Title>DAGS - Data Access Game Scripts</Title>
-    <Version>1.2.11</Version>
-    <AssemblyVersion>1.2.11</AssemblyVersion>
-    <FileVersion>1.2.11</FileVersion>
+    <Version>1.2.12</Version>
+    <AssemblyVersion>1.2.12</AssemblyVersion>
+    <FileVersion>1.2.12</FileVersion>
     <PackageTags>dags;scripting;game;development;engine;text;adventure;if;interactive;fiction</PackageTags>
-    <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageReleaseNotes>1.2.12 - Fixed PrettyScript to handle error scripts better</PackageReleaseNotes>
     <AssemblyName>dags</AssemblyName>
   </PropertyGroup>
 
@@ -33,15 +33,7 @@ A simple scripting language for handling game data in a dictionary object.</Desc
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </EmbeddedResource>
     <EmbeddedResource Include="SYNTAX.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </EmbeddedResource>
-    <EmbeddedResource Include="VERSIONS.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </EmbeddedResource>
