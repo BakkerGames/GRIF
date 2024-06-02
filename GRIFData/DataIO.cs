@@ -275,13 +275,26 @@ public static class DataIO
     private static string EncodeString(string value)
     {
         StringBuilder result = new();
+        var isScript = value.StartsWith('@');
         foreach (char c in value)
         {
             if (c < ' ' || c > '~')
             {
-                if (value.StartsWith('@') && (c == '\r' || c == '\n' || c == '\t'))
+                if (isScript && (c == '\r' || c == '\n' || c == '\t'))
                 {
                     result.Append(c);
+                }
+                else if (c == '\r')
+                {
+                    result.Append("\\r");
+                }
+                else if (c == '\n')
+                {
+                    result.Append("\\n");
+                }
+                else if (c == '\t')
+                {
+                    result.Append("\\t");
                 }
                 else
                 {

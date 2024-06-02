@@ -17,7 +17,7 @@ public partial class Dags
         result.AppendLine($"   {COMMENT}x)");
         result.AppendLine($"   {EXEC}script)");
         result.AppendLine($"   {SCRIPT}key)");
-        result.AppendLine($"   {SET}key,x)");
+        result.AppendLine($"   {SET}key,value)");
         result.AppendLine($"   {SWAP}key1,key2)");
         result.AppendLine();
 
@@ -32,22 +32,22 @@ public partial class Dags
         result.AppendLine("Output statements:");
         result.AppendLine($"   {NL}");
         result.AppendLine($"   {MSG}key)");
-        result.AppendLine($"   {WRITE}x,...)");
-        result.AppendLine($"   {WRITELINE}x,...)");
+        result.AppendLine($"   {WRITE}value[,value,...])");
+        result.AppendLine($"   {WRITELINE}value[,value,...])");
         result.AppendLine();
 
         result.AppendLine("Functions:");
         result.AppendLine($"   {ABS}x)");
         result.AppendLine($"   {ADD}x,y)");
-        result.AppendLine($"   {CONCAT}x,y,...)");
+        result.AppendLine($"   {CONCAT}value[,value,...])");
         result.AppendLine($"   {DIV}x,y)");
-        result.AppendLine($"   {FORMAT}x,y0,y1,...)");
+        result.AppendLine($"   {FORMAT}value,v0[,v1,...])");
         result.AppendLine($"   {GET}key)");
         result.AppendLine($"   {GETVALUE}key)");
         result.AppendLine($"   {LOWER}x)");
         result.AppendLine($"   {MOD}x,y)");
         result.AppendLine($"   {MUL}x,y)");
-        result.AppendLine($"   {REPLACE}x,y,z)");
+        result.AppendLine($"   {REPLACE}value,old,new)");
         result.AppendLine($"   {RND}x)");
         result.AppendLine($"   {SUB}x,y)");
         result.AppendLine($"   {SUBSTRING}value,start[,len])");
@@ -55,11 +55,13 @@ public partial class Dags
         result.AppendLine($"   {UPPER}x)");
         result.AppendLine();
 
-        result.AppendLine("If tokens:");
-        result.AppendLine($"   {IF}");
-        result.AppendLine($"   {THEN}");
-        result.AppendLine($"   {ELSEIF}");
-        result.AppendLine($"   {ELSE}");
+        result.AppendLine("If statement:");
+        result.AppendLine($"   {IF} ... {THEN}");
+        result.AppendLine($"      ...");
+        result.AppendLine($"   [{ELSEIF} ... {THEN}]");
+        result.AppendLine($"      [...]");
+        result.AppendLine($"   [{ELSE}]");
+        result.AppendLine($"      [...]");
         result.AppendLine($"   {ENDIF}");
         result.AppendLine();
 
@@ -89,16 +91,19 @@ public partial class Dags
 
         result.AppendLine("For loop:");
         result.AppendLine($"   {FOR}token,start,end)");
+        result.AppendLine("        ...$token...");
         result.AppendLine($"   {ENDFOR}");
         result.AppendLine();
 
         result.AppendLine("ForEachKey loop:");
         result.AppendLine($"   {FOREACHKEY}token,prefix[,suffix])");
+        result.AppendLine("        ...$token...");
         result.AppendLine($"   {ENDFOREACHKEY}");
         result.AppendLine();
 
         result.AppendLine("ForEachList loop:");
         result.AppendLine($"   {FOREACHLIST}token,name)");
+        result.AppendLine("        ...$token...");
         result.AppendLine($"   {ENDFOREACHLIST}");
         result.AppendLine();
 
