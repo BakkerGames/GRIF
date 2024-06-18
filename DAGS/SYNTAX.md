@@ -324,7 +324,7 @@ Any functions which returns truthy or falsey values may be defined and used as "
 
 ## List Statements/Functions
 
-These commands allow named lists of values to be stored as a single group instead of separate key/value pairs. They can be indexed by number, appended to, and cleared. The items will be separated by commas, so commas in the values will be replaced by the token "\x2C" when stored. Empty strings "" will be replaced by "null" when stored so they can be handled properly.
+These commands allow named lists of values to be stored as a single group instead of separate key/value pairs. They can be indexed by number, appended to, and cleared. They are stored as a single string starting with "[" and ending with "]", with values separated by commas.
 
 @addlist(name,value)
 
@@ -340,7 +340,7 @@ These commands allow named lists of values to be stored as a single group instea
 
 @insertatlist(name,pos,value)
 
->Inserts "value" at position "pos" (starting at 0) from list, shifting all later ones. If "pos" is past the end of the list, all values from the end up to "pos" are filled with "null" and then "value" is added.
+>Inserts "value" at position "pos" (starting at 0) from list, shifting all later ones. If "pos" is past the end of the list, all values from the end up to "pos" are filled with "" and then "value" is added.
 
 @listlength(name)
 
@@ -352,12 +352,12 @@ These commands allow named lists of values to be stored as a single group instea
 
 @setlist(name,pos,value)
 
->Sets the value at position "pos" (starting at 0) for the list "name". If "pos" is beyond the end of the list, all values from the end up to "pos" are filled with "null" and then "value" is added.
+>Sets the value at position "pos" (starting at 0) for the list "name". If "pos" is beyond the end of the list, all values from the end up to "pos" are filled with "" and then "value" is added.
 
 
 ## Array Statements/Functions
 
-These commands allow a two-dimensional array of values to be stored as a group. They are sparse arrays with unspecified values returned as "". The items will be separated by commas, so commas in the values will be replaced by the token "\x2C" when stored. Empty strings "" will be replaced by "null" when stored so they can be handled properly. Arrays are stored in the dictionary with the keys "{name}.{y}", with "{y}" as the row number.
+These commands allow a two-dimensional array of values to be stored as a group. They are sparse arrays with unspecified values returned as "". Arrays are stored in the dictionary with the keys "{name}.{y}", with "{y}" as the row number. Each row is stored as a single string starting with "[" and ending with "]", with values separated by commas.
 
 Note that the array values are referenced by row (y) first and then column (x), both starting at 0. Negative indexes throw an error.
 
@@ -371,7 +371,7 @@ Note that the array values are referenced by row (y) first and then column (x), 
 
 @setarray(name,y,x,value)
 
->Sets the value at position "y,x" (starting at 0,0) for the array "name". If either "y" or "x" is beyond the edge of the stored values, missing values will be set to "null" as needed before adding "value".
+>Sets the value at position "y,x" (starting at 0,0) for the array "name". If either "y" or "x" is beyond the edge of the stored values, missing values will be set to "" as needed before adding "value".
 
 
 ## In/Out Channel Commands

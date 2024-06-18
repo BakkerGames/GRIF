@@ -13,11 +13,11 @@
     <PackageProjectUrl>https://github.com/BakkerGames/GRIFData</PackageProjectUrl>
     <RepositoryUrl>https://github.com/BakkerGames/GRIFData</RepositoryUrl>
     <Title>GRIFData - Loading and saving GRIF game data files</Title>
-    <Version>1.3.3</Version>
-    <AssemblyVersion>1.3.3</AssemblyVersion>
-    <FileVersion>1.3.3</FileVersion>
+    <Version>1.3.4</Version>
+    <AssemblyVersion>1.3.4</AssemblyVersion>
+    <FileVersion>1.3.4</FileVersion>
     <PackageTags>grif;dags;grod;game;data</PackageTags>
-    <PackageReleaseNotes>Version 1.3.3 - Updated GROD and DAGS</PackageReleaseNotes>
+    <PackageReleaseNotes>Version 1.3.4 - DAGS v1.2.13; fixed CR LF TAB in values</PackageReleaseNotes>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <AssemblyName>grifdata</AssemblyName>

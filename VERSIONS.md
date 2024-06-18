@@ -9,3 +9,5 @@
 1.0.3 - Show Syntax if no command-line parameters are specified.
 
 1.0.4 - GROD - Added MergeOverlay()
+
+1.0.5 - DAGS v1.2.13; GRIFData v1.3.4
