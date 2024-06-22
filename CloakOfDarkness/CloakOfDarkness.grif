@@ -139,6 +139,8 @@ And that's all there is to it...
 		@else
 			@godir(@get(input.noun))
 		@endif",
+	"command.hang":
+		"@msg(message.hang_what)",
 	"command.hang.cloak":
 		"@if @here(hook) @and @herecarry(cloak) @then
 			@set(item.cloak.location,hook)
@@ -187,6 +189,8 @@ And that's all there is to it...
 		"@godir(out)",
 	"command.quit":
 		"@quit",
+	"command.read":
+		"@msg(message.read_what)",
 	"command.read.message":
 		"@if @isroom(bar) @then
 			@if @dark @then
@@ -310,6 +314,7 @@ And that's all there is to it...
 	"message.dont_have": "You don't have that.",
 	"message.dont_see": "I don't see that here.",
 	"message.dropcloak": "This isn't the best place to leave a smart cloak lying around.",
+	"message.hang_what": "Hang what?",
 	"message.hook_desc_cloak": "with a cloak hanging on it.",
 	"message.hook_desc_empty": "screwed to the wall.",
 	"message.hook_desc_start": "It's just a small brass hook, ",
@@ -321,6 +326,7 @@ And that's all there is to it...
 	"message.ok": "OK",
 	"message.otherdark": "In the dark? You could easily disturb something!",
 	"message.readable": "The message, neatly marked in the sawdust, reads...",
+	"message.read_what": "Read what?",
 	"message.restore_complete": "Restore complete.",
 	"message.save_complete": "Save complete.",
 	"message.save_slot_number": "Enter the slot number of the save file (1-5):",
