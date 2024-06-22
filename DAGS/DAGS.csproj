@@ -16,11 +16,11 @@ A simple scripting language for handling game data in a dictionary object.</Desc
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/BakkerGames/DAGS</RepositoryUrl>
     <Title>DAGS - Data Access Game Scripts</Title>
-    <Version>1.2.13</Version>
-    <AssemblyVersion>1.2.13</AssemblyVersion>
-    <FileVersion>1.2.13</FileVersion>
+    <Version>1.2.15</Version>
+    <AssemblyVersion>1.2.15</AssemblyVersion>
+    <FileVersion>1.2.15</FileVersion>
     <PackageTags>dags;scripting;game;development;engine;text;adventure;if;interactive;fiction</PackageTags>
-    <PackageReleaseNotes>1.2.13 - Changed lists and arrays to use [,] syntax</PackageReleaseNotes>
+    <PackageReleaseNotes>1.2.15 - Changed arrays to single nested values</PackageReleaseNotes>
     <AssemblyName>dags</AssemblyName>
   </PropertyGroup>
 

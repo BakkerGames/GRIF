@@ -233,29 +233,33 @@ public partial class Dags
     }
 
     /// <summary>
-    /// Expand a value containing a list into a list of strings
+    /// Expand a string value containing a list into an actual list
     /// </summary>
-    private static List<string> ExpandList(string value)
+    private static List<string> ExpandList(string value, ref int pos)
     {
         List<string> result = [];
         bool inQuote = false;
         bool lastSlash = false;
         StringBuilder token = new();
         value = value.Trim();
-        var startAt = 0;
-        var endAt = value.Length;
-        if (value.StartsWith('[')) startAt++;
-        if (value.EndsWith(']')) endAt--;
-        if (startAt >= endAt)
+        while (pos < value.Length)
         {
-            return result; // empty list
-        }
-        for (int i = startAt; i < endAt; i++)
-        {
-            char c = value[i];
-            if (!inQuote && (c == '[' || c == ']'))
+            char c = value[pos++];
+            if (token.Length == 0 && char.IsWhiteSpace(c))
             {
-                throw new SystemException($"Unexpected character within list: {c}");
+                continue;
+            }
+            if (!inQuote && c == ']')
+            {
+                break;
+            }
+            if (!inQuote && c == '[')
+            {
+                if (token.Length > 0)
+                {
+                    throw new SystemException($"Unexpected character within list: {c}");
+                }
+                continue;
             }
             if (inQuote)
             {
@@ -300,7 +304,7 @@ public partial class Dags
                 }
                 else
                 {
-                    result.Add(token.ToString());
+                    result.Add(token.ToString().Trim());
                 }
                 token.Clear();
                 continue;
@@ -311,63 +315,10 @@ public partial class Dags
         {
             result.Add(token.ToString()[1..^1]);
         }
-        else
+        else if (result.Count > 0 || token.Length > 0)
         {
-            result.Add(token.ToString());
+            result.Add(token.ToString().Trim());
         }
         return result;
-    }
-
-    /// <summary>
-    /// Compress a list of strings into a value
-    /// </summary>
-    private static string CollapseList(List<string> list)
-    {
-        StringBuilder result = new();
-        result.Append('[');
-        bool addComma = false;
-        foreach (string s in list)
-        {
-            if (addComma)
-                result.Append(',');
-            else
-                addComma = true;
-            var quote = false;
-            foreach (char c in s)
-            {
-                switch (c)
-                {
-                    case ',':
-                    case '"':
-                    case ' ':
-                    case '\t':
-                    case '\n':
-                    case '\r':
-                    case '\\':
-                    case '[':
-                    case ']':
-                        quote = true;
-                        break;
-                }
-                if (quote)
-                    break;
-            }
-            var value = s;
-            if (quote)
-            {
-                result.Append('"');
-                value = value
-                    .Replace("\\", "\\\\")
-                    .Replace("\"", "\\\"");
-                result.Append(value);
-                result.Append('"');
-            }
-            else if (value != NULL_VALUE)
-            {
-                result.Append(value);
-            }
-        }
-        result.Append(']');
-        return result.ToString();
     }
 }

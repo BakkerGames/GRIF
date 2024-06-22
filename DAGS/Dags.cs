@@ -166,4 +166,105 @@ public partial class Dags(IDictionary<string, string> dict)
         }
         return result.ToString();
     }
+
+    /// <summary>
+    /// Expand a value containing a list into a list of strings
+    /// </summary>
+    public static List<string> ExpandList(string value)
+    {
+        int pos = 0;
+        return ExpandList(value, ref pos);
+    }
+
+    /// <summary>
+    /// Compress a list of strings into a value
+    /// </summary>
+    public static string CollapseList(List<string> list)
+    {
+        StringBuilder result = new();
+        result.Append('[');
+        bool addComma = false;
+        foreach (string s in list)
+        {
+            if (addComma)
+                result.Append(',');
+            else
+                addComma = true;
+            var quote = false;
+            foreach (char c in s)
+            {
+                switch (c)
+                {
+                    case ',':
+                    case '"':
+                    case ' ':
+                    case '\t':
+                    case '\n':
+                    case '\r':
+                    case '\\':
+                    case '[':
+                    case ']':
+                        quote = true;
+                        break;
+                }
+                if (quote)
+                    break;
+            }
+            var value = s;
+            if (quote)
+            {
+                result.Append('"');
+                value = value
+                    .Replace("\\", "\\\\")
+                    .Replace("\"", "\\\"");
+                result.Append(value);
+                result.Append('"');
+            }
+            else if (value != NULL_VALUE)
+            {
+                result.Append(value);
+            }
+        }
+        result.Append(']');
+        return result.ToString();
+    }
+
+    public static List<List<string>> ExpandArray(string list)
+    {
+        List<List<string>> result = [];
+        int pos = 0;
+        bool first = true;
+        while (pos < list.Length)
+        {
+            char c = list[pos++];
+            if (char.IsWhiteSpace(c)) continue;
+            if (c == '[' && first)
+            {
+                first = false;
+                continue;
+            }
+            if (c == ',') continue;
+            if (c == ']') break;
+            pos--;
+            result.Add(ExpandList(list, ref pos));
+        }
+        return result;
+    }
+
+    public static string CollapseArray(List<List<string>> list)
+    {
+        StringBuilder result = new();
+        result.Append('[');
+        var comma = false;
+        foreach (var sublist in list)
+        {
+            if (comma)
+                result.Append(',');
+            else
+                comma = true;
+            result.Append(CollapseList(sublist));
+        }
+        result.Append(']');
+        return result.ToString();
+    }
 }

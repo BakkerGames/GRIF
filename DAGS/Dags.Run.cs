@@ -15,6 +15,7 @@ public partial class Dags
             string temp2;
             bool answer;
             List<string> list = [];
+            List<List<string>> array = [];
             var token = tokens[index++];
 
             // static value
@@ -97,11 +98,11 @@ public partial class Dags
                 case CLEARARRAY:
                     // clears the named array
                     CheckParamCount(token, p, 1);
-                    var keys = _dict.Keys.Where(x => x.StartsWith($"{p[0]}."));
-                    foreach (string key in keys)
+                    if (p[0] == "")
                     {
-                        Set(key, "[]");
+                        throw new SystemException("List name cannot be blank");
                     }
+                    Set(p[0], "[]");
                     return;
                 case CLEARLIST:
                     // clears the named list
@@ -259,10 +260,10 @@ public partial class Dags
                     {
                         throw new SystemException($"Invalid (y,x) for array: ({p[1]},{p[2]})");
                     }
-                    list = ExpandList(Get($"{p[0]}.{int1}"));
-                    if (int2 <= list.Count)
+                    array = ExpandArray(Get(p[0]));
+                    if (int1 < array.Count && int2 < array[int1].Count)
                     {
-                        result.Append(list[int2]);
+                        result.Append(array[int1][int2]);
                     }
                     return;
                 case GETLIST:
@@ -571,13 +572,17 @@ public partial class Dags
                     {
                         throw new SystemException($"Invalid (y,x) for array: ({p[1]},{p[2]})");
                     }
-                    list = ExpandList(Get($"{p[0]}.{int1}"));
-                    while (int2 >= list.Count)
+                    array = ExpandArray(Get(p[0]));
+                    while (int1 >= array.Count)
                     {
-                        list.Add("");
+                        array.Add([]);
                     }
-                    list[int2] = p[3];
-                    Set($"{p[0]}.{int1}", CollapseList(list));
+                    while (int2 >= array[int1].Count)
+                    {
+                        array[int1].Add("");
+                    }
+                    array[int1][int2] = p[3];
+                    Set(p[0], CollapseArray(array));
                     return;
                 case SETLIST:
                     // set a name,x,value
