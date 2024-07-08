@@ -42,7 +42,7 @@ public partial class Dags
                         }
                         return;
                     case NL:
-                        result.Append("\\n");
+                        result.Append(@"\n");
                         return;
                     default:
                         // run a defined function with no parameters
@@ -475,7 +475,7 @@ public partial class Dags
                         temp1 = tempResult.ToString();
                     }
                     result.Append(temp1);
-                    result.Append("\\n");
+                    result.Append(@"\n");
                     return;
                 case MUL:
                     // multiply two values
@@ -658,7 +658,7 @@ public partial class Dags
                 case TRIM:
                     // trim leading and trailing spaces from string
                     CheckParamCount(token, p, 1);
-                    result.Append(p[0].Replace("\\n", "").Trim());
+                    result.Append(p[0].Replace(@"\n", "").Trim());
                     return;
                 case TRUE:
                     // is value true (or truthy). false if error.
@@ -719,7 +719,7 @@ public partial class Dags
                         }
                         result.Append(temp1);
                     }
-                    result.Append("\\n");
+                    result.Append(@"\n");
                     return;
                 default:
                     // run a defined function with any number of replaceable parameters

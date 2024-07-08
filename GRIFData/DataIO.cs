@@ -286,19 +286,19 @@ public static class DataIO
                 }
                 else if (c == '\r')
                 {
-                    result.Append("\\r");
+                    result.Append(@"\r");
                 }
                 else if (c == '\n')
                 {
-                    result.Append("\\n");
+                    result.Append(@"\n");
                 }
                 else if (c == '\t')
                 {
-                    result.Append("\\t");
+                    result.Append(@"\t");
                 }
                 else
                 {
-                    result.Append("\\u");
+                    result.Append(@"\u");
                     result.Append($"{(int)c:x4}");
                 }
             }
