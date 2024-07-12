@@ -11,3 +11,5 @@
 1.0.4 - GROD - Added MergeOverlay()
 
 1.0.5 - DAGS v1.2.15; GRIFData v1.3.4; fixed lists and arrays to use "[,]"
+
+2.0.0 - Switch to git submodule layout
