@@ -5,7 +5,7 @@
     },
     "Adventure": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\Scott\\source\\repos\\AdventureToGRIF\\GRIF\\advent.grif\" -m \"C:\\Users\\Scott\\source\\repos\\AdventureToGRIF\\GRIF\\system.grif\" --meta -i \"C:\\Users\\Scott\\source\\repos\\AdventureToGRIF\\GRIF\\fulltest.txt\""
+      "commandLineArgs": "\"C:\\Users\\Scott\\source\\repos\\AdventureToGRIF\\GRIFOutput\\advent*.grif\" --meta"
     }
   }
 }

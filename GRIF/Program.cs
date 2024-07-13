@@ -70,11 +70,7 @@ internal class Program
             Dags dags = new(grod);
 
             // Load data
-            if (File.Exists(dataPath + DATA_EXTENSION))
-            {
-                DataIO.LoadDataFromFile(dataPath + DATA_EXTENSION, grod);
-            }
-            else if (File.Exists(dataPath))
+            if (File.Exists(dataPath))
             {
                 DataIO.LoadDataFromFile(dataPath, grod);
             }
@@ -91,9 +87,22 @@ internal class Program
             }
             else
             {
-                UserIO.Output("File or directory not found: " + dataPath);
-                Console.ReadLine();
-                return;
+                var pathName = Path.GetDirectoryName(dataPath) ?? "";
+                var fileName = Path.GetFileName(dataPath);
+                var files = Directory.GetFiles(pathName, fileName);
+                if (files.Length > 0)
+                {
+                    foreach (string filename in files)
+                    {
+                        DataIO.LoadDataFromFile(filename, grod);
+                    }
+                }
+                else
+                {
+                    UserIO.Output("File or directory not found: " + dataPath);
+                    Console.ReadLine();
+                    return;
+                }
             }
 
             // Check if anything was loaded
