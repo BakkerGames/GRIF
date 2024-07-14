@@ -156,7 +156,7 @@ internal class Program
             SystemData.Init(grod, dags);
             DagsIO.Init(grod, dags);
             Metadata.Init(grod, dags);
-            Parse.Init(grod, dags);
+            Parse.Init(grod);
 
             // Make sure necessary values exist
             if (!SystemData.SystemValidate(result))
@@ -182,6 +182,7 @@ internal class Program
             {
                 // Run all background scripts
                 result.Clear();
+                parseResult.Clear();
                 DagsIO.RunBackgroundScripts(result);
                 UserIO.Output(result);
                 DagsIO.CheckOutChannel();
@@ -203,7 +204,7 @@ internal class Program
                         UserIO.Output(result);
                         DagsIO.CheckOutChannel();
                         if (DagsIO.GameOver) break;
-                        parseResult.CommandScript = "";
+                        parseResult.CommandKey = "";
                         continue;
                     }
 
@@ -211,12 +212,12 @@ internal class Program
                     parseResult = Parse.ParseInput(input);
                     UserIO.Output(parseResult.Error, true);
 
-                } while (parseResult.CommandScript == "");
+                } while (parseResult.CommandKey == "");
                 if (DagsIO.GameOver) break;
 
                 // Run the script
                 result.Clear();
-                dags.RunScript(parseResult.CommandScript, result);
+                dags.RunScript($"@script({parseResult.CommandKey})", result);
                 UserIO.Output(result);
                 DagsIO.CheckOutChannel();
             }
