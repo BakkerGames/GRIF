@@ -1,456 +1,430 @@
-/*
-The "Cloak of Darkness" specification
-
-(As found on https://www.ifwiki.org/Cloak_of_Darkness)
-
-There are just three rooms and three objects.
-
-The Foyer of the Opera House is where the game begins. This empty room has doors to the south and west, also an unusable exit to the north. There is nobody else around.
-
-The Bar lies south of the Foyer, and is initially unlit. Trying to do anything other than return northwards results in a warning message about disturbing things in the dark.
-
-On the wall of the Cloakroom, to the west of the Foyer, is fixed a small brass hook.
-
-Taking an inventory of possessions reveals that the player is wearing a black velvet cloak which, upon examination, is found to be light-absorbent. The player can drop the cloak on the floor of the Cloakroom or, better, put it on the hook.
-
-Returning to the Bar without the cloak reveals that the room is now lit. A message is scratched in the sawdust on the floor.
-
-The message reads either "You have won" or "You have lost", depending on how much it was disturbed by the player while the room was dark.
-
-The act of reading the message ends the game.
-
-And that's all there is to it...
-*/
-
-{
-	"@addscore(x)":
-		"@if @ne($x,0) @then
-			@addto(value.score,$x)
-			@if @eq($x,1) @then
-				@set(temp.s,\"\")
-			@else
-				@set(temp.s,\"s\")
-			@endif
-			@write(@format(@get(message.scoreup),$x,@get(temp.s)))
+"@addscore(x)":
+	"@if @ne($x,0) @then
+		@addto(value.score,$x)
+		@if @eq($x,1) @then
+			@set(temp.s,\"\")
+		@else
+			@set(temp.s,\"s\")
+		@endif
+		@write(@format(@get(message.scoreup),$x,@get(temp.s)))
+		@nl
+	@endif";
+"@carry(x)":
+	"@if @eq(@getvalue(item.$x.location),@inv) @then
+		@write(true)
+	@else
+		@write(false)
+	@endif";
+"@dark":
+	"@if @not @isroom(bar) @then
+		@write(false)
+	@elseif @herecarry(cloak) @then
+		@write(true)
+	@else
+		@write(false)
+	@endif";
+"@godir(x)":
+	"@set(temp.newroom,@get(@concat(\"room.\",@room,\".exit.\",$x)))
+	@if @isnull(@get(temp.newroom)) @then
+		@msg(message.cant_go)
+	@elseif @isscript(@get(temp.newroom)) @then
+		@script(temp.newroom)
+	@else
+		@goto(@get(temp.newroom))
+	@endif";
+"@goto(x)":
+	"@set(value.room,$x)
+	@look";
+"@here(x)":
+	"@if @eq(@getvalue(item.$x.location),@room) @then
+		@write(true)
+	@else
+		@write(false)
+	@endif";
+"@herecarry(x)":
+	"@if @here($x) @or @carry($x) @then
+		@write(true)
+	@else
+		@write(false)
+	@endif";
+"@herechild(x)":
+	"@set(temp.here,false)
+	@foreachkey(y,\"item.\",\".location\")
+		@if @eq(@getvalue(item.$y.location),@room) @and @eq(@getvalue(item.$x.location),$y) @then
+			@set(temp.here,true)
+		@endif
+	@endforeachkey
+	@write(@get(temp.here))";
+"@inv": "inventory";
+"@isroom(x)":
+	"@eq(@room,$x)";
+"@look":
+	"@if @dark @then
+		@msg(message.too_dark)
+	@else
+		@script(@concat(\"room.\",@room,\".beforelook\"))
+		@msg(@concat(\"room.\",@room,\".shortdesc\"))
+		@if @false(@get(@concat(\"room.\",@room,\".visited\"))) @or @true(@get(value.fulllook)) @then
 			@nl
-		@endif",
-	"@carry(x)":
-		"@if @eq(@getvalue(item.$x.location),@inv) @then
-			@write(true)
-		@else
-			@write(false)
-		@endif",
-	"@dark":
-		"@if @not @isroom(bar) @then
-			@write(false)
-		@elseif @herecarry(cloak) @then
-			@write(true)
-		@else
-			@write(false)
-		@endif",
-	"@godir(x)":
-		"@set(temp.newroom,@get(@concat(\"room.\",@room,\".exit.\",$x)))
-		@if @isnull(@get(temp.newroom)) @then
-			@msg(message.cant_go)
-		@elseif @isscript(@get(temp.newroom)) @then
-			@script(temp.newroom)
-		@else
-			@goto(@get(temp.newroom))
-		@endif",
-	"@goto(x)":
-		"@set(value.room,$x)
-		@look",
-	"@here(x)":
-		"@if @eq(@getvalue(item.$x.location),@room) @then
-			@write(true)
-		@else
-			@write(false)
-		@endif",
-	"@herecarry(x)":
-		"@if @here($x) @or @carry($x) @then
-			@write(true)
-		@else
-			@write(false)
-		@endif",
-	"@herechild(x)":
-		"@set(temp.here,false)
-		@foreachkey(y,\"item.\",\".location\")
-			@if @eq(@getvalue(item.$y.location),@room) @and @eq(@getvalue(item.$x.location),$y) @then
-				@set(temp.here,true)
-			@endif
-		@endforeachkey
-		@write(@get(temp.here))",
-	"@inv": "inventory",
-	"@isroom(x)":
-		"@eq(@room,$x)",
-	"@look":
-		"@if @dark @then
-			@msg(message.too_dark)
-		@else
-			@script(@concat(\"room.\",@room,\".beforelook\"))
-			@msg(@concat(\"room.\",@room,\".shortdesc\"))
-			@if @false(@get(@concat(\"room.\",@room,\".visited\"))) @or @true(@get(value.fulllook)) @then
-				@nl
-				@msg(@concat(\"room.\",@room,\".longdesc\"))
-			@endif
-			@set(@concat(\"room.\",@room,\".visited\"),true)
-			@set(value.fulllook,false)
-			@script(@concat(\"room.\",@room,\".afterlook\"))
-			@foreachkey(x,\"item.\",\".location\")
-				@if @here($x) @and @not @true(@get(item.$x.scenery)) @then
-					@nl
-					@msg(item.$x.longdesc)
-				@endif
-			@endforeachkey
-		@endif",
-	"@lookfull":
-		"@set(value.fulllook,true)
-		@look",
-	"@quit":
-		"@setoutchannel(\"#GAMEOVER;\")",
-	"@room":
-		"@get(value.room)",
-	"background.intro":
-		"@if @false(@get(value.introdone)) @then
-			@msg(message.intro)
-			@set(value.introdone,true)
-			@nl
-			@look
-		@endif",
-	"command.down":
-		"@godir(down)",
-	"command.drop.*":
-		"@if @carry(@get(input.noun)) @then
-			@if @isroom(bar) @and @dark @then
-				@msg(message.otherdark)
-			@else
-				@set(@concat(\"item.\",@get(input.noun),\".location\"),@room)
-				@msg(message.ok)
-				@exec(@getvalue(@concat(\"item.\",@get(input.noun),\".afterdrop\")))
-			@endif
-		@else
-			@msg(message.dont_have)
-		@endif",
-	"command.east":
-		"@godir(east)",
-	"command.go.*":
-		"@if @isnull(@get(input.noun)) @then
-			@msg(system.dont_understand_that)
-		@else
-			@godir(@get(input.noun))
-		@endif",
-	"command.hang":
-		"@msg(message.hang_what)",
-	"command.hang.cloak":
-		"@if @here(hook) @and @herecarry(cloak) @then
-			@set(item.cloak.location,hook)
-			@msg(message.cloak_hanging)
-			@if @ne(@get(value.cloakscore),0) @then
-				@nl
-				@addscore(@get(value.cloakscore))
-				@set(value.cloakscore,0)
-			@endif
-		@elseif @herechild(cloak) @then
-			@msg(message.already_hanging)
-		@else
-			@msg(message.dont_see)
-		@endif",
-	"command.inventory":
-		"@set(temp.count,0)
+			@msg(@concat(\"room.\",@room,\".longdesc\"))
+		@endif
+		@set(@concat(\"room.\",@room,\".visited\"),true)
+		@set(value.fulllook,false)
+		@script(@concat(\"room.\",@room,\".afterlook\"))
 		@foreachkey(x,\"item.\",\".location\")
-			@if @carry($x) @then
-				@if @eq(@get(temp.count),0) @then
-					@msg(message.carrying)
-				@endif
-				@addto(temp.count,1)
-				@msg(item.$x.shortdesc)
+			@if @here($x) @and @not @true(@get(item.$x.scenery)) @then
+				@nl
+				@msg(item.$x.longdesc)
 			@endif
 		@endforeachkey
-		@if @eq(@get(temp.count),0) @then
-			@msg(message.inv_empty)
-		@endif",
-	"command.look":
-		"@set(value.fulllook,true)
-		@look",
-	"command.look.cloak":
-		"@if @herecarry(cloak) @or @herechild(cloak) @then
-			@write(\"A \")
-			@msg(item.cloak.description)
+	@endif";
+"@lookfull":
+	"@set(value.fulllook,true)
+	@look";
+"@quit":
+	"@setoutchannel(\"#GAMEOVER;\")";
+"@room":
+	"@get(value.room)";
+"background.intro":
+	"@if @false(@get(value.introdone)) @then
+		@msg(message.intro)
+		@set(value.introdone,true)
+		@nl
+		@look
+	@endif";
+"command.down":
+	"@godir(down)";
+"command.drop.*":
+	"@if @carry(@get(input.noun)) @then
+		@if @isroom(bar) @and @dark @then
+			@msg(message.otherdark)
 		@else
-			@msg(message.dont_see)
-		@endif",
-	"command.look.hook":
-		"@msg(item.hook.examine)",
-	"command.look.message":
-		"@script(command.read.message)",
-	"command.north":
-		"@godir(north)",
-	"command.out":
-		"@godir(out)",
-	"command.quit":
-		"@quit",
-	"command.read":
-		"@msg(message.read_what)",
-	"command.read.message":
-		"@if @isroom(bar) @then
-			@if @dark @then
-				@msg(message.otherdark)
-				@addto(value.scuffed,1)
-			@else
-				@if @lt(@get(value.scuffed),2) @then
-					@msg(message.readable)
-					@nl
-					@msg(message.you_won)
-					@nl
-					@addscore(@get(value.messagescore))
-					@set(value.messagescore,0)
-				@else
-					@msg(message.unreadable)
-					@nl
-					@msg(message.you_lost)
-				@endif
-				@nl
-				@script(command.score)
-				@quit
-			@endif
-		@else
-			@msg(message.dont_see)
-		@endif",
-	"command.restart":
-		"@msg(message.askrestart)
-		@setoutchannel(\"#ASK;\")
-		@setoutchannel(\"@script(script.restart)\")",
-	"command.restore":
-		"@msg(message.save_slot_number)
-		@setoutchannel(\"#ASK;\")
-		@setoutchannel(\"@script(script.restore_slot)\")",
-	"command.restore.#":
-		"@set(temp.slot,@get(input.nounword))
-		@if @isnumberdata(temp.slot) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
-			@setoutchannel(\"#RESTORENAME;\")
-			@setoutchannel(@get(temp.slot))
-			@setoutchannel(\"@msg(message.restore_complete) @nl\")
-			@setoutchannel(\"@lookfull\")
-		@else
-			@msg(message.save_slot_number)
-			@setoutchannel(\"#ASK;\")
-			@setoutchannel(\"@script(script.restore_slot)\")
-		@endif",
-	"command.save":
-		"@msg(message.save_slot_number)
-		@setoutchannel(\"#ASK;\")
-		@setoutchannel(\"@script(script.save_slot)\")",
-	"command.save.#":
-		"@set(temp.slot,@get(input.nounword))
-		@if @isnumberdata(temp.slot) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
-			@setoutchannel(\"#SAVENAME;\")
-			@setoutchannel(@get(temp.slot))
-			@setoutchannel(\"@msg(message.save_complete)\")
-		@else
-			@msg(message.save_slot_number)
-			@setoutchannel(\"#ASK;\")
-			@setoutchannel(\"@script(script.save_slot)\")
-		@endif",
-	"command.score":
-		"@write(@format(@get(message.score),@get(value.score),@get(value.maxscore)))
-		@nl",
-	"command.south":
-		"@godir(south)",
-	"command.take.*":
-		"@if @dark @then
-			@msg(message.too_dark)
-		@elseif @here(@get(input.noun)) @or @herechild(@get(input.noun)) @then
-			@if @true(@get(@concat(\"item.\",@get(input.noun),\".scenery\"))) @then
-				@msg(message.cant_take)
-			@else
-				@set(@concat(\"item.\",@get(input.noun),\".location\"),@inv)
-				@msg(message.ok)
-				@script(@concat(\"item.\",@get(input.noun),\".aftertake\"))
-			@endif
-		@elseif @carry(@get(input.noun)) @then
-			@msg(message.already_carrying)
-		@else
-			@msg(message.dont_see)
-		@endif",
-	"command.up":
-		"@godir(up)",
-	"command.use.hook":
-		"@script(command.hang.cloak)",
-	"command.west":
-		"@godir(west)",
-	"item.cloak.afterdrop":
-		"@nl
-		@msg(message.dropcloak)",
-	"item.cloak.description": "handsome cloak, of velvet trimmed with satin, and slightly spattered with raindrops. Its blackness is so deep that it almost seems to suck light from the room.",
-	"item.cloak.location":
-		"@inv",
-	"item.cloak.longdesc":
-		"@write(\"On the floor lies a \")
-		@write(@get(item.cloak.description))",
-	"item.cloak.shortdesc": "A velvet cloak",
-	"item.hook.examine":
-		"@if @here(hook) @then
-			@write(@get(message.hook_desc_start))
-			@if @eq(@get(item.cloak.location),hook) @then
-				@write(@get(message.hook_desc_cloak))
-			@else
-				@write(@get(message.hook_desc_empty))
-			@endif
-		@else
-			@write(@get(message.dont_see))
-		@endif",
-	"item.hook.location": "cloakroom",
-	"item.hook.scenery": "true",
-	"item.message.location": "bar",
-	"item.message.scenery": "true",
-	"message.already_carrying": "You are already carrying that.",
-	"message.already_hanging": "The cloak is already hanging on the hook.",
-	"message.askrestart": "Are you sure you want to restart the game?",
-	"message.askrestore": "Are you sure you want to restore from a save file?",
-	"message.cant_go": "You can't go that direction.",
-	"message.cant_take": "You can't take that.",
-	"message.carrying": "You are carrying:",
-	"message.cloak_hanging": "The cloak is now hanging smartly on the hook.",
-	"message.dont_have": "You don't have that.",
-	"message.dont_see": "I don't see that here.",
-	"message.dropcloak": "This isn't the best place to leave a smart cloak lying around.",
-	"message.hang_what": "Hang what?",
-	"message.hook_desc_cloak": "with a cloak hanging on it.",
-	"message.hook_desc_empty": "screwed to the wall.",
-	"message.hook_desc_start": "It's just a small brass hook, ",
-	"message.hook_with_cloak": "There is a handsome cloak hanging on the hook.",
-	"message.intro": "Cloak of Darkness\\n\\nA basic IF demonstration.\\n\\nHurrying through the rainswept November night, you're glad to see the bright lights of the Opera House. It's surprising that there aren't more people about but, hey, what do you expect in a cheap demo game...?",
-	"message.inv_empty": "You aren't carrying anything.",
-	"message.leave_operahouse": "You've only just arrived, and besides, the weather outside seems to be getting worse.",
-	"message.movedark": "Blundering around in the dark isn't a good idea!",
-	"message.ok": "OK",
-	"message.otherdark": "In the dark? You could easily disturb something!",
-	"message.readable": "The message, neatly marked in the sawdust, reads...",
-	"message.read_what": "Read what?",
-	"message.restore_complete": "Restore complete.",
-	"message.save_complete": "Save complete.",
-	"message.save_slot_number": "Enter the slot number of the save file (1-5):",
-	"message.score": "You have scored {0} out of {1} points.",
-	"message.scoreup": "Your score has gone up by {0} point{1}.",
-	"message.too_dark": "It is completely dark in here. You can't see a thing.",
-	"message.unreadable": "The message has been carelessly trampled, making it difficult to read. You can just distinguish the words...",
-	"message.yorn_error": "Please enter Yes or No.",
-	"message.you_lost": "\"You have lost.\"",
-	"message.you_won": "\"You have won!\"",
-	"noun.cloak": "cloak,velvet,handsome,black,dark,satin",
-	"noun.down": "down,d,descend",
-	"noun.east": "east,e",
-	"noun.hook": "hook,hooks,brass,small,peg",
-	"noun.message": "message,scrawled,sawdust,floor,msg",
-	"noun.north": "north,n",
-	"noun.out": "out",
-	"noun.south": "south,s",
-	"noun.up": "up,u,climb",
-	"noun.west": "west,w",
-	"room.bar.exit.down":
-		"@script(script.bar_cant_go)",
-	"room.bar.exit.east":
-		"@script(script.bar_cant_go)",
-	"room.bar.exit.north": "foyer",
-	"room.bar.exit.south":
-		"@script(script.bar_cant_go)",
-	"room.bar.exit.up":
-		"@script(script.bar_cant_go)",
-	"room.bar.exit.west":
-		"@script(script.bar_cant_go)",
-	"room.bar.longdesc": "The bar, much rougher than you'd have guessed after the opulence of the foyer to the north, is completely empty. There seems to be some sort of message scrawled in the sawdust on the floor.",
-	"room.bar.shortdesc": "Foyer bar",
-	"room.cloakroom.afterlook":
-		"@if @eq(@get(item.cloak.location),hook) @then
+			@set(@concat(\"item.\",@get(input.noun),\".location\"),@room)
+			@msg(message.ok)
+			@exec(@getvalue(@concat(\"item.\",@get(input.noun),\".afterdrop\")))
+		@endif
+	@else
+		@msg(message.dont_have)
+	@endif";
+"command.east":
+	"@godir(east)";
+"command.go.*":
+	"@if @isnull(@get(input.noun)) @then
+		@msg(system.dont_understand_that)
+	@else
+		@godir(@get(input.noun))
+	@endif";
+"command.hang":
+	"@msg(message.hang_what)";
+"command.hang.cloak":
+	"@if @here(hook) @and @herecarry(cloak) @then
+		@set(item.cloak.location,hook)
+		@msg(message.cloak_hanging)
+		@if @ne(@get(value.cloakscore),0) @then
 			@nl
-			@msg(message.hook_with_cloak)
-		@endif",
-	"room.cloakroom.exit.east": "foyer",
-	"room.cloakroom.longdesc": "The walls of this small room were clearly once lined with hooks, though now only one remains. The exit is a door to the east.",
-	"room.cloakroom.shortdesc": "Cloakroom",
-	"room.foyer.exit.north":
-		"@msg(message.leave_operahouse)",
-	"room.foyer.exit.out":
-		"@msg(message.leave_operahouse)",
-	"room.foyer.exit.south": "bar",
-	"room.foyer.exit.west": "cloakroom",
-	"room.foyer.longdesc": "You are standing in a spacious hall, splendidly decorated in red and gold, with glittering chandeliers overhead. The entrance from the street is to the north, and there are doorways south and west.",
-	"room.foyer.shortdesc": "Foyer of the Opera House",
-	"script.bar_cant_go":
-		"@if @dark @then
-			@msg(message.movedark)
+			@addscore(@get(value.cloakscore))
+			@set(value.cloakscore,0)
+		@endif
+	@elseif @herechild(cloak) @then
+		@msg(message.already_hanging)
+	@else
+		@msg(message.dont_see)
+	@endif";
+"command.inventory":
+	"@set(temp.count,0)
+	@foreachkey(x,\"item.\",\".location\")
+		@if @carry($x) @then
+			@if @eq(@get(temp.count),0) @then
+				@msg(message.carrying)
+			@endif
+			@addto(temp.count,1)
+			@msg(item.$x.shortdesc)
+		@endif
+	@endforeachkey
+	@if @eq(@get(temp.count),0) @then
+		@msg(message.inv_empty)
+	@endif";
+"command.look":
+	"@set(value.fulllook,true)
+	@look";
+"command.look.cloak":
+	"@if @herecarry(cloak) @or @herechild(cloak) @then
+		@write(\"A \")
+		@msg(item.cloak.description)
+	@else
+		@msg(message.dont_see)
+	@endif";
+"command.look.hook":
+	"@msg(item.hook.examine)";
+"command.look.message":
+	"@script(command.read.message)";
+"command.north":
+	"@godir(north)";
+"command.out":
+	"@godir(out)";
+"command.quit":
+	"@quit";
+"command.read":
+	"@msg(message.read_what)";
+"command.read.message":
+	"@if @isroom(bar) @then
+		@if @dark @then
+			@msg(message.otherdark)
 			@addto(value.scuffed,1)
 		@else
-			@msg(message.cant_go)
-		@endif",
-	"script.restart":
-		"@set(temp.yorn,@getinchannel)
-		@if @true(@get(temp.yorn)) @then
-			@setoutchannel(\"#RESTART;\")
-		@elseif @false(@get(temp.yorn)) @then
+			@if @lt(@get(value.scuffed),2) @then
+				@msg(message.readable)
+				@nl
+				@msg(message.you_won)
+				@nl
+				@addscore(@get(value.messagescore))
+				@set(value.messagescore,0)
+			@else
+				@msg(message.unreadable)
+				@nl
+				@msg(message.you_lost)
+			@endif
+			@nl
+			@script(command.score)
+			@quit
+		@endif
+	@else
+		@msg(message.dont_see)
+	@endif";
+"command.restart":
+	"@msg(message.askrestart)
+	@setoutchannel(\"#ASK;\")
+	@setoutchannel(\"@script(script.restart)\")";
+"command.restore":
+	"@msg(message.save_slot_number)
+	@setoutchannel(\"#ASK;\")
+	@setoutchannel(\"@script(script.restore_slot)\")";
+"command.restore.#":
+	"@set(temp.slot,@get(input.nounword))
+	@if @isnumberdata(temp.slot) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
+		@setoutchannel(\"#RESTORENAME;\")
+		@setoutchannel(@get(temp.slot))
+		@setoutchannel(\"@msg(message.restore_complete) @nl\")
+		@setoutchannel(\"@lookfull\")
+	@else
+		@msg(message.save_slot_number)
+		@setoutchannel(\"#ASK;\")
+		@setoutchannel(\"@script(script.restore_slot)\")
+	@endif";
+"command.save":
+	"@msg(message.save_slot_number)
+	@setoutchannel(\"#ASK;\")
+	@setoutchannel(\"@script(script.save_slot)\")";
+"command.save.#":
+	"@set(temp.slot,@get(input.nounword))
+	@if @isnumberdata(temp.slot) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
+		@setoutchannel(\"#SAVENAME;\")
+		@setoutchannel(@get(temp.slot))
+		@setoutchannel(\"@msg(message.save_complete)\")
+	@else
+		@msg(message.save_slot_number)
+		@setoutchannel(\"#ASK;\")
+		@setoutchannel(\"@script(script.save_slot)\")
+	@endif";
+"command.score":
+	"@write(@format(@get(message.score),@get(value.score),@get(value.maxscore)))
+	@nl";
+"command.south":
+	"@godir(south)";
+"command.take.*":
+	"@if @dark @then
+		@msg(message.too_dark)
+	@elseif @here(@get(input.noun)) @or @herechild(@get(input.noun)) @then
+		@if @true(@get(@concat(\"item.\",@get(input.noun),\".scenery\"))) @then
+			@msg(message.cant_take)
+		@else
+			@set(@concat(\"item.\",@get(input.noun),\".location\"),@inv)
 			@msg(message.ok)
+			@script(@concat(\"item.\",@get(input.noun),\".aftertake\"))
+		@endif
+	@elseif @carry(@get(input.noun)) @then
+		@msg(message.already_carrying)
+	@else
+		@msg(message.dont_see)
+	@endif";
+"command.up":
+	"@godir(up)";
+"command.use.hook":
+	"@script(command.hang.cloak)";
+"command.west":
+	"@godir(west)";
+"item.cloak.afterdrop":
+	"@nl
+	@msg(message.dropcloak)";
+"item.cloak.description": "handsome cloak, of velvet trimmed with satin, and slightly spattered with raindrops. Its blackness is so deep that it almost seems to suck light from the room.";
+"item.cloak.location":
+	"@inv";
+"item.cloak.longdesc":
+	"@write(\"On the floor lies a \")
+	@write(@get(item.cloak.description))";
+"item.cloak.shortdesc": "A velvet cloak";
+"item.hook.examine":
+	"@if @here(hook) @then
+		@write(@get(message.hook_desc_start))
+		@if @eq(@get(item.cloak.location),hook) @then
+			@write(@get(message.hook_desc_cloak))
 		@else
-			@msg(message.yorn_error)
-			@setoutchannel(\"#ASK;\")
-			@setoutchannel(\"@script(script.restart))\")
-		@endif",
-	"script.restore_slot":
-		"@set(temp.slot,@getinchannel)
-		@if @isnumberdata(temp.slot) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
-			@setoutchannel(\"#RESTORENAME;\")
-			@setoutchannel(@get(temp.slot))
-			@setoutchannel(\"@msg(message.restore_complete) @nl\")
-			@setoutchannel(\"@lookfull\")
-		@else
-			@msg(message.save_slot_number)
-			@setoutchannel(\"#ASK;\")
-			@setoutchannel(\"@script(script.restore_slot)\")
-		@endif",
-	"script.save_slot":
-		"@set(temp.slot,@getinchannel)
-		@if @isnumberdata(temp.slot) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
-			@setoutchannel(\"#SAVENAME;\")
-			@setoutchannel(@get(temp.slot))
-			@setoutchannel(\"@msg(message.save_complete)\")
-		@else
-			@msg(message.save_slot_number)
-			@setoutchannel(\"#ASK;\")
-			@setoutchannel(\"@script(script.save_slot)\")
-		@endif",
-	"system.after_prompt": "\\n",
-	"system.dont_understand": "I don't understand \"{0}\".",
-	"system.dont_understand_that": "I don't understand that.",
-	"system.gamename": "CloakOfDarkness",
-	"system.gametitle": "Cloak Of Darkness",
-	"system.nl_after_prompt": "true",
-	"system.output_width": "80",
-	"system.prompt": "\\n>",
-	"value.cloakscore": "1",
-	"value.maxscore": "2",
-	"value.messagescore": "1",
-	"value.room": "foyer",
-	"value.room.comment": "/* current player location */",
-	"value.score": "0",
-	"value.scuffed": "0",
-	"value.scuffed.comment": "/* how scuffed is the message? */",
-	"verb.down": "down,d,descend",
-	"verb.drop": "drop,throw",
-	"verb.east": "east,e",
-	"verb.go": "go,walk,run",
-	"verb.hang": "hang,put,place",
-	"verb.inventory": "i,inv,inventory",
-	"verb.look": "l,look,x,examine",
-	"verb.north": "north,n",
-	"verb.out": "out",
-	"verb.quit": "quit",
-	"verb.read": "read",
-	"verb.restart": "restart,reset",
-	"verb.restore": "restore",
-	"verb.save": "save,suspend",
-	"verb.score": "score",
-	"verb.south": "south,s",
-	"verb.take": "take,t,get",
-	"verb.up": "up,u,climb",
-	"verb.use": "use",
-	"verb.west": "west,w",
-}
+			@write(@get(message.hook_desc_empty))
+		@endif
+	@else
+		@write(@get(message.dont_see))
+	@endif";
+"item.hook.location": "cloakroom";
+"item.hook.scenery": "true";
+"item.message.location": "bar";
+"item.message.scenery": "true";
+"message.already_carrying": "You are already carrying that.";
+"message.already_hanging": "The cloak is already hanging on the hook.";
+"message.askrestart": "Are you sure you want to restart the game?";
+"message.askrestore": "Are you sure you want to restore from a save file?";
+"message.cant_go": "You can't go that direction.";
+"message.cant_take": "You can't take that.";
+"message.carrying": "You are carrying:";
+"message.cloak_hanging": "The cloak is now hanging smartly on the hook.";
+"message.dont_have": "You don't have that.";
+"message.dont_see": "I don't see that here.";
+"message.dropcloak": "This isn't the best place to leave a smart cloak lying around.";
+"message.hang_what": "Hang what?";
+"message.hook_desc_cloak": "with a cloak hanging on it.";
+"message.hook_desc_empty": "screwed to the wall.";
+"message.hook_desc_start": "It's just a small brass hook, ";
+"message.hook_with_cloak": "There is a handsome cloak hanging on the hook.";
+"message.intro": "Cloak of Darkness\\n\\nA basic IF demonstration.\\n\\nHurrying through the rainswept November night, you're glad to see the bright lights of the Opera House. It's surprising that there aren't more people about but, hey, what do you expect in a cheap demo game...?";
+"message.inv_empty": "You aren't carrying anything.";
+"message.leave_operahouse": "You've only just arrived, and besides, the weather outside seems to be getting worse.";
+"message.movedark": "Blundering around in the dark isn't a good idea!";
+"message.ok": "OK";
+"message.otherdark": "In the dark? You could easily disturb something!";
+"message.readable": "The message, neatly marked in the sawdust, reads...";
+"message.read_what": "Read what?";
+"message.restore_complete": "Restore complete.";
+"message.save_complete": "Save complete.";
+"message.save_slot_number": "Enter the slot number of the save file (1-5):";
+"message.score": "You have scored {0} out of {1} points.";
+"message.scoreup": "Your score has gone up by {0} point{1}.";
+"message.too_dark": "It is completely dark in here. You can't see a thing.";
+"message.unreadable": "The message has been carelessly trampled, making it difficult to read. You can just distinguish the words...";
+"message.yorn_error": "Please enter Yes or No.";
+"message.you_lost": "\"You have lost.\"";
+"message.you_won": "\"You have won!\"";
+"noun.cloak": "cloak,velvet,handsome,black,dark,satin";
+"noun.down": "down,d,descend";
+"noun.east": "east,e";
+"noun.hook": "hook,hooks,brass,small,peg";
+"noun.message": "message,scrawled,sawdust,floor,msg";
+"noun.north": "north,n";
+"noun.out": "out";
+"noun.south": "south,s";
+"noun.up": "up,u,climb";
+"noun.west": "west,w";
+"room.bar.exit.down":
+	"@script(script.bar_cant_go)";
+"room.bar.exit.east":
+	"@script(script.bar_cant_go)";
+"room.bar.exit.north": "foyer";
+"room.bar.exit.south":
+	"@script(script.bar_cant_go)";
+"room.bar.exit.up":
+	"@script(script.bar_cant_go)";
+"room.bar.exit.west":
+	"@script(script.bar_cant_go)";
+"room.bar.longdesc": "The bar, much rougher than you'd have guessed after the opulence of the foyer to the north, is completely empty. There seems to be some sort of message scrawled in the sawdust on the floor.";
+"room.bar.shortdesc": "Foyer bar";
+"room.cloakroom.afterlook":
+	"@if @eq(@get(item.cloak.location),hook) @then
+		@nl
+		@msg(message.hook_with_cloak)
+	@endif";
+"room.cloakroom.exit.east": "foyer";
+"room.cloakroom.longdesc": "The walls of this small room were clearly once lined with hooks, though now only one remains. The exit is a door to the east.";
+"room.cloakroom.shortdesc": "Cloakroom";
+"room.foyer.exit.north":
+	"@msg(message.leave_operahouse)";
+"room.foyer.exit.out":
+	"@msg(message.leave_operahouse)";
+"room.foyer.exit.south": "bar";
+"room.foyer.exit.west": "cloakroom";
+"room.foyer.longdesc": "You are standing in a spacious hall, splendidly decorated in red and gold, with glittering chandeliers overhead. The entrance from the street is to the north, and there are doorways south and west.";
+"room.foyer.shortdesc": "Foyer of the Opera House";
+"script.bar_cant_go":
+	"@if @dark @then
+		@msg(message.movedark)
+		@addto(value.scuffed,1)
+	@else
+		@msg(message.cant_go)
+	@endif";
+"script.restart":
+	"@set(temp.yorn,@getinchannel)
+	@if @true(@get(temp.yorn)) @then
+		@setoutchannel(\"#RESTART;\")
+	@elseif @false(@get(temp.yorn)) @then
+		@msg(message.ok)
+	@else
+		@msg(message.yorn_error)
+		@setoutchannel(\"#ASK;\")
+		@setoutchannel(\"@script(script.restart))\")
+	@endif";
+"script.restore_slot":
+	"@set(temp.slot,@getinchannel)
+	@if @isnumberdata(temp.slot) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
+		@setoutchannel(\"#RESTORENAME;\")
+		@setoutchannel(@get(temp.slot))
+		@setoutchannel(\"@msg(message.restore_complete) @nl\")
+		@setoutchannel(\"@lookfull\")
+	@else
+		@msg(message.save_slot_number)
+		@setoutchannel(\"#ASK;\")
+		@setoutchannel(\"@script(script.restore_slot)\")
+	@endif";
+"script.save_slot":
+	"@set(temp.slot,@getinchannel)
+	@if @isnumberdata(temp.slot) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
+		@setoutchannel(\"#SAVENAME;\")
+		@setoutchannel(@get(temp.slot))
+		@setoutchannel(\"@msg(message.save_complete)\")
+	@else
+		@msg(message.save_slot_number)
+		@setoutchannel(\"#ASK;\")
+		@setoutchannel(\"@script(script.save_slot)\")
+	@endif";
+"system.after_prompt": "\\n";
+"system.dont_understand": "I don't understand \"{0}\".";
+"system.dont_understand_that": "I don't understand that.";
+"system.gamename": "CloakOfDarkness";
+"system.gametitle": "Cloak Of Darkness";
+"system.nl_after_prompt": "true";
+"system.output_width": "80";
+"system.prompt": "\\n>";
+"value.cloakscore": "1";
+"value.maxscore": "2";
+"value.messagescore": "1";
+"value.room": "foyer";
+"value.room.comment": "/* current player location */";
+"value.score": "0";
+"value.scuffed": "0";
+"value.scuffed.comment": "/* how scuffed is the message? */";
+"verb.down": "down,d,descend";
+"verb.drop": "drop,throw";
+"verb.east": "east,e";
+"verb.go": "go,walk,run";
+"verb.hang": "hang,put,place";
+"verb.inventory": "i,inv,inventory";
+"verb.look": "l,look,x,examine";
+"verb.north": "north,n";
+"verb.out": "out";
+"verb.quit": "quit";
+"verb.read": "read";
+"verb.restart": "restart,reset";
+"verb.restore": "restore";
+"verb.save": "save,suspend";
+"verb.score": "score";
+"verb.south": "south,s";
+"verb.take": "take,t,get";
+"verb.up": "up,u,climb";
+"verb.use": "use";
+"verb.west": "west,w";

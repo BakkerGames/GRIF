@@ -1,172 +1,170 @@
-{
-	"@checkgameover":
-		"@if @checkwin(1,2,3) @or @checkwin(4,5,6) @or @checkwin(7,8,9) @or @checkwin(1,4,7) @or @checkwin(2,5,8) @or @checkwin(3,6,9) @or @checkwin(1,5,9) @or @checkwin(3,5,7) @then
-			@set(value.gameover,true)
-			@nl
-			@write(@get(value.winner))
-			@nl
-			@nl
-			@msg(message.playagain)
-			@setoutchannel(\"#ASK;\")
-			@setoutchannel(\"@script(script.restart)\")
-		@elseif @eq(@get(value.moves),9) @then
-			@set(value.gameover,true)
-			@nl
-			@msg(message.tie)
-			@nl
-			@msg(message.playagain)
-			@setoutchannel(\"#ASK;\")
-			@setoutchannel(\"@script(script.restart)\")
-		@endif",
-	"@checkwin(x,y,z)":
-		"@set(temp.count,0)
-		@addto(temp.count,@getlist(ttt,$x))
-		@addto(temp.count,@getlist(ttt,$y))
-		@addto(temp.count,@getlist(ttt,$z))
-		@if @eq(@get(temp.count),-3) @then
-			@set(value.winner,@get(message.x_won))
-			@write(true)
-		@elseif @eq(@get(temp.count),3) @then
-			@set(value.winner,@get(message.o_won))
-			@write(true)
-		@else
-			@set(value.winner,null)
-			@write(false)
-		@endif",
-	"@clear":
-		"@clearlist(ttt)
-		@for(x,1,9)
-			@setlist(ttt,$x,0)
-		@endfor
-		@set(value.player,-1)
-		@set(value.moves,0)",
-	"@flip":
-		"@multo(value.player,-1)",
-	"@move(x)":
-		"@if @eq(@getlist(ttt,$x),0) @then
-			@setlist(ttt,$x,@get(value.player))
-			@addto(value.moves,1)
-			@showboard
-			@flip
-			@checkgameover
-		@else
-			@msg(message.cant_go)
-		@endif",
-	"@piece(x)":
-		"@if @eq($x,1) @then
-			@write(\"O\")
-		@elseif @eq($x,-1) @then
-			@write(\"X\")
-		@else
-			@write(\" \")
-		@endif",
-	"@quit":
-		"@msg(message.thanks)
-		@setoutchannel(\"#GAMEOVER;\")",
-	"@restart":
-		"@setoutchannel(\"#RESTART;\")",
-	"@restore":
-		"@setoutchannel(\"#RESTORE;\")
-		@setoutchannel(\"@showboard\")",
-	"@showboard":
-		"@write(\" \",@value(1),\" | \",@value(2),\" | \",@value(3),\" \\n\")
-		@write(\"---+---+---\\n\")
-		@write(\" \",@value(4),\" | \",@value(5),\" | \",@value(6),\" \\n\")
-		@write(\"---+---+---\\n\")
-		@write(\" \",@value(7),\" | \",@value(8),\" | \",@value(9),\" \\n\")",
-	"@value(x)":
-		"@write(@piece(@getlist(ttt,$x)))",
-	"background.0":
-		"@if @false(@get(value.intro_done)) @then
-			@write(\"Tic-Tac-Toe\\n\\n\")
-			@write(\"Board positions:\\n\\n\")
-			@write(\" 1 | 2 | 3 \\n\")
-			@write(\"---+---+---\\n\")
-			@write(\" 4 | 5 | 6 \\n\")
-			@write(\"---+---+---\\n\")
-			@write(\" 7 | 8 | 9 \\n\\n\")
-			@clear
-			@showboard
-			@set(value.intro_done,true)
-		@endif",
-	"command.1":
-		"@move(1)",
-	"command.2":
-		"@move(2)",
-	"command.3":
-		"@move(3)",
-	"command.4":
-		"@move(4)",
-	"command.5":
-		"@move(5)",
-	"command.6":
-		"@move(6)",
-	"command.7":
-		"@move(7)",
-	"command.8":
-		"@move(8)",
-	"command.9":
-		"@move(9)",
-	"command.clear":
-		"@clear
-		@showboard",
-	"command.quit":
-		"@quit",
-	"command.restart":
-		"@msg(message.ask_restart)
+"@checkgameover":
+	"@if @checkwin(1,2,3) @or @checkwin(4,5,6) @or @checkwin(7,8,9) @or @checkwin(1,4,7) @or @checkwin(2,5,8) @or @checkwin(3,6,9) @or @checkwin(1,5,9) @or @checkwin(3,5,7) @then
+		@set(value.gameover,true)
+		@nl
+		@write(@get(value.winner))
+		@nl
+		@nl
+		@msg(message.playagain)
 		@setoutchannel(\"#ASK;\")
-		@setoutchannel(\"@restart\")",
-	"command.restore":
-		"@msg(message.ask_restore)
+		@setoutchannel(\"@script(script.restart)\")
+	@elseif @eq(@get(value.moves),9) @then
+		@set(value.gameover,true)
+		@nl
+		@msg(message.tie)
+		@nl
+		@msg(message.playagain)
 		@setoutchannel(\"#ASK;\")
-		@setoutchannel(\"@restore\")",
-	"command.save":
-		"@setoutchannel(\"#SAVE;\")
-		@setoutchannel(\"@msg(message.ok)\")",
-	"message.ask_restart": "Are you sure you want to restart the game?",
-	"message.ask_restore": "Are you sure you want to restore from a save file?",
-	"message.cant_go": "That location is already taken.",
-	"message.ok": "OK",
-	"message.o_won": "O has won!",
-	"message.playagain": "Do you want to play again?",
-	"message.thanks": "Thanks for playing!",
-	"message.tie": "It is a tie game.",
-	"message.x_won": "X has won!",
-	"message.yorn_error": "Please answer YES or NO.",
-	"script.restart":
-		"@set(temp.yorn,@getinchannel)
-		@if @true(@get(temp.yorn)) @then
-			@setoutchannel(\"#RESTART;\")
-		@elseif @false(@get(temp.yorn)) @then
-			@quit
-		@else
-			@msg(message.yorn_error)
-			@setoutchannel(\"#ASK;\")
-			@setoutchannel(\"@script(script.restart)\")
-		@endif",
-	"system.after_prompt": "\\n",
-	"system.dont_understand": "I don't understand that.",
-	"system.gamename": "TicTacToe",
-	"system.prompt":
-		"@if @false(@get(value.gameover)) @then
-			@write(\"\\n\",@piece(@get(value.player)),\"'s turn>\")
-		@else
-			@write(\"\\n>\")
-		@endif",
-	"value.moves": "0",
-	"value.player": "-1",
-	"verb.1": "1",
-	"verb.2": "2",
-	"verb.3": "3",
-	"verb.4": "4",
-	"verb.5": "5",
-	"verb.6": "6",
-	"verb.7": "7",
-	"verb.8": "8",
-	"verb.9": "9",
-	"verb.clear": "clear",
-	"verb.quit": "quit",
-	"verb.restart": "restart",
-	"verb.restore": "restore",
-	"verb.save": "save",
-}
+		@setoutchannel(\"@script(script.restart)\")
+	@endif";
+"@checkwin(x,y,z)":
+	"@set(temp.count,0)
+	@addto(temp.count,@getlist(ttt,$x))
+	@addto(temp.count,@getlist(ttt,$y))
+	@addto(temp.count,@getlist(ttt,$z))
+	@if @eq(@get(temp.count),-3) @then
+		@set(value.winner,@get(message.x_won))
+		@write(true)
+	@elseif @eq(@get(temp.count),3) @then
+		@set(value.winner,@get(message.o_won))
+		@write(true)
+	@else
+		@set(value.winner,null)
+		@write(false)
+	@endif";
+"@clear":
+	"@clearlist(ttt)
+	@for(x,1,9)
+		@setlist(ttt,$x,0)
+	@endfor
+	@set(value.player,-1)
+	@set(value.moves,0)";
+"@flip":
+	"@multo(value.player,-1)";
+"@move(x)":
+	"@if @eq(@getlist(ttt,$x),0) @then
+		@setlist(ttt,$x,@get(value.player))
+		@addto(value.moves,1)
+		@showboard
+		@flip
+		@checkgameover
+	@else
+		@msg(message.cant_go)
+	@endif";
+"@piece(x)":
+	"@if @eq($x,1) @then
+		@write(\"O\")
+	@elseif @eq($x,-1) @then
+		@write(\"X\")
+	@else
+		@write(\" \")
+	@endif";
+"@quit":
+	"@msg(message.thanks)
+	@setoutchannel(\"#GAMEOVER;\")";
+"@restart":
+	"@setoutchannel(\"#RESTART;\")";
+"@restore":
+	"@setoutchannel(\"#RESTORE;\")
+	@setoutchannel(\"@showboard\")";
+"@showboard":
+	"@write(\" \",@value(1),\" | \",@value(2),\" | \",@value(3),\" \\n\")
+	@write(\"---+---+---\\n\")
+	@write(\" \",@value(4),\" | \",@value(5),\" | \",@value(6),\" \\n\")
+	@write(\"---+---+---\\n\")
+	@write(\" \",@value(7),\" | \",@value(8),\" | \",@value(9),\" \\n\")";
+"@value(x)":
+	"@write(@piece(@getlist(ttt,$x)))";
+"background.0":
+	"@if @false(@get(value.intro_done)) @then
+		@write(\"Tic-Tac-Toe\\n\\n\")
+		@write(\"Board positions:\\n\\n\")
+		@write(\" 1 | 2 | 3 \\n\")
+		@write(\"---+---+---\\n\")
+		@write(\" 4 | 5 | 6 \\n\")
+		@write(\"---+---+---\\n\")
+		@write(\" 7 | 8 | 9 \\n\\n\")
+		@clear
+		@showboard
+		@set(value.intro_done,true)
+	@endif";
+"command.1":
+	"@move(1)";
+"command.2":
+	"@move(2)";
+"command.3":
+	"@move(3)";
+"command.4":
+	"@move(4)";
+"command.5":
+	"@move(5)";
+"command.6":
+	"@move(6)";
+"command.7":
+	"@move(7)";
+"command.8":
+	"@move(8)";
+"command.9":
+	"@move(9)";
+"command.clear":
+	"@clear
+	@showboard";
+"command.quit":
+	"@quit";
+"command.restart":
+	"@msg(message.ask_restart)
+	@setoutchannel(\"#ASK;\")
+	@setoutchannel(\"@restart\")";
+"command.restore":
+	"@msg(message.ask_restore)
+	@setoutchannel(\"#ASK;\")
+	@setoutchannel(\"@restore\")";
+"command.save":
+	"@setoutchannel(\"#SAVE;\")
+	@setoutchannel(\"@msg(message.ok)\")";
+"message.ask_restart": "Are you sure you want to restart the game?";
+"message.ask_restore": "Are you sure you want to restore from a save file?";
+"message.cant_go": "That location is already taken.";
+"message.ok": "OK";
+"message.o_won": "O has won!";
+"message.playagain": "Do you want to play again?";
+"message.thanks": "Thanks for playing!";
+"message.tie": "It is a tie game.";
+"message.x_won": "X has won!";
+"message.yorn_error": "Please answer YES or NO.";
+"script.restart":
+	"@set(temp.yorn,@getinchannel)
+	@if @true(@get(temp.yorn)) @then
+		@setoutchannel(\"#RESTART;\")
+	@elseif @false(@get(temp.yorn)) @then
+		@quit
+	@else
+		@msg(message.yorn_error)
+		@setoutchannel(\"#ASK;\")
+		@setoutchannel(\"@script(script.restart)\")
+	@endif";
+"system.after_prompt": "\\n";
+"system.dont_understand": "I don't understand that.";
+"system.gamename": "TicTacToe";
+"system.prompt":
+	"@if @false(@get(value.gameover)) @then
+		@write(\"\\n\",@piece(@get(value.player)),\"'s turn>\")
+	@else
+		@write(\"\\n>\")
+	@endif";
+"value.moves": "0";
+"value.player": "-1";
+"verb.1": "1";
+"verb.2": "2";
+"verb.3": "3";
+"verb.4": "4";
+"verb.5": "5";
+"verb.6": "6";
+"verb.7": "7";
+"verb.8": "8";
+"verb.9": "9";
+"verb.clear": "clear";
+"verb.quit": "quit";
+"verb.restart": "restart";
+"verb.restore": "restore";
+"verb.save": "save";
