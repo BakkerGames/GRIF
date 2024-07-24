@@ -150,7 +150,8 @@ public static class DagsIO
 
     private static void SaveState(string filename)
     {
-        DataIO.SaveOverlayDataToFile(filename, grod);
+        // save in valid json format
+        DataIO.SaveOverlayDataToFile(filename, grod, true);
     }
 
     private static void RestoreState(string filename)
