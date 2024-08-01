@@ -29,23 +29,42 @@ Another sample game "TicTacToe.grif" is included to show features of GRIF for so
 
 ## Data files
 
-GRIF data files are simple text files with a ".grif" extension. They hold a JSON formatted object with keys and values. Example:
+GRIF data files are simple text files with a ".grif" extension. They hold lines with keys and value, each surrounded by double-quotes and separated by a colon. Any special characters within double-quotes must be escaped by a backslash `\`.
+
+There are two formats supported for GRIF files: JSON format and GRIF format.
+
+The `JSON` format has `{` and `}` at the beginning and end of the file, with each line separated by commas. The last line should not end with a comma. This is less human-readable as scripts cannot have any formatting.
+
+The `GRIF` format is a more relaxed text format, where values start and end with double-quotes but can continue across multiple lines for readability. Lines end with a semicolon.
+
+Examples:
 
 ```
 {
 	"key1": "value1",
 	"key2": "value2",
+	"key3": "@if @eq(@get(key1),value1) @then @write(\"Value found!\") @else @write(\"Not found\") @endif",
 	...
 }
 ```
 
-The whitespace around the keys and values doesn't matter, but it helps if it is consistant and readable. The last key/value pair may end with a comma or not. The order of keys doesn't matter, but keeping them alphabetical is helpful.
+```
+"key1": "value1";
+"key2": "value2";
+"key3":
+	"@if @eq(@get(key1),value1) @then
+		@write(\"Value found!\")
+	@else
+		@write(\"Not found\")
+	@endif";
+...
+```
 
-Comments may be included for readability. Both "// ..." and "/* ... */" are supported. They may appear anywhere whitespace is allowed outside of keys and values, and are ignored while loading.
+The whitespace around the keys and values doesn't matter, nor does whitespace within scripts in the `GRIF` format. The order of keys doesn't matter, but keeping them alphabetical can be helpful.
 
-Any special characters within the keys or values must be escaped. For a double-quote, it would be `\"` with a backslash. A backslash itself would be `\\`. Any non-ASCII characters (chars 0-31 and 127+) must be escaped 4-digit hexadecimal values, `\u####`.
+Any special characters within the keys or values must be escaped. For a double-quote, it would be `\"`. A backslash itself would be `\\`. Newline `\n`, carrige-return `\r, and tab `\t` are allowed. Any other non-ASCII characters (chars 0-31 and 127+) must be escaped 4-digit hexadecimal values, `\u####`.
 
-To indicate a new line in a value, use the two characters `\` and `n`, which escaped would appear as `\\n`. GRIF will handle `\\n` as starting a new line.
+### left off here
 
 For scripts, where the value starts with a `@`, there can be formatting in the values using newlines, tabs, and spaces. GRIF data files allow this formatting for making scripts easier to read. They will be handled properly while loading. Note that the value still starts and ends with double quotes and internal quotes are escaped.
 

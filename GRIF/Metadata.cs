@@ -15,11 +15,6 @@ public static class Metadata
 
     public static void CheckMetaCommand(string input, StringBuilder result)
     {
-        if (input.StartsWith("#debug ", OIC))
-        {
-            dags.DebugLog(input[7..], result);
-            return;
-        }
         if (input.StartsWith("#exec ", OIC))
         {
             dags.RunScript(input[6..], result);
