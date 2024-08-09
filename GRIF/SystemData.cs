@@ -21,7 +21,7 @@ public static class SystemData
 
     public static string GameName()
     {
-        return grod[GAMENAME];
+        return grod[GAMENAME] ?? "";
     }
 
     public static int WordSize()
@@ -50,7 +50,7 @@ public static class SystemData
 
     public static string DontUnderstand(string input)
     {
-        var value = grod[DONT_UNDERSTAND];
+        var value = grod[DONT_UNDERSTAND] ?? "";
         if (value.StartsWith('@'))
         {
             StringBuilder result = new();
@@ -74,7 +74,7 @@ public static class SystemData
 
     public static string DoWhatWith(string input)
     {
-        var value = grod[DO_WHAT_WITH];
+        var value = grod[DO_WHAT_WITH] ?? "";
         if (value.StartsWith('@'))
         {
             StringBuilder result = new();
@@ -100,7 +100,7 @@ public static class SystemData
     {
         if (grod.ContainsKey(PROMPT))
         {
-            var value = grod[PROMPT];
+            var value = grod[PROMPT] ?? "";
             if (value.StartsWith('@'))
             {
                 StringBuilder result = new();
@@ -119,7 +119,7 @@ public static class SystemData
     {
         if (grod.ContainsKey(AFTER_PROMPT))
         {
-            var value = grod[AFTER_PROMPT];
+            var value = grod[AFTER_PROMPT] ?? "";
             if (value.StartsWith('@'))
             {
                 StringBuilder result = new();
@@ -162,7 +162,7 @@ public static class SystemData
 
     public static string Intro()
     {
-        return grod.ContainsKey(INTRO) ? grod[INTRO] : "";
+        return grod.ContainsKey(INTRO) ? (grod[INTRO] ?? "") : "";
     }
 
     #region Private

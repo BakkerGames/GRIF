@@ -11,6 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAGS", "..\DAGS\DAGS.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GRIFData", "..\GRIFData\GRIFData.csproj", "{73EE8145-3373-460A-A6B9-E3750D4A9663}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "binaries", "binaries", "{E0E514C6-F7A6-4DD1-8F5D-E69286B74AD5}"
+	ProjectSection(SolutionItems) = preProject
+		binaries\_package.bat = binaries\_package.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

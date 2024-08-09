@@ -112,7 +112,7 @@ public static class Parse
         // check for verb and noun
         foreach (string key in grod.Keys.Where(x => x.StartsWith(VERB_PREFIX, OIC)))
         {
-            var verbList = grod[key].Split(',', SPLIT_OPTIONS);
+            var verbList = (grod[key] ?? "").Split(',', SPLIT_OPTIONS);
             foreach (string v in verbList)
             {
                 var verb = v;
@@ -134,7 +134,7 @@ public static class Parse
         {
             foreach (string key in grod.Keys.Where(x => x.StartsWith(NOUN_PREFIX, OIC)))
             {
-                var nounList = grod[key].Split(',', SPLIT_OPTIONS);
+                var nounList = (grod[key] ?? "").Split(',', SPLIT_OPTIONS);
                 foreach (string n in nounList)
                 {
                     var noun = n;
