@@ -1,6 +1,4 @@
-﻿using DAGS;
-using GRIFData;
-using GROD;
+﻿using GRIFTools;
 using System.Text;
 using static GRIF.Constants;
 
@@ -72,7 +70,7 @@ internal class Program
             // Load data
             if (File.Exists(dataPath))
             {
-                DataIO.LoadDataFromFile(dataPath, grod);
+                GrodDataIO.LoadDataFromFile(dataPath, grod);
             }
             else if (Directory.Exists(dataPath))
             {
@@ -81,7 +79,7 @@ internal class Program
                 {
                     foreach (string filename in files)
                     {
-                        DataIO.LoadDataFromFile(filename, grod);
+                        GrodDataIO.LoadDataFromFile(filename, grod);
                     }
                 }
             }
@@ -94,7 +92,7 @@ internal class Program
                 {
                     foreach (string filename in files)
                     {
-                        DataIO.LoadDataFromFile(filename, grod);
+                        GrodDataIO.LoadDataFromFile(filename, grod);
                     }
                 }
                 else
@@ -118,11 +116,11 @@ internal class Program
             {
                 if (File.Exists(modFile + DATA_EXTENSION))
                 {
-                    DataIO.LoadDataFromFile(modFile + DATA_EXTENSION, grod);
+                    GrodDataIO.LoadDataFromFile(modFile + DATA_EXTENSION, grod);
                 }
                 else if (File.Exists(modFile))
                 {
-                    DataIO.LoadDataFromFile(modFile, grod);
+                    GrodDataIO.LoadDataFromFile(modFile, grod);
                 }
                 else if (Directory.Exists(modFile))
                 {
@@ -131,7 +129,7 @@ internal class Program
                     {
                         foreach (string filename in files)
                         {
-                            DataIO.LoadDataFromFile(filename, grod);
+                            GrodDataIO.LoadDataFromFile(filename, grod);
                         }
                     }
                 }

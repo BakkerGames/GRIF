@@ -5,16 +5,12 @@ VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GRIF", "GRIF.csproj", "{395968DB-A154-425E-9E4F-074D792C95F3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GROD", "..\GROD\GROD.csproj", "{3ACE06B0-702B-490A-811F-7840B00607E7}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAGS", "..\DAGS\DAGS.csproj", "{A48E1F2E-9720-4E31-BAE7-45E585608C70}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GRIFData", "..\GRIFData\GRIFData.csproj", "{73EE8145-3373-460A-A6B9-E3750D4A9663}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "binaries", "binaries", "{E0E514C6-F7A6-4DD1-8F5D-E69286B74AD5}"
 	ProjectSection(SolutionItems) = preProject
 		binaries\_package.bat = binaries\_package.bat
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GRIFTools", "..\GRIFTools\GRIFTools.csproj", "{AE6E3715-837E-4835-9520-2981FF47F1BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,18 +22,10 @@ Global
 		{395968DB-A154-425E-9E4F-074D792C95F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{395968DB-A154-425E-9E4F-074D792C95F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{395968DB-A154-425E-9E4F-074D792C95F3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3ACE06B0-702B-490A-811F-7840B00607E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3ACE06B0-702B-490A-811F-7840B00607E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3ACE06B0-702B-490A-811F-7840B00607E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3ACE06B0-702B-490A-811F-7840B00607E7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A48E1F2E-9720-4E31-BAE7-45E585608C70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A48E1F2E-9720-4E31-BAE7-45E585608C70}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A48E1F2E-9720-4E31-BAE7-45E585608C70}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A48E1F2E-9720-4E31-BAE7-45E585608C70}.Release|Any CPU.Build.0 = Release|Any CPU
-		{73EE8145-3373-460A-A6B9-E3750D4A9663}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{73EE8145-3373-460A-A6B9-E3750D4A9663}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{73EE8145-3373-460A-A6B9-E3750D4A9663}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{73EE8145-3373-460A-A6B9-E3750D4A9663}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE6E3715-837E-4835-9520-2981FF47F1BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE6E3715-837E-4835-9520-2981FF47F1BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE6E3715-837E-4835-9520-2981FF47F1BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE6E3715-837E-4835-9520-2981FF47F1BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

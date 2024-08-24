@@ -54,9 +54,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DAGS\DAGS.csproj" />
-    <ProjectReference Include="..\GRIFData\GRIFData.csproj" />
-    <ProjectReference Include="..\GROD\GROD.csproj" />
+    <ProjectReference Include="..\GRIFTools\GRIFTools.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
-﻿using DAGS;
-using GROD;
+﻿using GRIFTools;
 using System.Text;
 
 namespace GRIF;

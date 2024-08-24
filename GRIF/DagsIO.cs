@@ -1,6 +1,4 @@
-﻿using DAGS;
-using GRIFData;
-using GROD;
+﻿using GRIFTools;
 using System.Text;
 using static GRIF.Constants;
 
@@ -151,13 +149,13 @@ public static class DagsIO
     private static void SaveState(string filename)
     {
         // save in valid json format
-        DataIO.SaveOverlayDataToFile(filename, grod, true);
+        GrodDataIO.SaveOverlayDataToFile(filename, grod, true);
     }
 
     private static void RestoreState(string filename)
     {
         grod.ClearOverlay();
-        DataIO.LoadDataFromFile(filename, grod);
+        GrodDataIO.LoadDataFromFile(filename, grod);
     }
 
     #endregion
