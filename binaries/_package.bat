@@ -1,6 +1,6 @@
 @echo off
 
-set VER=20240808
+set VER=20240824
 
 del grif-linux-arm-*.tgz
 del grif-linux-arm64-*.tgz
@@ -20,17 +20,17 @@ copy /y ..\README.md linux-x64
 copy /y ..\README.md win-x64
 copy /y ..\README.md win-x86
 
-copy /y ..\GRIF\DETAILS.md linux-arm
-copy /y ..\GRIF\DETAILS.md linux-arm64
-copy /y ..\GRIF\DETAILS.md linux-x64
-copy /y ..\GRIF\DETAILS.md win-x64
-copy /y ..\GRIF\DETAILS.md win-x86
+copy /y ..\DETAILS.md linux-arm
+copy /y ..\DETAILS.md linux-arm64
+copy /y ..\DETAILS.md linux-x64
+copy /y ..\DETAILS.md win-x64
+copy /y ..\DETAILS.md win-x86
 
-copy /y ..\DAGS\SYNTAX.md linux-arm
-copy /y ..\DAGS\SYNTAX.md linux-arm64
-copy /y ..\DAGS\SYNTAX.md linux-x64
-copy /y ..\DAGS\SYNTAX.md win-x64
-copy /y ..\DAGS\SYNTAX.md win-x86
+copy /y ..\..\GRIFTools\DAGS_SYNTAX.md linux-arm
+copy /y ..\..\GRIFTools\DAGS_SYNTAX.md linux-arm64
+copy /y ..\..\GRIFTools\DAGS_SYNTAX.md linux-x64
+copy /y ..\..\GRIFTools\DAGS_SYNTAX.md win-x64
+copy /y ..\..\GRIFTools\DAGS_SYNTAX.md win-x86
 
 copy /y ..\CloakOfDarkness\CloakOfDarkness.grif linux-arm
 copy /y ..\CloakOfDarkness\CloakOfDarkness.grif linux-arm64
