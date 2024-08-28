@@ -1,3 +1,4 @@
+// TicTacToe.grif - GRIF format
 @checkgameover
 	@if @checkwin(1,2,3) @or @checkwin(4,5,6) @or @checkwin(7,8,9) @or @checkwin(1,4,7) @or @checkwin(2,5,8) @or @checkwin(3,6,9) @or @checkwin(1,5,9) @or @checkwin(3,5,7) @then
 		@set(value.gameover,true)
@@ -63,7 +64,11 @@
 	@msg(message.thanks)
 	@setoutchannel("#GAMEOVER;")
 @restart
-	@setoutchannel("#RESTART;")
+	@clear
+	@showboard
+	@set(value.moves,0)
+	@set(value.player,-1)
+	@set(value.gameover,false)
 @restore
 	@setoutchannel("#RESTORE;")
 	@setoutchannel("@showboard")
@@ -75,19 +80,6 @@
 	@write(" ",@value(7)," | ",@value(8)," | ",@value(9)," \n")
 @value(x)
 	@write(@piece(@getlist(ttt,$x)))
-background.0
-	@if @false(@get(value.intro_done)) @then
-		@write("Tic-Tac-Toe\n\n")
-		@write("Board positions:\n\n")
-		@write(" 1 | 2 | 3 \n")
-		@write("---+---+---\n")
-		@write(" 4 | 5 | 6 \n")
-		@write("---+---+---\n")
-		@write(" 7 | 8 | 9 \n\n")
-		@clear
-		@showboard
-		@set(value.intro_done,true)
-	@endif
 command.1
 	@move(1)
 command.2
@@ -109,6 +101,9 @@ command.9
 command.clear
 	@clear
 	@showboard
+command.help
+	@comment("help")
+	@msg(message.help)
 command.quit
 	@quit
 command.restart
@@ -128,6 +123,8 @@ message.ask_restore
 	Are you sure you want to restore from a save file?
 message.cant_go
 	That location is already taken.
+message.help
+	Enter the numbers 1 through 9 to make a move. When it is X's turn, an "X" will be placed in that location, or "O" for O's turn. You can't reuse a location.\n\nAfter each move, the game will check for a win or a tie.\n\nOther commands will also work, such as SAVE, RESTORE, RESTART, QUIT, or HELP for this message.
 message.ok
 	OK
 message.o_won
@@ -145,7 +142,7 @@ message.yorn_error
 script.restart
 	@set(temp.yorn,@getinchannel)
 	@if @true(@get(temp.yorn)) @then
-		@setoutchannel("#RESTART;")
+		@restart
 	@elseif @false(@get(temp.yorn)) @then
 		@quit
 	@else
@@ -159,6 +156,17 @@ system.dont_understand
 	I don't understand that.
 system.gamename
 	TicTacToe
+system.intro
+	@comment("script run at the beginning of the game")
+	@write("Tic-Tac-Toe\n\n")
+	@write("Board positions:\n\n")
+	@write(" 1 | 2 | 3 \n")
+	@write("---+---+---\n")
+	@write(" 4 | 5 | 6 \n")
+	@write("---+---+---\n")
+	@write(" 7 | 8 | 9 \n\n")
+	@clear
+	@showboard
 system.prompt
 	@if @false(@get(value.gameover)) @then
 		@write("\n",@piece(@get(value.player)),"'s turn>")
@@ -189,6 +197,8 @@ verb.9
 	9
 verb.clear
 	clear
+verb.help
+	help,info,information
 verb.quit
 	quit
 verb.restart

@@ -68,7 +68,7 @@ public static class SystemData
         {
             return value.Replace("{0}", input);
         }
-        return value + ": " + input;
+        return value;
     }
 
     public static string DoWhatWith(string input)
@@ -92,7 +92,7 @@ public static class SystemData
         {
             return value.Replace("{0}", input);
         }
-        return value + ": " + input;
+        return value;
     }
 
     public static string Prompt()

@@ -1,3 +1,4 @@
+// CloakOfDarkness.grif - GRIF format
 @addscore(x)
 	@if @ne($x,0) @then
 		@addto(value.score,$x)
@@ -27,7 +28,7 @@
 	@set(temp.newroom,@get(@concat("room.",@room,".exit.",$x)))
 	@if @isnull(@get(temp.newroom)) @then
 		@msg(message.cant_go)
-	@elseif @isscript(@get(temp.newroom)) @then
+	@elseif @isscriptdata(temp.newroom) @then
 		@script(temp.newroom)
 	@else
 		@goto(@get(temp.newroom))
