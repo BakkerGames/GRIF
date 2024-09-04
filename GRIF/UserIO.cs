@@ -39,10 +39,13 @@ public static class UserIO
             do
             {
                 result = InputQueue.Dequeue();
-                Output(result, true);
-                if (result.TrimStart().StartsWith("//"))
+                if (result.TrimStart().StartsWith("//") || result.Trim() == "")
                 {
                     result = "";
+                }
+                else
+                {
+                    Output(result, true);
                 }
             } while (InputQueue.Count > 0 & (result == "" && !emptyAllowed));
             return result;

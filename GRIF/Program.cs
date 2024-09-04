@@ -224,8 +224,5 @@ internal class Program
         {
             UserIO.Output(ex.Message);
         }
-
-        // Done
-        Console.ReadLine();
     }
 }
