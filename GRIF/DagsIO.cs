@@ -16,10 +16,10 @@ public static class DagsIO
 
     public static void RunBackgroundScripts(StringBuilder result)
     {
-        var backgroundKeys = grod.Keys.Where(x => x.StartsWith(BACKGROUND_PREFIX)).ToList();
+        var backgroundKeys = grod.Keys().Where(x => x.StartsWith(BACKGROUND_PREFIX)).ToList();
         foreach (string key in backgroundKeys)
         {
-            dags.RunScript(grod[key] ?? "", result);
+            dags.RunScript(grod.GetString(key) ?? "", result);
         }
     }
 
@@ -125,7 +125,7 @@ public static class DagsIO
 
     #region Private
 
-    private static Grod grod = [];
+    private static Grod grod = new();
     private static Dags dags = new(grod);
 
     private static string GetSavePath(string filebase, string fileext)
@@ -143,7 +143,7 @@ public static class DagsIO
 
     private static void Restart()
     {
-        grod.ClearOverlay();
+        grod.Clear(GrodEnums.WhichData.Overlay);
     }
 
     private static void SaveState(string filename)
@@ -154,7 +154,7 @@ public static class DagsIO
 
     private static void RestoreState(string filename)
     {
-        grod.ClearOverlay();
+        grod.Clear(GrodEnums.WhichData.Overlay);
         GrodDataIO.LoadDataFromFile(filename, grod);
     }
 

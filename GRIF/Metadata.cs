@@ -28,7 +28,7 @@ public static class Metadata
 
     #region Private
 
-    private static Grod grod = [];
+    private static Grod grod = new();
     private static Dags dags = new(grod);
 
     #endregion

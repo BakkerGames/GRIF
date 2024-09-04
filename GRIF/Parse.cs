@@ -72,10 +72,10 @@ public static class Parse
         }
 
         // Clear answers
-        grod[$"{INPUT_PREFIX}verb"] = "";
-        grod[$"{INPUT_PREFIX}verbword"] = "";
-        grod[$"{INPUT_PREFIX}noun"] = "";
-        grod[$"{INPUT_PREFIX}nounword"] = "";
+        grod.SetString($"{INPUT_PREFIX}verb", "");
+        grod.SetString($"{INPUT_PREFIX}verbword", "");
+        grod.SetString($"{INPUT_PREFIX}noun", "");
+        grod.SetString($"{INPUT_PREFIX}nounword", "");
 
         var words = input.Split(' ', SPLIT_OPTIONS);
         if (words.Length == 0)
@@ -110,9 +110,9 @@ public static class Parse
         }
 
         // check for verb and noun
-        foreach (string key in grod.Keys.Where(x => x.StartsWith(VERB_PREFIX, OIC)))
+        foreach (string key in grod.Keys().Where(x => x.StartsWith(VERB_PREFIX, OIC)))
         {
-            var verbList = (grod[key] ?? "").Split(',', SPLIT_OPTIONS);
+            var verbList = (grod.GetString(key) ?? "").Split(',', SPLIT_OPTIONS);
             foreach (string v in verbList)
             {
                 var verb = v;
@@ -132,9 +132,9 @@ public static class Parse
 
         if (tempWord1 != "")
         {
-            foreach (string key in grod.Keys.Where(x => x.StartsWith(NOUN_PREFIX, OIC)))
+            foreach (string key in grod.Keys().Where(x => x.StartsWith(NOUN_PREFIX, OIC)))
             {
-                var nounList = (grod[key] ?? "").Split(',', SPLIT_OPTIONS);
+                var nounList = (grod.GetString(key) ?? "").Split(',', SPLIT_OPTIONS);
                 foreach (string n in nounList)
                 {
                     var noun = n;
@@ -205,17 +205,17 @@ public static class Parse
         }
 
         // Send verb/noun for use in scripts
-        grod[$"{INPUT_PREFIX}verb"] = result.Verb;
-        grod[$"{INPUT_PREFIX}verbword"] = result.VerbWord;
-        grod[$"{INPUT_PREFIX}noun"] = result.Noun;
-        grod[$"{INPUT_PREFIX}nounword"] = result.NounWord;
+        grod.SetString($"{INPUT_PREFIX}verb", result.Verb);
+        grod.SetString($"{INPUT_PREFIX}verbword", result.VerbWord);
+        grod.SetString($"{INPUT_PREFIX}noun", result.Noun);
+        grod.SetString($"{INPUT_PREFIX}nounword", result.NounWord);
 
         return result;
     }
 
     #region Private
 
-    private static Grod grod = [];
+    private static Grod grod = new();
 
     #endregion
 }

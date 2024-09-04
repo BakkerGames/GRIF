@@ -63,8 +63,10 @@ internal class Program
             }
 
             // Prepare engines
-            Grod grod = [];
-            grod.UseOverlay = false;
+            Grod grod = new()
+            {
+                UseOverlay = false
+            };
             Dags dags = new(grod);
 
             // Load data
@@ -104,7 +106,7 @@ internal class Program
             }
 
             // Check if anything was loaded
-            if (grod.Count == 0)
+            if (grod.Count() == 0)
             {
                 UserIO.Output(SystemData.Syntax());
                 Console.ReadLine();
@@ -224,5 +226,9 @@ internal class Program
         {
             UserIO.Output(ex.Message);
         }
+#if DEBUG
+        Console.Write("Press enter to continue...");
+        Console.ReadLine();
+#endif
     }
 }

@@ -20,14 +20,14 @@ public static class SystemData
 
     public static string GameName()
     {
-        return grod[GAMENAME] ?? "";
+        return grod.GetString(GAMENAME) ?? "";
     }
 
     public static int WordSize()
     {
         if (grod.ContainsKey(WORD_SIZE))
         {
-            if (int.TryParse(grod[WORD_SIZE], out int answer))
+            if (int.TryParse(grod.GetString(WORD_SIZE), out int answer))
             {
                 return answer;
             }
@@ -39,7 +39,7 @@ public static class SystemData
     {
         if (grod.ContainsKey(UPPERCASE))
         {
-            if (bool.TryParse(grod[UPPERCASE], out bool answer))
+            if (bool.TryParse(grod.GetString(UPPERCASE), out bool answer))
             {
                 return answer;
             }
@@ -49,7 +49,7 @@ public static class SystemData
 
     public static string DontUnderstand(string input)
     {
-        var value = grod[DONT_UNDERSTAND] ?? "";
+        var value = grod.GetString(DONT_UNDERSTAND) ?? "";
         if (value.StartsWith('@'))
         {
             StringBuilder result = new();
@@ -73,7 +73,7 @@ public static class SystemData
 
     public static string DoWhatWith(string input)
     {
-        var value = grod[DO_WHAT_WITH] ?? "";
+        var value = grod.GetString(DO_WHAT_WITH) ?? "";
         if (value.StartsWith('@'))
         {
             StringBuilder result = new();
@@ -99,7 +99,7 @@ public static class SystemData
     {
         if (grod.ContainsKey(PROMPT))
         {
-            var value = grod[PROMPT] ?? "";
+            var value = grod.GetString(PROMPT) ?? "";
             if (value.StartsWith('@'))
             {
                 StringBuilder result = new();
@@ -118,7 +118,7 @@ public static class SystemData
     {
         if (grod.ContainsKey(AFTER_PROMPT))
         {
-            var value = grod[AFTER_PROMPT] ?? "";
+            var value = grod.GetString(AFTER_PROMPT) ?? "";
             if (value.StartsWith('@'))
             {
                 StringBuilder result = new();
@@ -137,7 +137,7 @@ public static class SystemData
     {
         if (grod.ContainsKey(OUTPUT_WIDTH))
         {
-            if (int.TryParse(grod[OUTPUT_WIDTH], out int answer))
+            if (int.TryParse(grod.GetString(OUTPUT_WIDTH), out int answer))
             {
                 return answer;
             }
@@ -161,12 +161,12 @@ public static class SystemData
 
     public static string Intro()
     {
-        return grod.ContainsKey(INTRO) ? (grod[INTRO] ?? "") : "";
+        return grod.ContainsKey(INTRO) ? (grod.GetString(INTRO) ?? "") : "";
     }
 
     #region Private
 
-    private static Grod grod = [];
+    private static Grod grod = new();
     private static Dags dags = new(grod);
 
     private const string AFTER_PROMPT = "system.after_prompt";
@@ -186,7 +186,7 @@ public static class SystemData
 
     private static bool CheckValue(string key, StringBuilder result)
     {
-        if (grod[key] == "")
+        if (grod.GetString(key) == "")
         {
             result.Append("Missing value: ");
             result.AppendLine(key);

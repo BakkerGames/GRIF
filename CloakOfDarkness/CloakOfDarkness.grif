@@ -315,7 +315,7 @@ message.hook_desc_cloak
 message.hook_desc_empty
 	screwed to the wall.
 message.hook_desc_start
-	It's just a small brass hook, 
+	It's just a small brass hook,\s
 message.hook_with_cloak
 	There is a handsome cloak hanging on the hook.
 message.intro
