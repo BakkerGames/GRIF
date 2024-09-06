@@ -20,14 +20,14 @@ public static class SystemData
 
     public static string GameName()
     {
-        return grod.GetString(GAMENAME) ?? "";
+        return grod.Get(GAMENAME) ?? "";
     }
 
     public static int WordSize()
     {
         if (grod.ContainsKey(WORD_SIZE))
         {
-            if (int.TryParse(grod.GetString(WORD_SIZE), out int answer))
+            if (int.TryParse(grod.Get(WORD_SIZE), out int answer))
             {
                 return answer;
             }
@@ -39,7 +39,7 @@ public static class SystemData
     {
         if (grod.ContainsKey(UPPERCASE))
         {
-            if (bool.TryParse(grod.GetString(UPPERCASE), out bool answer))
+            if (bool.TryParse(grod.Get(UPPERCASE), out bool answer))
             {
                 return answer;
             }
@@ -49,7 +49,7 @@ public static class SystemData
 
     public static string DontUnderstand(string input)
     {
-        var value = grod.GetString(DONT_UNDERSTAND) ?? "";
+        var value = grod.Get(DONT_UNDERSTAND) ?? "";
         if (value.StartsWith('@'))
         {
             StringBuilder result = new();
@@ -73,7 +73,7 @@ public static class SystemData
 
     public static string DoWhatWith(string input)
     {
-        var value = grod.GetString(DO_WHAT_WITH) ?? "";
+        var value = grod.Get(DO_WHAT_WITH) ?? "";
         if (value.StartsWith('@'))
         {
             StringBuilder result = new();
@@ -99,7 +99,7 @@ public static class SystemData
     {
         if (grod.ContainsKey(PROMPT))
         {
-            var value = grod.GetString(PROMPT) ?? "";
+            var value = grod.Get(PROMPT) ?? "";
             if (value.StartsWith('@'))
             {
                 StringBuilder result = new();
@@ -118,7 +118,7 @@ public static class SystemData
     {
         if (grod.ContainsKey(AFTER_PROMPT))
         {
-            var value = grod.GetString(AFTER_PROMPT) ?? "";
+            var value = grod.Get(AFTER_PROMPT) ?? "";
             if (value.StartsWith('@'))
             {
                 StringBuilder result = new();
@@ -137,7 +137,7 @@ public static class SystemData
     {
         if (grod.ContainsKey(OUTPUT_WIDTH))
         {
-            if (int.TryParse(grod.GetString(OUTPUT_WIDTH), out int answer))
+            if (int.TryParse(grod.Get(OUTPUT_WIDTH), out int answer))
             {
                 return answer;
             }
@@ -161,7 +161,7 @@ public static class SystemData
 
     public static string Intro()
     {
-        return grod.ContainsKey(INTRO) ? (grod.GetString(INTRO) ?? "") : "";
+        return grod.ContainsKey(INTRO) ? (grod.Get(INTRO) ?? "") : "";
     }
 
     #region Private
@@ -186,7 +186,7 @@ public static class SystemData
 
     private static bool CheckValue(string key, StringBuilder result)
     {
-        if (grod.GetString(key) == "")
+        if (grod.Get(key) == "")
         {
             result.Append("Missing value: ");
             result.AppendLine(key);

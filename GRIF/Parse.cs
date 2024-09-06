@@ -72,10 +72,10 @@ public static class Parse
         }
 
         // Clear answers
-        grod.SetString($"{INPUT_PREFIX}verb", "");
-        grod.SetString($"{INPUT_PREFIX}verbword", "");
-        grod.SetString($"{INPUT_PREFIX}noun", "");
-        grod.SetString($"{INPUT_PREFIX}nounword", "");
+        grod.Set($"{INPUT_PREFIX}verb", "");
+        grod.Set($"{INPUT_PREFIX}verbword", "");
+        grod.Set($"{INPUT_PREFIX}noun", "");
+        grod.Set($"{INPUT_PREFIX}nounword", "");
 
         var words = input.Split(' ', SPLIT_OPTIONS);
         if (words.Length == 0)
@@ -112,7 +112,7 @@ public static class Parse
         // check for verb and noun
         foreach (string key in grod.Keys().Where(x => x.StartsWith(VERB_PREFIX, OIC)))
         {
-            var verbList = (grod.GetString(key) ?? "").Split(',', SPLIT_OPTIONS);
+            var verbList = (grod.Get(key) ?? "").Split(',', SPLIT_OPTIONS);
             foreach (string v in verbList)
             {
                 var verb = v;
@@ -134,7 +134,7 @@ public static class Parse
         {
             foreach (string key in grod.Keys().Where(x => x.StartsWith(NOUN_PREFIX, OIC)))
             {
-                var nounList = (grod.GetString(key) ?? "").Split(',', SPLIT_OPTIONS);
+                var nounList = (grod.Get(key) ?? "").Split(',', SPLIT_OPTIONS);
                 foreach (string n in nounList)
                 {
                     var noun = n;
@@ -205,10 +205,10 @@ public static class Parse
         }
 
         // Send verb/noun for use in scripts
-        grod.SetString($"{INPUT_PREFIX}verb", result.Verb);
-        grod.SetString($"{INPUT_PREFIX}verbword", result.VerbWord);
-        grod.SetString($"{INPUT_PREFIX}noun", result.Noun);
-        grod.SetString($"{INPUT_PREFIX}nounword", result.NounWord);
+        grod.Set($"{INPUT_PREFIX}verb", result.Verb);
+        grod.Set($"{INPUT_PREFIX}verbword", result.VerbWord);
+        grod.Set($"{INPUT_PREFIX}noun", result.Noun);
+        grod.Set($"{INPUT_PREFIX}nounword", result.NounWord);
 
         return result;
     }

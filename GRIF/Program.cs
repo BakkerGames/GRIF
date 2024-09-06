@@ -227,6 +227,7 @@ internal class Program
             UserIO.Output(ex.Message);
         }
 #if DEBUG
+        Console.WriteLine();
         Console.Write("Press enter to continue...");
         Console.ReadLine();
 #endif
