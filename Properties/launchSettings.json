@@ -14,6 +14,10 @@
     "TicTacToe": {
       "commandName": "Project",
       "commandLineArgs": "\"C:\\Users\\Scott\\source\\repos\\GRIF\\TicTacToe\\TicTacToe.grif\""
+    },
+    "Castlequest": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\Scott\\source\\repos\\Castlequest_GRIF\\Castlequest.grif\""
     }
   }
 }
