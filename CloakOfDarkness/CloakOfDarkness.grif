@@ -26,7 +26,7 @@
 	@endif
 @godir(x)
 	@set(temp.newroom,@get(@concat("room.",@room,".exit.",$x)))
-	@if @isnull(@get(temp.newroom)) @then
+	@if @null(@get(temp.newroom)) @then
 		@msg(message.cant_go)
 	@elseif @isscriptdata(temp.newroom) @then
 		@script(temp.newroom)
@@ -111,7 +111,7 @@ command.drop.*
 command.east
 	@godir(east)
 command.go.*
-	@if @isnull(@get(input.noun)) @then
+	@if @null(@get(input.noun)) @then
 		@msg(system.dont_understand_that)
 	@else
 		@godir(@get(input.noun))
