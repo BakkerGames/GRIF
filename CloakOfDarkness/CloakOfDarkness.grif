@@ -25,13 +25,13 @@
 		@write(false)
 	@endif
 @godir(x)
-	@set(temp.newroom,@get(@concat("room.",@room,".exit.",$x)))
-	@if @null(@get(temp.newroom)) @then
+	@set(temp.key,@concat("room.",@room,".exit.",$x))
+	@if @not @exists(@get(temp.key)) @then
 		@msg(message.cant_go)
-	@elseif @isscriptdata(temp.newroom) @then
-		@script(temp.newroom)
+	@elseif @isscriptdata(@get(temp.key)) @then
+		@script(@get(temp.key))
 	@else
-		@goto(@get(temp.newroom))
+		@goto(@get(@get(temp.key)))
 	@endif
 @goto(x)
 	@set(value.room,$x)
