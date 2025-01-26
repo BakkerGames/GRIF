@@ -1,6 +1,6 @@
 @echo off
 
-set VER=20240922
+set VER=20250126
 
 del grif-linux-arm-*.tgz
 del grif-linux-arm64-*.tgz

@@ -8,13 +8,13 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <Authors>Scott Bakker</Authors>
     <Company>BakkerGames</Company>
-    <Copyright>Copyright 2023-2024 Scott Bakker</Copyright>
+    <Copyright>Copyright 2025 Scott Bakker</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/BakkerGames/GRIF</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/BakkerGames/GRIF</RepositoryUrl>
     <Title>GRIF - Game Runner for Interactive Fiction</Title>
-    <Version>2024.9.22</Version>
+    <Version>2025.1.26</Version>
     <PackageTags>grif;game;engine;runner;interactive;fiction;text;adventure;if</PackageTags>
     <AssemblyName>grif</AssemblyName>
   </PropertyGroup>
