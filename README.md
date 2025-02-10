@@ -1,5 +1,8 @@
 # GRIF - Game Runner for Interactive Fiction
 
+> [!NOTE]
+> GRIF is still in active development, so expect certain features to change or even disappear as development continues.
+
 GRIF is a game runner for playing Interactive Fiction games from the console. It is a simple engine which loads and runs game data and logic from external files.
 
 It is designed to be as flexible as possible while doing as little as possible. GRIF handles player input, text output, file loading and saving, and simple parsing. Everything else is handled by scripts in the game data files.
