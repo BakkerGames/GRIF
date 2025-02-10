@@ -370,3 +370,6 @@ binaries/
 
 # launch settings
 /GRIF/Properties/launchSettings.json
+
+# not publish profiles
+!/GRIF/Properties/PublishProfiles/*.pubxml

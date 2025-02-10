@@ -26,9 +26,9 @@
 	@endif
 @godir(x)
 	@set(temp.newroom,@get(@concat("room.",@room,".exit.",$x)))
-	@if @isnull(@get(temp.newroom)) @then
+	@if @null(@get(temp.newroom)) @then
 		@msg(message.cant_go)
-	@elseif @isscriptdata(temp.newroom) @then
+	@elseif @isscript(temp.newroom) @then
 		@script(temp.newroom)
 	@else
 		@goto(@get(temp.newroom))
@@ -111,7 +111,7 @@ command.drop.*
 command.east
 	@godir(east)
 command.go.*
-	@if @isnull(@get(input.noun)) @then
+	@if @null(@get(input.noun)) @then
 		@msg(system.dont_understand_that)
 	@else
 		@godir(@get(input.noun))
@@ -203,7 +203,7 @@ command.restore
 	@setoutchannel("@script(script.restore_slot)")
 command.restore.#
 	@set(temp.slot,@get(input.nounword))
-	@if @isnumberdata(temp.slot) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
+	@if @isnumber(temp.slot) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
 		@setoutchannel("#RESTORENAME;")
 		@setoutchannel(@get(temp.slot))
 		@setoutchannel("@msg(message.restore_complete) @nl")
@@ -219,7 +219,7 @@ command.save
 	@setoutchannel("@script(script.save_slot)")
 command.save.#
 	@set(temp.slot,@get(input.nounword))
-	@if @isnumberdata(temp.slot) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
+	@if @isnumber(temp.slot) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
 		@setoutchannel("#SAVENAME;")
 		@setoutchannel(@get(temp.slot))
 		@setoutchannel("@msg(message.save_complete)")
@@ -433,7 +433,7 @@ script.restart
 	@endif
 script.restore_slot
 	@set(temp.slot,@getinchannel)
-	@if @isnumberdata(temp.slot) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
+	@if @isnumber(temp.slot) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
 		@setoutchannel("#RESTORENAME;")
 		@setoutchannel(@get(temp.slot))
 		@setoutchannel("@msg(message.restore_complete) @nl")
@@ -445,7 +445,7 @@ script.restore_slot
 	@endif
 script.save_slot
 	@set(temp.slot,@getinchannel)
-	@if @isnumberdata(temp.slot) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
+	@if @isnumber(temp.slot) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
 		@setoutchannel("#SAVENAME;")
 		@setoutchannel(@get(temp.slot))
 		@setoutchannel("@msg(message.save_complete)")

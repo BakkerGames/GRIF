@@ -8,7 +8,7 @@ The game data may be stored in one or many files. There may even be modification
 
 GRIF uses the DAGS scripting language, which was developed specifically for Interactive Fiction text games.
 
-GRIF is written in C# .NET 8. The full source is available, plus the required [GRIFTools](https://github.com/BakkerGames/GRIFTools) library containing the GROD, DAGS, and GameData projects. GRIF compiles to various Windows and Linux binaries.
+GRIF is written in C# .NET 8. The full source is available at [GRIF](https://github.com/BakkerGames/GRIF). GRIF compiles to various Windows and Linux binaries. It does not require any additional libraries beyond the standard C# System library.
 
 Check out the "Cloak Of Darkness" and "Tic Tac Toe" demo games to see some of the features of GRIF.
 

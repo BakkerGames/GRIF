@@ -45,13 +45,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="DETAILS.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\DAGSScriptLibrary\DAGSScriptLibrary.csproj" />
     <ProjectReference Include="..\GRIFTools\GRIFTools.csproj" />
   </ItemGroup>
 

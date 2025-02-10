@@ -11,7 +11,7 @@ GRIF
 	[(-m | --mod) filename[.grif] | directorypath]
 ```
 
-If no parameters are giving, GRIF will load all the `*.grif` files from the current directory. If there are more than one (such as for a large game), it will combine them all in memory. If a directory path is given, it will do the same with all the `*.grif` files in that directory.
+If no parameters are given, GRIF will load all the `*.grif` files from the current directory. If there are more than one (such as for a large game), it will combine them all in memory. If a directory path is given, it will do the same with all the `*.grif` files in that directory.
 
 The input filename would contain a list of commands to execute. These only work as long as there are no random events, but are handy for walkthroughs and debugging.
 
