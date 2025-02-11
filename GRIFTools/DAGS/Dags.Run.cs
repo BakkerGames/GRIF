@@ -316,7 +316,7 @@ public partial class Dags
                     CheckParamCount(token, p, 1);
                     for (int i = 0; i < tokens.Length - 1; i++)
                     {
-                        if (tokens[i] == LABEL && tokens[i + 1] == p[0] && tokens[i+2] == ")")
+                        if (tokens[i] == LABEL && tokens[i + 1] == p[0] && tokens[i + 2] == ")")
                         {
                             index = i + 3;
                         }
@@ -1089,15 +1089,18 @@ public partial class Dags
             }
             newTokens.Append(token);
         } while (index < tokens.Length);
-        int max = GetInt($"{p[1]}.max");
-        for (int i = 0; i <= max; i++)
+        // p[1] holds the name of the list
+        string list = Get(p[1]);
+        if (!string.IsNullOrWhiteSpace(list))
         {
-            var key = $"{p[1]}.{i}";
-            var value = Get(key);
-            if (!string.IsNullOrEmpty(value))
+            var items = list.Split(',');
+            foreach (string value in items)
             {
-                var script = newTokens.ToString().Replace($"${p[0]}", value);
-                RunScript(script, result);
+                if (!string.IsNullOrEmpty(value))
+                {
+                    var script = newTokens.ToString().Replace($"${p[0]}", value);
+                    RunScript(script, result);
+                }
             }
         }
     }

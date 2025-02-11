@@ -39,6 +39,37 @@ public static class DagsIO
                 GameOver = true;
                 return;
             }
+            if (value.Equals(OUTCHANNEL_EXISTS_SAVE, OIC))
+            {
+                if (File.Exists(GetSavePath(SAVE_FILENAME, SAVE_EXTENSION)))
+                {
+                    dags.InChannel.Enqueue("true");
+                }
+                else
+                {
+                    dags.InChannel.Enqueue("false");
+                }
+                continue;
+            }
+            if (value.Equals(OUTCHANNEL_EXISTS_SAVE_NAME, OIC))
+            {
+                dags.OutChannel.TryDequeue(out string? restorename);
+                if (string.IsNullOrEmpty(restorename))
+                {
+                    UserIO.Output("Missing filename.", true);
+                    dags.OutChannel.Clear();
+                    continue;
+                }
+                if (File.Exists(GetSavePath(restorename, SAVE_EXTENSION)))
+                {
+                    dags.InChannel.Enqueue("true");
+                }
+                else
+                {
+                    dags.InChannel.Enqueue("false");
+                }
+                continue;
+            }
             if (value.Equals(OUTCHANNEL_SAVE, OIC))
             {
                 SaveState(GetSavePath(SAVE_FILENAME, SAVE_EXTENSION));

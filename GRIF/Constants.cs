@@ -20,6 +20,8 @@ public static class Constants
 
     public const string OUTCHANNEL_ASK = "#ASK;";
     public const string OUTCHANNEL_ENTER = "#ENTER;";
+    public const string OUTCHANNEL_EXISTS_SAVE = "#EXISTS;";
+    public const string OUTCHANNEL_EXISTS_SAVE_NAME = "#EXISTSNAME;";
     public const string OUTCHANNEL_GAMEOVER = "#GAMEOVER;";
     public const string OUTCHANNEL_RESTART = "#RESTART;";
     public const string OUTCHANNEL_RESTORE = "#RESTORE;";
