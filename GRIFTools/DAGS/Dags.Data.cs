@@ -84,14 +84,15 @@ public partial class Dags
         {
             throw new SystemException($"List index cannot be negative: {key}: {index}");
         }
-        var maxKey = $"{key}.max";
-        var max = Data.Get(maxKey);
-        if (max == "" || !int.TryParse(max, out int maxValue) || maxValue < index)
+        var list = Data.Get(key);
+        var items = list.Split(',').ToList<string>();
+        while (items.Count < index - 1)
         {
-            Data.Set(maxKey, index.ToString());
+            items.Add("");
         }
-        var itemKey = $"{key}.{index}";
-        Data.Set(itemKey, value);
+        items[index] = value ?? "";
+        Data.Set(key, string.Join(',', items));
+        // TODO ### left off here
     }
 
     private void AddListItem(string key, string? value)
