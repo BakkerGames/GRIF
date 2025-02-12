@@ -3,7 +3,7 @@
 > [!NOTE]
 > GRIFTools is still in active development, so expect certain features to change or disappear as development continues.
 
-GRIFTools is a library containing the GROD, DAGS, and GrodDataIO classes used by GRIF and similar projects. Putting them together in a single library simplifies development and distribution.
+GRIFTools is a library containing the GROD, DAGS, and GameData classes used by GRIF and similar projects. Putting them together in a single library simplifies development and distribution.
 
 # GROD - Game Resource Overlay Dictionary
 
@@ -31,9 +31,13 @@ Many of the built-in functions directly access the data from the GROD dictionary
 
 DAGS can be extended by creating new functions and adding them to the dictionary. They are used exactly like the built-in functions.
 
-# GrodDataIO - Loading and saving GROD data files
+# DAGS Script Library
 
-GrodDataIO is a class to handle the loading and saving of GROD data files.
+This contains the DAGS constants and routines for handling DAGS scripts.
+
+# GameData - Loading and saving GROD data files
+
+GameData is a class to handle the loading and saving of GROD data files.
 
 The format of a GROD data file can either be JSON or GRIF.
 

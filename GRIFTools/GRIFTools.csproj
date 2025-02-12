@@ -22,8 +22,4 @@
     <None Remove=".gitignore" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DAGSScriptLibrary\DAGSScriptLibrary.csproj" />
-  </ItemGroup>
-
 </Project>

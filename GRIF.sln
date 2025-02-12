@@ -10,8 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "binaries", "binaries", "{E0
 		binaries\_package.bat = binaries\_package.bat
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAGSScriptLibrary", "DAGSScriptLibrary\DAGSScriptLibrary.csproj", "{DA50802E-15F4-46A6-9E83-A66AB3159157}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GRIFTools", "GRIFTools\GRIFTools.csproj", "{29E4B706-3973-466C-B256-FA028C31475F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1ABAEEB6-A3B4-43A4-82E7-C6B7B18DDBCE}"
@@ -42,10 +40,6 @@ Global
 		{395968DB-A154-425E-9E4F-074D792C95F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{395968DB-A154-425E-9E4F-074D792C95F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{395968DB-A154-425E-9E4F-074D792C95F3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DA50802E-15F4-46A6-9E83-A66AB3159157}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DA50802E-15F4-46A6-9E83-A66AB3159157}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DA50802E-15F4-46A6-9E83-A66AB3159157}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DA50802E-15F4-46A6-9E83-A66AB3159157}.Release|Any CPU.Build.0 = Release|Any CPU
 		{29E4B706-3973-466C-B256-FA028C31475F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{29E4B706-3973-466C-B256-FA028C31475F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29E4B706-3973-466C-B256-FA028C31475F}.Release|Any CPU.ActiveCfg = Release|Any CPU

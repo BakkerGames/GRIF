@@ -1,4 +1,4 @@
-﻿namespace DAGSScriptLibrary;
+﻿namespace GRIFTools;
 
 public static class DAGSConstants
 {
