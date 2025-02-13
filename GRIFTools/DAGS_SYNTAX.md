@@ -310,7 +310,7 @@ Any functions which returns truthy or falsey values may be defined and used as "
 
 @foreachlist(token,name)
 
->Executes the code in the "foreachlist" block multiple times, by replacing "$token" (the token with a leading "$") anywhere in it with all the comma-separated values in the list "name". The script in the block will be executed once per value. Tokens can be anything, but should have no spaces or special characters. Nesting is allow if the tokens are different.
+>Executes the code in the "foreachlist" block multiple times, by replacing "$token" (the token with a leading "$") anywhere in it with all the comma-separated values in the list "name". The script in the block will be executed once per value. Tokens can be anything, but should have no spaces or special characters. Nesting is allowed if the tokens are different.
 
 >Note: Any values within the list which are "" or "null" will be ignored.
 
@@ -321,7 +321,7 @@ Any functions which returns truthy or falsey values may be defined and used as "
 
 ## List Statements/Functions
 
-These commands allow named lists of values to be stored as a single group instead of separate key/value pairs. They can be indexed by number, appended to, and cleared. They are stored as a single string starting with "[" and ending with "]", with values separated by commas.
+These commands allow named lists of values to be stored as a single group instead of separate key/value pairs. They can be indexed by number, appended to, and cleared. They are stored as a single string with values separated by commas.
 
 @addlist(name,value)
 
@@ -331,30 +331,30 @@ These commands allow named lists of values to be stored as a single group instea
 
 >Clears the list "name".
 
-@getlist(name,pos)
+@getlist(name,index)
 
->Gets the value at position "pos" (starting at 0) for the list "name". If "pos" is beyond the end of the list, "" is returned.
+>Gets the value at position "index" (starting at 0) for the list "name". If "index" is beyond the end of the list, "" is returned.
 
-@insertatlist(name,pos,value)
+@insertatlist(name,index,value)
 
->Inserts "value" at position "pos" (starting at 0) from list, shifting all later ones. If "pos" is past the end of the list, all values from the end up to "pos" are filled with "" and then "value" is added.
+>Inserts "value" at position "index" (starting at 0) from the list, shifting all later items. If "index" is past the end of the list, all items from the end up to "index" are filled with "" and then "value" is added.
 
 @listlength(name)
 
 >Returns the number of items in list "name".
 
-@removeatlist(name,pos)
+@removeatlist(name,index)
 
->Removes the value at position "pos" (starting at 0) from list, shifting all later ones. If "pos" is past the end of the list, nothing happens.
+>Removes the item at position "index" (starting at 0) from the list, shifting all later items. If "index" is past the end of the list, nothing happens.
 
-@setlist(name,pos,value)
+@setlist(name,index,value)
 
->Sets the value at position "pos" (starting at 0) for the list "name". If "pos" is beyond the end of the list, all values from the end up to "pos" are filled with "" and then "value" is added.
+>Sets the value at position "index" (starting at 0) for the list "name". If "index" is beyond the end of the list, all items from the end up to "index" are filled with "" and then "value" is added. Commas are not permitted within values.
 
 
 ## Array Statements/Functions
 
-These commands allow a two-dimensional array of values to be stored as a group. They are sparse arrays with unspecified values returned as "". Arrays start with "[" and end with "]", and contain zero or more rows separated by commas. Each row starts with "[" and ends with "]", with values separated by commas. The rows can be different lengths.
+These commands allow a two-dimensional array of values to be stored as a group. They are sparse arrays with unspecified values returned as "". Arrays use keys containing the array name, a colon, and the row number, as "name:0". The row values contain zero or more items separated by commas. The rows can be different lengths and rows can be missing.
 
 Note that the array values are referenced by row (y) first and then column (x), both starting at 0. Negative indexes throw an error.
 
@@ -368,14 +368,51 @@ Note that the array values are referenced by row (y) first and then column (x), 
 
 @setarray(name,y,x,value)
 
->Sets the value at position "y,x" (starting at 0,0) for the array "name". If either "y" or "x" is beyond the edge of the stored values, missing values will be set to "" as needed before adding "value".
+>Sets the value at position "y,x" (starting at 0,0) for the array "name". If either "y" or "x" is beyond the edge of the stored values, missing values will be set to "" as needed before adding "value". Commas are not permitted within values.
 
 
 ## In/Out Channel Commands
 
+>In and Out channel commands are a way for the DAGS scripts to communicate with the outside calling program and receive information back. They use queues to stack commands for processing in order. The calling program looks at the In channel, handles all commands, and possibly passes back answers. This allows the calling program to handle file I/O and operating system commands so DAGS doesn't have to.
+
+>Any DAGS command can be set in the Out channel, and the calling program would run it by calling DAGS. Typically this is used for running scripts.
+
+>The list of special values recognized by GRIF are:
+
+>"#ASK;"
+>"#ENTER;"
+>"#EXISTS;"
+>"#EXISTSNAME;"
+>"#GAMEOVER;"
+>"#RESTART;"
+>"#RESTORE;"
+>"#RESTORENAME;"
+>"#SAVE;"
+>"#SAVENAME;"
+
+> Some special commands would be followed by a script to handle the result. The script is called after doing the special command, and that script would use @getinchannel to retrieve the answer. Here is a partial example:
+
+```
+command.restart
+    @msg(message.askrestart)
+    @setoutchannel("#ASK;")
+    @setoutchannel("@script(script.restart)")
+script.restart
+    @set(temp.yorn,@getinchannel)
+    @if @true(@get(temp.yorn)) @then
+        @setoutchannel("#RESTART;")
+    @elseif @false(@get(temp.yorn)) @then
+        @msg(message.ok)
+    @else
+        @msg(message.yorn_error)
+        @setoutchannel("#ASK;")
+        @setoutchannel("@script(script.restart))")
+    @endif
+```
+
 @setoutchannel(value)
 
->Adds the value to the OutChannel queue. The calling program would be looking for these values and know how to process them. If "value" is a script it must be quoted.
+>Adds the value to the OutChannel queue. The calling program would be looking for these values and know how to process them. Values should be quoted, and if "value" is a DAGS command it must be quoted.
 
 @getinchannel
 
@@ -441,12 +478,26 @@ If you are adding functions which will be conditions in an `@if` statement, be s
 
 Examples:
 
-@quitmsg: Are you sure you want to quit?
+```
+@quitmsg
+    Are you sure you want to quit?
 
-@score: @write("You have a score of ",@get(value.score)," out of ",@get(value.maxscore)," points.") @nl @nl
+@score
+    @write("You have a score of ",@get(value.score)," out of ",@get(value.maxscore)," points.")
+    @nl
+    @nl
 
-@moveto(x,y): @comment("moves the item to a location") @set(item.$x.location,$y)
+@moveto(x,y)
+    @comment("moves the item to a location")
+    @set(item.$x.location,$y)
 
-@unknown(x): @write("I don't understand ",$x,".\n")
+@unknown(x)
+    @write("I don't understand ",$x,".\n")
 
-@isnegative(x): @if @lt($x,0) @then @write(true) @else @write(false) @endif
+@isnegative(x)
+    @if @lt($x,0) @then
+        @write(true)
+    @else
+        @write(false)
+    @endif
+```

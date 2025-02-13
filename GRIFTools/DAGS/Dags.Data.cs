@@ -191,23 +191,44 @@ public partial class Dags
 
     #region Array routines
 
+    private void ClearArray(string key)
+    {
+        if (key == "")
+        {
+            throw new SystemException("Array keys cannot be blank.");
+        }
+        var keys = Data.Keys().Where(x => x.StartsWith($"{key}:", OIC)).ToList();
+        foreach (string s in keys)
+        {
+            Data.Remove(s);
+        }
+    }
+
     private string GetArrayItem(string key, int y, int x)
     {
+        if (key == "")
+        {
+            throw new SystemException("Array keys cannot be blank.");
+        }
         if (y < 0 || x < 0)
         {
             throw new SystemException($"Array indexes cannot be negative: {key}: {y},{x}");
         }
-        var itemKey = $"{key}.{y}";
+        var itemKey = $"{key}:{y}";
         return GetListItem(itemKey, x);
     }
 
     private void SetArrayItem(string key, int y, int x, string value)
     {
+        if (key == "")
+        {
+            throw new SystemException("Array keys cannot be blank.");
+        }
         if (y < 0 || x < 0)
         {
             throw new SystemException($"Array indexes cannot be negative: {key}: {y},{x}");
         }
-        var itemKey = $"{key}.{y}";
+        var itemKey = $"{key}:{y}";
         SetListItem(itemKey, x, value);
     }
 

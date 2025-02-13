@@ -1,6 +1,6 @@
 @echo off
 
-set VER=20250210
+set VER=20250212
 
 del grif-linux-arm-*.tgz
 del grif-linux-arm64-*.tgz
@@ -26,11 +26,11 @@ copy /y ..\DETAILS.md linux-x64
 copy /y ..\DETAILS.md win-x64
 copy /y ..\DETAILS.md win-x86
 
-copy /y ..\..\GRIFTools\DAGS_SYNTAX.md linux-arm
-copy /y ..\..\GRIFTools\DAGS_SYNTAX.md linux-arm64
-copy /y ..\..\GRIFTools\DAGS_SYNTAX.md linux-x64
-copy /y ..\..\GRIFTools\DAGS_SYNTAX.md win-x64
-copy /y ..\..\GRIFTools\DAGS_SYNTAX.md win-x86
+copy /y ..\GRIFTools\DAGS_SYNTAX.md linux-arm
+copy /y ..\GRIFTools\DAGS_SYNTAX.md linux-arm64
+copy /y ..\GRIFTools\DAGS_SYNTAX.md linux-x64
+copy /y ..\GRIFTools\DAGS_SYNTAX.md win-x64
+copy /y ..\GRIFTools\DAGS_SYNTAX.md win-x86
 
 copy /y ..\CloakOfDarkness\CloakOfDarkness.grif linux-arm
 copy /y ..\CloakOfDarkness\CloakOfDarkness.grif linux-arm64

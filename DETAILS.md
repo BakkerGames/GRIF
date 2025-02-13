@@ -5,10 +5,10 @@
 
 ```
 GRIF
-	[filename[.grif] | directorypath]
-	[(-i | --input) inputfilename]
-	[(-o | --output) logfilename]
-	[(-m | --mod) filename[.grif] | directorypath]
+    [filename[.grif] | directorypath]
+    [(-i | --input) inputfilename]
+    [(-o | --output) logfilename]
+    [(-m | --mod) filename[.grif] | directorypath]
 ```
 
 If no parameters are given, GRIF will load all the `*.grif` files from the current directory. If there are more than one (such as for a large game), it will combine them all in memory. If a directory path is given, it will do the same with all the `*.grif` files in that directory.
@@ -35,28 +35,30 @@ There are two formats supported for GRIF files: JSON format and GRIF format.
 
 The `JSON` format has `{` and `}` at the beginning and end of the file, with each line separated by commas. The last line should not end with a comma. This is less human-readable as scripts cannot have any formatting.
 
-The `GRIF` format is a more relaxed text format, where values start and end with double-quotes but can continue across multiple lines for readability. Lines end with a semicolon.
+The `GRIF` format is a more relaxed text format, where keys have no leading whitespace, and all following lines are indented with spaces or tabs and combine into a single value.
 
 Examples:
 
 ```
 {
-	"key1": "value1",
-	"key2": "value2",
-	"key3": "@if @eq(@get(key1),value1) @then @write(\"Value found!\") @else @write(\"Not found\") @endif",
-	...
+    "key1": "value1",
+    "key2": "value2",
+    "key3": "@if @eq(@get(key1),value1) @then @write(\"Value found!\") @else @write(\"Not found\") @endif",
+    ...
 }
 ```
 
 ```
-"key1": "value1";
-"key2": "value2";
-"key3":
-	"@if @eq(@get(key1),value1) @then
-		@write(\"Value found!\")
-	@else
-		@write(\"Not found\")
-	@endif";
+key1
+    value1
+key2
+    value2
+key3
+    @if @eq(@get(key1),value1) @then
+        @write(\"Value found!\")
+    @else
+        @write(\"Not found\")
+    @endif
 ...
 ```
 
@@ -64,26 +66,32 @@ The whitespace around the keys and values doesn't matter, nor does whitespace wi
 
 Any special characters within the keys or values must be escaped. For a double-quote, it would be `\"`. A backslash itself would be `\\`. Newline `\n`, carrige-return `\r, and tab `\t` are allowed. Any other non-ASCII characters (chars 0-31 and 127+) must be escaped 4-digit hexadecimal values, `\u####`.
 
-### left off here
-
 For scripts, where the value starts with a `@`, there can be formatting in the values using newlines, tabs, and spaces. GRIF data files allow this formatting for making scripts easier to read. They will be handled properly while loading. Note that the value still starts and ends with double quotes and internal quotes are escaped.
 
 ```
-	"scriptkey":
-		"@comment(\"This is a comment.\")
-		@if @true(@get(testvalue)) @then
-			@somecommand(value)
-		@endif",
-	...
+scriptkey
+    @comment("This is a comment.")
+    @if @true(@get(testvalue)) @then
+        @somecommand(value)
+    @endif
+...
 ```
 
 Functions can be added to a game data file if the key starts with `@`. These functions can be used in other scripts as shortcuts, instead of duplicating the same code in several places. There are several styles:
 
 ```
-	"@func1": "This is a text string used wherever @func1 is found.",
-	"@func2": "@comment(\"script to be run\") @write(@func1) @dosomething @dootherthing(value)",
-	"@func3(x)": "@comment(\"replace $x with parameter x\") @write(\"I see $x here.\\n\")",
-	"@func4(x,y,z)": "You have made $x moves and scored $y out of $z points."
+@func1
+    This is a text string used wherever the key is found.
+@func2
+    @comment("script to be run")
+    @write(@func1)
+    @dosomething
+    @dootherthing(value)
+@func3(x)
+    @comment("replace $x with parameter x")
+    @write("I see $x here.\n")
+@func4(x,y,z)
+    You have made $x moves and scored $y out of $z points.
 ```
 
 There may be more than one parameter with any (simple) names desired. `@func4(x,y,z)` replaces `$x`, `$y`, and `$z` in the value with the provided parameters at those positions.
@@ -111,12 +119,18 @@ GRIF expects that there will be certain keys and values in the data file so it c
 One line for each verb used in the game. The value contains all synonyms separated by commas. Note that having directions as verbs allows them to be used directly. Some older games use numbers as the verb "name", like `verb.10`, and may limit each synonym to a small number of characters.
 
 ```
-	"verb.go": "go,walk,run",
-	"verb.climb": "climb,ascend",
-	"verb.take": "take,get,grab",
-	"verb.drop": "drop,throw",
-	"verb.north": "north,n",
-	"verb.south": "south,s",
+verb.go
+    go,walk,run
+verb.climb
+    climb,ascend
+verb.take
+    take,get,grab
+verb.drop
+    drop,throw
+verb.north
+    north,n
+verb.south
+    south,s
 ```
 
 `noun.???`
@@ -124,9 +138,12 @@ One line for each verb used in the game. The value contains all synonyms separat
 One line for each noun used in the game. The value contains all synonyms separated by commas. Note that having directions as nouns allows them to be used with a verb, as in `go north` or `climb up` (but does increase the number of commands needed). Some older games use numbers as noun "names".
 
 ```
-	"noun.north": "north,n",
-	"noun.south": "south,s",
-	"noun.cup": "cup,glass,goblet",
+noun.north
+    north,n
+noun.south
+    south,s
+noun.cup
+    cup,glass,goblet
 ```
 
 `command.<verb>`, `command.<verb>.<noun>`
@@ -140,12 +157,18 @@ The noun part can be replaced with "#" to mean any number. Some commands need a 
 The noun part can also be replaced with "?" to mean any word, known or unknown. Some commands need some value, such as "SAVE filename". The value in "input.noun" will be "?" and "input.nounword" will contain the value. Note that if you have `command.verb.?` it will supercede all other commands for that verb with a noun.
 
 ```
-	"command.north": "@moveplayer(north)",
-	"command.go.north": "@moveplayer(north)",
-	"command.take.book": "@takethebook",
-	"command.take.*": "@takesomething",
-	"command.pace.#": "@pacebeforedigging",
-	"command.save.?": "@savetofilename",
+command.north
+    @moveplayer(north)
+command.go.north
+    @moveplayer(north)
+command.take.book
+    @takethebook
+command.take.*
+    @takesomething
+command.pace.#
+    @pacebeforedigging
+command.save.?
+    @savetofilename
 ```
 
 `background.???`
@@ -153,14 +176,15 @@ The noun part can also be replaced with "?" to mean any word, known or unknown. 
 These are scripts which are run once per game loop and handle background tasks. All background scripts are run each time, so they may wish to save and check values to know whether to run them or not. For instance, a script to show the beginning introduction message only once might be look like this:
 
 ```
-	"value.introdone": "false",
-	...
-	"background.intro":
-		"@if @false(@get(value.introdone)) @then
-			@msg(message.intromessage)
-			@set(value.introdone,true)
-			@look
-		@endif",
+value.introdone
+    false
+...
+background.intro
+    @if @false(@get(value.introdone)) @then
+        @msg(message.intromessage)
+        @set(value.introdone,true)
+        @look
+    @endif
 ```
 
 `system.???`
@@ -174,23 +198,31 @@ The value for `system.wordsize` is required if the vocabulary does not consist o
 These values may be changed however the game developer desires.
 
 ```
-	"system.gamename": "MyGame",
-	"system.intro": "Welcome to MyGame!\\n",
-	"system.wordsize": "0",
-	"system.prompt": "\\n>",
-	"system.after_prompt": "\\n",
-	"system.output_width": "80",
-	"system.dont_understand": "I don't understand \"{0}\".",
-	"system.do_what_with": "Do what with the {0}?",
+system.gamename
+    MyGame
+system.intro
+    Welcome to MyGame!\n
+system.wordsize
+    0
+system.prompt
+    \n>
+system.after_prompt
+    \n
+system.output_width
+    80
+system.dont_understand
+    I don't understand "{0}".
+system.do_what_with
+    Do what with the {0}?
 ```
 
 `system.intro` is a script or text which will be run once at the start of the game.
 
 `system.prompt` is shown each time the player can enter something. If it is "", no prompt is shown. It can also be a script that changes the prompt as appropriate.
 
-`system.after_prompt` is shown after the player entered something. For instance, `\\n` will add a blank line.
+`system.after_prompt` is shown after the player entered something. For instance, `\n` will add a blank line.
 
-`system.output_width` controls the width of text messages if automatic word wrapping should done. It always breaks at a space so whole words are shown. Setting it to "0" turns off any automatic wrapping. This isn't necessary if all the long messages and descriptions have `\\n` at the proper line breaks, or if word wrapping doesn't matter.
+`system.output_width` controls the width of text messages if automatic word wrapping should done. It always breaks at a space so whole words are shown. Setting it to "0" turns off any automatic wrapping. This isn't necessary if all the long messages and descriptions have `\n` at the proper line breaks, or if word wrapping doesn't matter.
 
 `system.dont_understand` is used whenever the parser can't understand what has been typed. If a word doesn't match any verb or noun in the data file, this message will be used, replacing the "{0}" with the unknown value.
 
@@ -271,7 +303,7 @@ Scripts often need to send commands to GRIF or to get information from the playe
 
 OutChannel is used by game scripts to send information to GRIF. These are specific values which GRIF will look for as special commands, or values starting with `@` indicating DAGS scripts to be run.
 
-Game scripts can add values to the queue using `@setoutchannel(\"value\")`. In each game loop, OutChannel is checked after the background scripts run, and again after the parsed command is run.
+Game scripts can add values to the queue using `@setoutchannel("value")`. In each game loop, OutChannel is checked after the background scripts run, and again after the parsed command is run.
 
 InChannel is used by GRIF to send information back to the scripts, such as when a question is asked and the player has to answer. The scripts can use `@getinchannel` to get the next value from the queue.
 
@@ -280,6 +312,12 @@ Here are the OutChannel values GRIF expects. They must be exactly as specified, 
 `#GAMEOVER;` immediately terminates the game. No further processing is done or messages displayed.
 
 `#ASK;` will ask the player to enter a value. The messages about this should already have been displayed. The prompt will be shown and the answer pushed to InChannel but not parsed. This is used for Yes/No questions or more detailed ones.
+
+`#ENTER;` will wait for the player to press ENTER. The messages about this should already have been displayed. If they type anything, it is ignored.
+
+`#EXISTS;` will check if the default save file exists. It returns `true` or `false` into the InChannel.
+
+`#EXISTSNAME;` will check if the specified save file name exists. It returns `true` or `false` into the InChannel.
 
 `#SAVE;` will save the current game state to the default save file `save.dat`. See above for path info. It will overwrite the file if it already exists.
 
@@ -294,14 +332,14 @@ Here are the OutChannel values GRIF expects. They must be exactly as specified, 
 Scripts in the OutChannel queue starting with `@` are run directly using DAGS. The above situations may require a script to be run afterwards, such as `#ASK;`. The next OutChannel command would be a script to handle that entered value. Note that the second `@setoutchannel` has to put escaped quotes around the script or else it would run immediately.
 
 ```
-	"script.ask_about_intro":
-		"@msg(message.show_intro_yes_or_no)
-		@setoutchannel(\"#ASK;\")
-		@setoutchannel(\"@script(script.handle_answer)\")",
-	...
-	"script.handle_answer":
-		"@set(temp.yorn,@getinchannel)
-		@if @true(@get(temp.yorn)) @then ...",
+script.ask_about_intro
+    @msg(message.show_intro_yes_or_no)
+    @setoutchannel("#ASK;")
+    @setoutchannel("@script(script.handle_answer)")
+    ...
+script.handle_answer
+    @set(temp.yorn,@getinchannel)
+    @if @true(@get(temp.yorn)) @then ...
 ```
 
 
@@ -312,22 +350,25 @@ Occasionally there will be a game which has a mismatch between nouns and item na
 One way to handle this is to use a special set of data lines, `nounitem.???`. The "???" is the noun name/number, and the value holds a list of all items with this noun. A `@foreachlist` loop checks each value in the list to see if that item is here. The code (this game uses numbers, not names) looks something like this. Do something similar for dropping or any other uses.
 
 ```
-	"verb.10": "get,tak",
-	"noun.11": "bot,rum",
-	"nounitem.11": "7,25,42,49",
-	"command.10.*":
-		"@comment(\"take first item that matches noun\")
-		@set(temp.found,false)
-		@foreachlist(x,@concat("nounitem.",@get(input.noun)))
-			@if @here($x) @and @false(@get(temp.found)) @then
-				@take($x)
-				@set(temp.found,true)
-				@write(\"OK\\n\")
-			@endif
-		@endforeachlist
-		@if @false(@get(temp.found)) @then
-			@write(\"I DON'T SEE THAT HERE.\\n\")
-		@endif",
+verb.10
+    get,tak
+noun.11
+    bot,rum
+nounitem.11
+    7,25,42,49
+command.10.*
+    @comment("take first item that matches noun")
+    @set(temp.found,false)
+    @foreachlist(x,@concat("nounitem.",@get(input.noun)))
+        @if @here($x) @and @false(@get(temp.found)) @then
+            @take($x)
+            @set(temp.found,true)
+            @write("OK\n")
+        @endif
+    @endforeachlist
+    @if @false(@get(temp.found)) @then
+        @write("I DON'T SEE THAT HERE.\n")
+    @endif
 ```
 
 

@@ -18,7 +18,6 @@ public partial class Dags
             List<string> list = [];
             List<List<string>> array = [];
             var token = tokens[index++];
-            int maxY, maxX;
 
             // static value
             if (!token.StartsWith('@'))
@@ -121,15 +120,7 @@ public partial class Dags
                     {
                         throw new SystemException("Array name cannot be blank");
                     }
-                    maxY = GetInt($"{p[0]}.max.y");
-                    maxX = GetInt($"{p[0]}.max.x");
-                    for (int y = 0; y <= maxY; y++)
-                    {
-                        for (int x = 0; x <= maxX; x++)
-                        {
-                            Set($"{p[0]}.{y}.{x}", "");
-                        }
-                    }
+                    ClearArray(p[0]);
                     return;
                 case CLEARLIST:
                     // clears the named list
