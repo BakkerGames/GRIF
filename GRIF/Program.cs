@@ -19,7 +19,6 @@ internal class Program
             if (args.Length == 0)
             {
                 UserIO.Output(SystemData.Syntax());
-                Console.ReadLine();
                 return;
             }
 
@@ -34,7 +33,6 @@ internal class Program
                     if (!File.Exists(inputFilename))
                     {
                         UserIO.Output("Input file not found: " + inputFilename);
-                        Console.ReadLine();
                         return;
                     }
                     // Input commands
@@ -100,7 +98,6 @@ internal class Program
                 else
                 {
                     UserIO.Output("File or directory not found: " + dataPath);
-                    Console.ReadLine();
                     return;
                 }
             }
@@ -109,7 +106,6 @@ internal class Program
             if (grod.Count() == 0)
             {
                 UserIO.Output(SystemData.Syntax());
-                Console.ReadLine();
                 return;
             }
 
@@ -138,7 +134,6 @@ internal class Program
                 else
                 {
                     UserIO.Output("Modification file or directory not found: " + modFile);
-                    Console.ReadLine();
                     return;
                 }
             }
@@ -148,7 +143,6 @@ internal class Program
             if (!dags.ValidateDictionary(result))
             {
                 UserIO.Output(result);
-                Console.ReadLine();
                 return;
             }
 
@@ -162,7 +156,6 @@ internal class Program
             if (!SystemData.SystemValidate(result))
             {
                 UserIO.Output(result);
-                Console.ReadLine();
                 return;
             }
 
