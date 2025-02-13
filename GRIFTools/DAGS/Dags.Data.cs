@@ -46,73 +46,159 @@ public partial class Dags
         {
             return result;
         }
-        throw new SystemException($"Value is not an int: {key}: {value}");
+        throw new SystemException($"Value is not an integer: {key}: {value}");
     }
 
-    private void SetInt(string key, int value)
+    #region List routines
+
+    private string GetListLength(string key)
     {
-        Data.Set(key, value.ToString());
+        string list = Data.Get(key);
+        List<string> items = [.. list.Split(',')];
+        return items.Count.ToString();
     }
 
     private string GetListItem(string key, string index)
     {
         if (!int.TryParse(index, out int tempIndex))
         {
-            throw new ArgumentException($"Value is not an integer: {index}");
+            throw new ArgumentException($"List index is not an integer: {index}");
         }
         return GetListItem(key, tempIndex);
     }
 
     private string GetListItem(string key, int index)
     {
-        var itemKey = $"{key}.{index}";
-        return Data.Get(itemKey);
+        string list = Data.Get(key);
+        List<string> items = [.. list.Split(',')];
+        if (items.Count <= index)
+        {
+            return "";
+        }
+        return items[index];
     }
 
     private void SetListItem(string key, string index, string value)
     {
         if (!int.TryParse(index, out int tempIndex))
         {
-            throw new ArgumentException($"Value is not an integer: {index}");
+            throw new ArgumentException($"List index is not an integer: {index}");
         }
         SetListItem(key, tempIndex, value);
     }
 
-    private void SetListItem(string key, int index, string? value)
+    private void SetListItem(string key, int index, string value)
     {
         if (index < 0)
         {
             throw new SystemException($"List index cannot be negative: {key}: {index}");
         }
-        var list = Data.Get(key);
-        var items = list.Split(',').ToList<string>();
-        while (items.Count < index - 1)
+        if (value.Contains(','))
+        {
+            throw new SystemException($"List items cannot contain commas: {key}: {value}");
+        }
+        string list = Data.Get(key);
+        List<string> items = [.. list.Split(',')];
+        while (items.Count <= index)
         {
             items.Add("");
         }
-        items[index] = value ?? "";
+        items[index] = value;
         Data.Set(key, string.Join(',', items));
-        // TODO ### left off here
     }
 
-    private void AddListItem(string key, string? value)
+    private void AddListItem(string key, string value)
     {
-        var maxKey = $"{key}.max";
-        var max = Data.Get(maxKey);
-        var index = 0;
-        if (max != "" && int.TryParse(max, out int maxValue))
+        if (value.Contains(','))
         {
-            index = maxValue + 1;
+            throw new SystemException($"List items cannot contain commas: {key}: {value}");
         }
-        Data.Set(maxKey, index.ToString());
-        var itemKey = $"{key}.{index}";
-        Data.Set(itemKey, value);
+        string list = Data.Get(key);
+        List<string> items = [.. list.Split(',')];
+        if (list == "")
+        {
+            if (value == "")
+            {
+                throw new SystemException($"Cannot add a blank value to an empty list: {key}");
+            }
+            items[0] = value;
+        }
+        else
+        {
+            items.Add(value);
+        }
+        Data.Set(key, string.Join(',', items));
     }
+
+    private void InsertAtListItem(string key, string index, string value)
+    {
+        if (!int.TryParse(index, out int tempIndex))
+        {
+            throw new ArgumentException($"List index is not an integer: {index}");
+        }
+        InsertAtListItem(key, tempIndex, value);
+    }
+
+    private void InsertAtListItem(string key, int index, string value)
+    {
+        if (index < 0)
+        {
+            throw new SystemException($"List index cannot be negative: {key}: {index}");
+        }
+        if (value.Contains(','))
+        {
+            throw new SystemException($"List items cannot contain commas: {key}: {value}");
+        }
+        string list = Data.Get(key);
+        List<string> items = [.. list.Split(',')];
+        while (items.Count < index)
+        {
+            items.Add("");
+        }
+        if (items.Count == index)
+        {
+            items.Add(value);
+        }
+        else
+        {
+            items.Insert(index, value);
+        }
+        Data.Set(key, string.Join(',', items));
+    }
+
+    private void RemoveAtListItem(string key, string index)
+    {
+        if (!int.TryParse(index, out int tempIndex))
+        {
+            throw new ArgumentException($"List index is not an integer: {index}");
+        }
+        RemoveAtListItem(key, tempIndex);
+    }
+
+    private void RemoveAtListItem(string key, int index)
+    {
+        string list = Data.Get(key);
+        List<string> items = [.. list.Split(',')];
+        if (items.Count <= index)
+        {
+            return;
+        }
+        items.RemoveAt(index);
+        Data.Set(key, string.Join(',', items));
+    }
+
+    #endregion
+
+    #region Array routines
 
     private string GetArrayItem(string key, int y, int x)
     {
-        var itemKey = $"{key}.{y}.{x}";
-        return Data.Get(itemKey);
+        if (y < 0 || x < 0)
+        {
+            throw new SystemException($"Array indexes cannot be negative: {key}: {y},{x}");
+        }
+        var itemKey = $"{key}.{y}";
+        return GetListItem(itemKey, x);
     }
 
     private void SetArrayItem(string key, int y, int x, string value)
@@ -121,19 +207,9 @@ public partial class Dags
         {
             throw new SystemException($"Array indexes cannot be negative: {key}: {y},{x}");
         }
-        var yMaxKey = $"{key}.max.y";
-        var yMax = Data.Get(yMaxKey);
-        if (yMax == "" || !int.TryParse(yMax, out int yMaxValue) || yMaxValue < y)
-        {
-            Data.Set(yMaxKey, y.ToString());
-        }
-        var xMaxKey = $"{key}.max.x";
-        var xMax = Data.Get(xMaxKey);
-        if (xMax == "" || !int.TryParse(xMax, out int xMaxValue) || xMaxValue < x)
-        {
-            Data.Set(xMaxKey, x.ToString());
-        }
-        var itemKey = $"{key}.{y}.{x}";
-        Data.Set(itemKey, value);
+        var itemKey = $"{key}.{y}";
+        SetListItem(itemKey, x, value);
     }
+
+    #endregion
 }
