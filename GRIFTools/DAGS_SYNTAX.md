@@ -371,9 +371,9 @@ Note that the array values are referenced by row (y) first and then column (x), 
 >Sets the value at position "y,x" (starting at 0,0) for the array "name". If either "y" or "x" is beyond the edge of the stored values, missing values will be set to "" as needed before adding "value". Commas are not permitted within values.
 
 
-## In/Out Channel Commands
+## InChannel/OutChannel Commands
 
->In and Out channel commands are a way for the DAGS scripts to communicate with the outside calling program and receive information back. They use queues to stack commands for processing in order. The calling program looks at the In channel, handles all commands, and possibly passes back answers. This allows the calling program to handle file I/O and operating system commands so DAGS doesn't have to.
+>InChannel and OutChannel commands are a way for the DAGS scripts to communicate with the outside calling program and receive information back. They use queues to stack commands for processing in order. The calling program looks at the In channel, handles all commands, and possibly passes back answers. This allows the calling program to handle file I/O and operating system commands so DAGS doesn't have to.
 
 >Any DAGS command can be set in the Out channel, and the calling program would run it by calling DAGS. Typically this is used for running scripts.
 

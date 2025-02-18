@@ -27,6 +27,13 @@ public partial class Grod
         return "";
     }
 
+    public string GetOrDefault(string key, string value)
+    {
+        var result = Get(key);
+        if (result == "") result = value;
+        return result;
+    }
+
     /// <summary>
     /// Saves a single value into the proper dictionary.
     /// </summary>
