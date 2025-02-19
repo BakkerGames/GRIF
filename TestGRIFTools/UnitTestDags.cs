@@ -12,13 +12,13 @@ public class UnitTestDags
     }
 
     [Test]
-    public void TestPassing()
+    public void Test_Passing()
     {
         Assert.Pass();
     }
 
     [Test]
-    public void TestGet()
+    public void Test_Get()
     {
         Grod data = new();
         Dags dags = new(data);
@@ -31,7 +31,7 @@ public class UnitTestDags
     }
 
     [Test]
-    public void TestSet()
+    public void Test_Set()
     {
         Grod data = new();
         Dags dags = new(data);
@@ -44,7 +44,7 @@ public class UnitTestDags
     }
 
     [Test]
-    public void TestSetScript()
+    public void Test_SetScript()
     {
         Grod data = new();
         Dags dags = new(data);
@@ -58,7 +58,7 @@ public class UnitTestDags
     }
 
     [Test]
-    public void TestSetArray()
+    public void Test_SetArray()
     {
         Grod data = new();
         Dags dags = new(data);
@@ -71,7 +71,7 @@ public class UnitTestDags
     }
 
     [Test]
-    public void TestSetArray_Null()
+    public void Test_SetArray_Null()
     {
         Grod data = new();
         Dags dags = new(data);
@@ -84,7 +84,7 @@ public class UnitTestDags
     }
 
     [Test]
-    public void TestClearArray()
+    public void Test_ClearArray()
     {
         Grod data = new();
         Dags dags = new(data);
@@ -98,7 +98,7 @@ public class UnitTestDags
     }
 
     [Test]
-    public void TestSetList()
+    public void Test_SetList()
     {
         Grod data = new();
         Dags dags = new(data);
@@ -111,7 +111,7 @@ public class UnitTestDags
     }
 
     [Test]
-    public void TestSetList_Null()
+    public void Test_SetList_Null()
     {
         Grod data = new();
         Dags dags = new(data);
@@ -124,7 +124,7 @@ public class UnitTestDags
     }
 
     [Test]
-    public void TestSetList_TabCRLF()
+    public void Test_SetList_TabCRLF()
     {
         Grod data = new();
         Dags dags = new(data);
@@ -137,7 +137,7 @@ public class UnitTestDags
     }
 
     [Test]
-    public void TestInsertAtList()
+    public void Test_InsertAtList()
     {
         Grod data = new();
         Dags dags = new(data);
@@ -157,7 +157,7 @@ public class UnitTestDags
     }
 
     [Test]
-    public void TestRemoveAtList()
+    public void Test_RemoveAtList()
     {
         Grod data = new();
         Dags dags = new(data);
@@ -171,7 +171,7 @@ public class UnitTestDags
     }
 
     [Test]
-    public void TestFunction()
+    public void Test_Function()
     {
         Grod data = new();
         Dags dags = new(data);
@@ -182,7 +182,7 @@ public class UnitTestDags
     }
 
     [Test]
-    public void TestFunctionParameters()
+    public void Test_FunctionParameters()
     {
         Grod data = new();
         Dags dags = new(data);
@@ -193,7 +193,7 @@ public class UnitTestDags
     }
 
     [Test]
-    public void TestValidateSucceed()
+    public void Test_ValidateSucceed()
     {
         Grod data = new();
         Dags dags = new(data);
@@ -203,7 +203,7 @@ public class UnitTestDags
     }
 
     [Test]
-    public void TestValidateFail()
+    public void Test_ValidateFail()
     {
         Grod data = new();
         Dags dags = new(data);
@@ -213,7 +213,7 @@ public class UnitTestDags
     }
 
     [Test]
-    public void TestValidateSyntaxSucceed()
+    public void Test_ValidateSyntaxSucceed()
     {
         StringBuilder result = new();
         bool value = Dags.ValidateSyntax("@blah(key)", result);
