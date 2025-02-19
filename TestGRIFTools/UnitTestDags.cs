@@ -44,7 +44,7 @@ public class UnitTestDags
     }
 
     [Test]
-    public void Test_SetScript()
+    public void Test_Set_Script()
     {
         Grod data = new();
         Dags dags = new(data);
@@ -961,5 +961,53 @@ public class UnitTestDags
         Assert.That(result.Length, Is.EqualTo(0));
         dags.RunScript($"@get({key})", result);
         Assert.That(result.ToString(), Is.EqualTo(value1));
+    }
+
+    [Test]
+    public void Test_AddList()
+    {
+        Assert.Fail();
+    }
+
+    [Test]
+    public void Test_ClearList()
+    {
+        Assert.Fail();
+    }
+
+    [Test]
+    public void Test_GetArray()
+    {
+        Assert.Fail();
+    }
+
+    [Test]
+    public void Test_GetList()
+    {
+        Assert.Fail();
+    }
+
+    [Test]
+    public void Test_IsNumber()
+    {
+        Assert.Fail();
+    }
+
+    [Test]
+    public void Test_ListLength()
+    {
+        Assert.Fail();
+    }
+
+    [Test]
+    public void Test_Write()
+    {
+        Assert.Fail();
+    }
+
+    [Test]
+    public void Test_WriteLine()
+    {
+        Assert.Fail();
     }
 }
