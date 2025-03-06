@@ -4,6 +4,7 @@ public partial class Grod
 {
     private readonly Dictionary<string, string> _base = [];
     private readonly Dictionary<string, string> _overlay = [];
+    private readonly Dictionary<string, string[]?> _unpacked = [];
 
     private static string NormalizeKey(string key)
     {

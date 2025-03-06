@@ -19,7 +19,7 @@ public static class DagsIO
         var backgroundKeys = grod.Keys().Where(x => x.StartsWith(BACKGROUND_PREFIX)).ToList();
         foreach (string key in backgroundKeys)
         {
-            dags.RunScript(grod.Get(key) ?? "", result);
+            dags.RunScriptKey(key, result);
         }
     }
 

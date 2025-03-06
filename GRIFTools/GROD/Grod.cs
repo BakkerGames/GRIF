@@ -15,8 +15,7 @@ public partial class Grod
     public string Get(string key)
     {
         key = NormalizeKey(key);
-        string? item;
-        if (UseOverlay && _overlay.TryGetValue(key, out item))
+        if (UseOverlay && _overlay.TryGetValue(key, out string? item))
         {
             return item ?? "";
         }
@@ -27,6 +26,9 @@ public partial class Grod
         return "";
     }
 
+    /// <summary>
+    /// Gets a single value, or the specified value if not found.
+    /// </summary>
     public string GetOrDefault(string key, string value)
     {
         var result = Get(key);
@@ -35,11 +37,25 @@ public partial class Grod
     }
 
     /// <summary>
+    /// Gets an unpacked array of strings, or null if not found
+    /// </summary>
+    public string[]? GetUnpacked(string key)
+    {
+        key = NormalizeKey(key);
+        if (_unpacked.TryGetValue(key, out string[]? value))
+        {
+            return value;
+        }
+        return null;
+    }
+
+    /// <summary>
     /// Saves a single value into the proper dictionary.
     /// </summary>
     public void Set(string key, string? item)
     {
         key = NormalizeKey(key);
+        _unpacked.Remove(key);
         if (UseOverlay)
         {
             if (!_overlay.TryAdd(key, item ?? ""))
@@ -50,6 +66,18 @@ public partial class Grod
         else if (!_base.TryAdd(key, item ?? ""))
         {
             _base[key] = item ?? "";
+        }
+    }
+
+    /// <summary>
+    /// Saves an unpacked array of strings.
+    /// </summary>
+    public void SetUnpacked(string key, string[]? item)
+    {
+        key = NormalizeKey(key);
+        if (!_unpacked.TryAdd(key, item))
+        {
+            _unpacked[key] = item;
         }
     }
 
@@ -66,6 +94,7 @@ public partial class Grod
         {
             _overlay.Clear();
         }
+        _unpacked.Clear();
     }
 
     /// <summary>
@@ -75,13 +104,13 @@ public partial class Grod
     {
         if (UseOverlay && which == WhichData.Overlay)
         {
-            return _overlay.Keys.ToList();
+            return [.. _overlay.Keys];
         }
         if (!UseOverlay || which == WhichData.Base)
         {
-            return _base.Keys.ToList();
+            return [.. _base.Keys];
         }
-        return _base.Keys.Union(_overlay.Keys).ToList();
+        return [.. _base.Keys.Union(_overlay.Keys)];
     }
 
     /// <summary>
@@ -118,5 +147,6 @@ public partial class Grod
         key = NormalizeKey(key);
         _base.Remove(key);
         _overlay.Remove(key);
+        _unpacked.Remove(key);
     }
 }

@@ -53,4 +53,28 @@ public partial class Dags(Grod grod)
             result.AppendLine(ex.Message);
         }
     }
+
+    public void RunScriptKey(string key, StringBuilder result)
+    {
+        try
+        {
+            var tokens = grod.GetUnpacked(key);
+            if (tokens == null)
+            {
+                tokens = SplitTokens(grod.Get(key));
+                grod.SetUnpacked(key, tokens);
+            }
+            int index = 0;
+            while (index < tokens.Length)
+            {
+                RunOneCommand(tokens, ref index, result);
+            }
+        }
+        catch (Exception ex)
+        {
+            if (result.Length > 0) result.AppendLine();
+            if (!ex.Message.StartsWith("Error", OIC)) result.Append("ERROR: ");
+            result.AppendLine(ex.Message);
+        }
+    }
 }
