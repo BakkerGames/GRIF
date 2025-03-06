@@ -57,12 +57,7 @@ public partial class Dags
                     default:
                         // run a defined function with no parameters
                         // @func=...
-                        var value = Get(token);
-                        if (value == "")
-                        {
-                            throw new SystemException($"Function not found: {token}");
-                        }
-                        RunScript(value, result);
+                        RunScriptKey(token, result);
                         return;
                 }
                 throw new SystemException($"Unknown script token: {token}");
@@ -550,7 +545,7 @@ public partial class Dags
                 case SCRIPT:
                     // run a script
                     CheckParamCount(token, p, 1);
-                    RunScript(Get(p[0]), result);
+                    RunScriptKey(p[0], result);
                     return;
                 case SET:
                     // set a value

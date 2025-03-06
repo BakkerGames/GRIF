@@ -37,7 +37,7 @@ public partial class Grod
     }
 
     /// <summary>
-    /// Gets an unpacked array of strings, or null if not found
+    /// Gets an unpacked array of strings, or null if not found.
     /// </summary>
     public string[]? GetUnpacked(string key)
     {
@@ -50,7 +50,7 @@ public partial class Grod
     }
 
     /// <summary>
-    /// Saves a single value into the proper dictionary.
+    /// Stores a single value into the proper dictionary.
     /// </summary>
     public void Set(string key, string? item)
     {
@@ -70,7 +70,7 @@ public partial class Grod
     }
 
     /// <summary>
-    /// Saves an unpacked array of strings.
+    /// Stores an unpacked array of strings.
     /// </summary>
     public void SetUnpacked(string key, string[]? item)
     {
@@ -140,7 +140,7 @@ public partial class Grod
     }
 
     /// <summary>
-    /// Removed the specified key from both dictonaries.
+    /// Removed the specified key from all dictonaries.
     /// </summary>
     public void Remove(string key)
     {

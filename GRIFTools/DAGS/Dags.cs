@@ -6,12 +6,12 @@ namespace GRIFTools;
 /// <summary>
 /// Generate a DAGS script object and assign its dictionary.
 /// </summary>
-public partial class Dags(Grod grod)
+public partial class Dags(Grod data)
 {
     /// <summary>
     /// Grod dictionary of (key,value) pairs
     /// </summary>
-    public Grod Data { get; set; } = grod;
+    public Grod Data { get; set; } = data;
 
     /// <summary>
     /// Receives metadata from the calling program, such as text input.
@@ -54,15 +54,29 @@ public partial class Dags(Grod grod)
         }
     }
 
+    /// <summary>
+    /// Run one script specified by key and return any text in result.
+    /// Use the unpacked script if it exists. If not, unpack it and store it for next time.
+    /// </summary>
     public void RunScriptKey(string key, StringBuilder result)
     {
+        var script = Data.Get(key);
+        if (string.IsNullOrWhiteSpace(script) || script.Equals(NULL_VALUE, OIC))
+        {
+            return;
+        }
+        if (!script.TrimStart().StartsWith('@'))
+        {
+            result.Append(script);
+            return;
+        }
         try
         {
-            var tokens = grod.GetUnpacked(key);
+            var tokens = Data.GetUnpacked(key);
             if (tokens == null)
             {
-                tokens = SplitTokens(grod.Get(key));
-                grod.SetUnpacked(key, tokens);
+                tokens = SplitTokens(script);
+                Data.SetUnpacked(key, tokens);
             }
             int index = 0;
             while (index < tokens.Length)

@@ -27,7 +27,7 @@ public partial class Dags
     {
         Dictionary<string, string?> result = [];
         List<string> keys;
-        keys = Data.Keys().Where(x => x.StartsWith(prefix, OIC)).ToList();
+        keys = [.. Data.Keys().Where(x => x.StartsWith(prefix, OIC))];
         foreach (string k in keys)
         {
             result.Add(k, Get(k));
@@ -75,7 +75,12 @@ public partial class Dags
         {
             return "";
         }
-        return items[index];
+        var result = items[index];
+        if (result == NULL_VALUE)
+        {
+            return "";
+        }
+        return result;
     }
 
     private void SetListItem(string key, string index, string value)
@@ -104,6 +109,11 @@ public partial class Dags
             items.Add("");
         }
         items[index] = value;
+        if (items.Count == 1 && items[0] == "")
+        {
+            // special case: need to store something which is not ""
+            items[0] = NULL_VALUE;
+        }
         Data.Set(key, string.Join(',', items));
     }
 
@@ -119,7 +129,8 @@ public partial class Dags
         {
             if (value == "")
             {
-                throw new SystemException($"Cannot add a blank value to an empty list: {key}");
+                // special case: need to store something which is not ""
+                value = NULL_VALUE;
             }
             items[0] = value;
         }
@@ -184,6 +195,11 @@ public partial class Dags
             return;
         }
         items.RemoveAt(index);
+        if (items.Count == 1 && items[0] == "")
+        {
+            // special case: need to store something which is not ""
+            items[0] = NULL_VALUE;
+        }
         Data.Set(key, string.Join(',', items));
     }
 

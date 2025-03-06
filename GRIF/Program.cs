@@ -210,7 +210,7 @@ internal class Program
 
                 // Run the script
                 result.Clear();
-                dags.RunScript($"@script({parseResult.CommandKey})", result);
+                dags.RunScriptKey(parseResult.CommandKey, result);
                 UserIO.Output(result);
                 DagsIO.CheckOutChannel();
             }
