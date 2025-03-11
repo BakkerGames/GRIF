@@ -76,6 +76,10 @@ public static class Parse
         grod.Set($"{INPUT_PREFIX}verbword", "");
         grod.Set($"{INPUT_PREFIX}noun", "");
         grod.Set($"{INPUT_PREFIX}nounword", "");
+        grod.Set($"{INPUT_PREFIX}preposition", "");
+        grod.Set($"{INPUT_PREFIX}prepositionword", "");
+        grod.Set($"{INPUT_PREFIX}object", "");
+        grod.Set($"{INPUT_PREFIX}objectword", "");
 
         var words = input.Split(' ', SPLIT_OPTIONS);
         if (words.Length == 0)

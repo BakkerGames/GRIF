@@ -87,6 +87,16 @@
 	@setoutchannel("#GAMEOVER;")
 @room
 	@get(value.room)
+adjective.cloak
+	velvet,handsome,black,dark,satin
+adjective.hook
+	brass,small
+article.a
+	a
+article.an
+	an
+article.the
+	the
 background.intro
 	@if @false(@get(value.introdone)) @then
 		@msg(message.intro)
@@ -133,6 +143,8 @@ command.hang.cloak
 	@else
 		@msg(message.dont_see)
 	@endif
+command.hang.cloak.on.hook
+	@script(command.hang.cloak)
 command.inventory
 	@set(temp.count,0)
 	@foreachkey(x,"item.",".location")
@@ -358,13 +370,13 @@ message.you_lost
 message.you_won
 	"You have won!"
 noun.cloak
-	cloak,velvet,handsome,black,dark,satin
+	cloak
 noun.down
 	down,d,descend
 noun.east
 	east,e
 noun.hook
-	hook,hooks,brass,small,peg
+	hook,hooks,coathook,peg
 noun.message
 	message,scrawled,sawdust,floor,msg
 noun.north
@@ -377,6 +389,8 @@ noun.up
 	up,u,climb
 noun.west
 	west,w
+preposition.on
+	on,upon
 room.bar.exit.down
 	@script(script.bar_cant_go)
 room.bar.exit.east
