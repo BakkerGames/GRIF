@@ -3,7 +3,6 @@ using static GRIF.Constants;
 
 namespace GRIF;
 
-
 public class ParseResult
 {
     public string Verb = "";
@@ -35,6 +34,8 @@ public class ParseResult
 
 public static class Parse
 {
+    private static Grod grod = new();
+
     public static void Init(Grod grod)
     {
         Parse.grod = grod;
@@ -67,6 +68,7 @@ public static class Parse
         }
 
         int index = 0;
+
         GetVerb(result, words, ref index);
         if (result.Error != "")
         {
@@ -77,6 +79,7 @@ public static class Parse
             result.Error = SystemData.DontUnderstand(input);
             return result;
         }
+
         if (index < words.Length)
         {
             GetNoun(result, words, ref index);
@@ -109,97 +112,49 @@ public static class Parse
             return result;
         }
 
-        //TODO ### left off here
-
-        var tempWord0 = words[0];
-        var tempWord1 = words.Length > 1 ? words[1] : "";
-        var tempWord1Full = tempWord1;
-        if (tempWord0.StartsWith('@') || tempWord1.StartsWith('@'))
-        {
-            // avoid injection attacks. ;)
-            result.Error = SystemData.DontUnderstand(input);
-            return result;
-        }
-        if (SystemData.WordSize() > 0)
-        {
-            if (tempWord0.Length > SystemData.WordSize())
-            {
-                tempWord0 = tempWord0[..SystemData.WordSize()];
-            }
-            if (tempWord1.Length > SystemData.WordSize())
-            {
-                tempWord1 = tempWord1[..SystemData.WordSize()];
-            }
-        }
-
-        // check for verb and noun
-        foreach (string key in grod.Keys().Where(x => x.StartsWith(VERB_PREFIX, OIC)))
-        {
-            var verbList = (grod.Get(key) ?? "").Split(',', SPLIT_OPTIONS);
-            foreach (string v in verbList)
-            {
-                var verb = v;
-                if (SystemData.WordSize() > 0 && verb.Length > SystemData.WordSize())
-                {
-                    verb = verb[..SystemData.WordSize()];
-                }
-                if (verb.Equals(tempWord0, OIC))
-                {
-                    result.Verb = key[VERB_PREFIX.Length..];
-                    result.VerbWord = words[0];
-                    break;
-                }
-            }
-            if (result.Verb != "") break;
-        }
-
-        if (tempWord1 != "")
-        {
-        }
-
-        if (result.Verb == "")
-        {
-            if (result.Noun != "")
-            {
-                result.Error = SystemData.DoWhatWith(result.NounWord);
-                return result;
-            }
-            else
-            {
-                result.Error = SystemData.DontUnderstand(input);
-                return result;
-            }
-        }
-
         // find a matching command script key in the dictionary
 
         var tempCommandKey = $"{COMMAND_PREFIX}{result.Verb}";
-        if (words.Length > 1)
+        if (result.Noun == "")
         {
-            if (grod.ContainsKey(tempCommandKey + "." + result.Noun))
+            if (grod.ContainsKey(tempCommandKey))
             {
-                result.CommandKey = tempCommandKey + "." + result.Noun;
-            }
-            else if (grod.ContainsKey(tempCommandKey + ".*") && result.Noun != "")
-            {
-                result.CommandKey = tempCommandKey + ".*";
-            }
-            else if (grod.ContainsKey(tempCommandKey + ".#") && int.TryParse(tempWord1Full, out int number))
-            {
-                result.Noun = "#"; // special indicator for any number
-                result.NounWord = number.ToString(); // normalized number
-                result.CommandKey = tempCommandKey + ".#";
-            }
-            else if (grod.ContainsKey(tempCommandKey + ".?"))
-            {
-                result.Noun = "?"; // special indicator for any value, like a filename
-                result.NounWord = tempWord1Full; // actual value entered, not shortened
-                result.CommandKey = tempCommandKey + ".?";
+                result.CommandKey = tempCommandKey;
             }
         }
-        else if (grod.ContainsKey(tempCommandKey))
+        else if (result.Preposition != "" && result.Object != "")
         {
-            result.CommandKey = tempCommandKey;
+            if (grod.ContainsKey($"{tempCommandKey}.{result.Noun}.{result.Preposition}.{result.Object}"))
+            {
+                result.CommandKey = $"{tempCommandKey}.{result.Noun}.{result.Preposition}.{result.Object}";
+            }
+            else if (grod.ContainsKey($"{tempCommandKey}.*.{result.Preposition}.{result.Object}"))
+            {
+                result.CommandKey = $"{tempCommandKey}.*.{result.Preposition}.{result.Object}";
+            }
+            else if (grod.ContainsKey($"{tempCommandKey}.{result.Noun}.{result.Preposition}.*"))
+            {
+                result.CommandKey = $"{tempCommandKey}.{result.Noun}.{result.Preposition}.*";
+            }
+        }
+        else if (grod.ContainsKey($"{tempCommandKey}.{result.Noun}"))
+        {
+            result.CommandKey = $"{tempCommandKey}.{result.Noun}";
+        }
+        else if (grod.ContainsKey($"{tempCommandKey}.*"))
+        {
+            result.CommandKey = $"{tempCommandKey}.*";
+        }
+        else if (grod.ContainsKey($"{tempCommandKey}.#") && int.TryParse(result.NounWord, out int number))
+        {
+            result.Noun = "#"; // special indicator for any number
+            result.NounWord = number.ToString(); // normalized number
+            result.CommandKey = $"{tempCommandKey}.#";
+        }
+        else if (grod.ContainsKey($"{tempCommandKey}.?"))
+        {
+            result.Noun = "?"; // special indicator for any value, like a filename
+            result.CommandKey = $"{tempCommandKey}.?";
         }
 
         if (result.CommandKey == "")
@@ -221,12 +176,16 @@ public static class Parse
         return result;
     }
 
-    private static string GetMatchingWord(string keyPrefix, string origWord)
+    private static string GetMatchingWord(string keyPrefix, string[] words, ref int index)
     {
+        string answer = "";
+        Dictionary<string, string> multiWords = [];
+
+        string origWord = words[index];
+        int newIndex = index + 1;
+
         // get the origWord cut to the proper length
-        var shortWord = SystemData.WordSize() > 0 && origWord.Length > SystemData.WordSize()
-            ? origWord[..SystemData.WordSize()]
-            : origWord;
+        var shortWord = FixLength(origWord);
 
         // compare against each possible word
         foreach (string key in grod.Keys().Where(x => x.StartsWith(keyPrefix, OIC)))
@@ -234,64 +193,139 @@ public static class Parse
             var wordList = (grod.Get(key) ?? "").Split(',', SPLIT_OPTIONS);
             foreach (string item in wordList)
             {
-                var compareWord = SystemData.WordSize() > 0 && item.Length > SystemData.WordSize()
-                    ? item[..SystemData.WordSize()]
-                    : item;
-                if (compareWord.Equals(shortWord, OIC))
+                // Check for items made of two or more words
+                if (item.Contains(' '))
                 {
-                    return key[keyPrefix.Length..];
+                    multiWords.Add(key[keyPrefix.Length..], item);
+                }
+                var compareWord = FixLength(item);
+                if (compareWord.Equals(shortWord, OIC) && answer == "")
+                {
+                    answer = key[keyPrefix.Length..];
+                    break; // TODO ### have to remove for multi word checking
                 }
             }
+            if (answer != "") break; // TODO ### have to remove for multi word checking
         }
 
-        // not found
-        return "";
+        // check multi word list
+        // TODO ### check multi word list
+
+        if (answer != "")
+        {
+            // bump index past matched word(s)
+            index = newIndex;
+        }
+
+        return answer;
     }
 
     private static void GetVerb(ParseResult result, string[] words, ref int index)
     {
-        var origWord = words[index++];
-        var verb = GetMatchingWord(VERB_PREFIX, origWord);
-        result.Verb = origWord;
-        result.VerbWord = verb;
+        string origWord = words[index];
+        result.Verb = GetMatchingWord(VERB_PREFIX, words, ref index);
+        if (result.Verb == "")
+        {
+            return;
+        }
+        result.VerbWord = origWord;
     }
 
     private static void GetNoun(ParseResult result, string[] words, ref int index)
     {
-        var origNoun = words[index++];
-        var tempNoun = SystemData.WordSize() > 0 && origNoun.Length > SystemData.WordSize()
-            ? origNoun[..SystemData.WordSize()]
-            : origNoun;
+        // articles
+        CheckArticles(words, ref index);
 
-            foreach (string key in grod.Keys().Where(x => x.StartsWith(NOUN_PREFIX, OIC)))
+        // adjectives
+        var adjNounList = CheckAdjectives(words, ref index);
+
+        // get the noun
+        string origWord = words[index];
+        string noun = GetMatchingWord(NOUN_PREFIX, words, ref index);
+        if (noun == "")
         {
-            var nounList = (grod.Get(key) ?? "").Split(',', SPLIT_OPTIONS);
-            foreach (string n in nounList)
-            {
-                var noun = n;
-                if (SystemData.WordSize() > 0 && noun.Length > SystemData.WordSize())
-                {
-                    noun = noun[..SystemData.WordSize()];
-                }
-                if (noun.Equals(tempNoun, OIC))
-                {
-                    result.Noun = key[NOUN_PREFIX.Length..];
-                    result.NounWord = tempNoun;
-                    break;
-                }
-            }
-            if (result.Noun != "") break;
+            return;
         }
+        // check adjectives
+        if (adjNounList.Count > 0 && !adjNounList.Contains(noun))
+        {
+            // noun doesn't match adjectives
+            return;
+        }
+        result.Noun = noun;
+        result.NounWord = origWord;
     }
 
     private static void GetPrepositionAndObject(ParseResult result, string[] words, ref int index)
     {
-        throw new NotImplementedException();
+        // get the preposition
+        string origWord = words[index];
+        result.Preposition = GetMatchingWord(PREPOSITION_PREFIX, words, ref index);
+        if (result.Preposition == "")
+        {
+            return;
+        }
+        result.PrepositionWord = origWord;
+
+        // articles
+        CheckArticles(words, ref index);
+
+        // adjectives
+        var adjNounList = CheckAdjectives(words, ref index);
+
+        // get the preposition's object
+        origWord = words[index];
+        string noun = GetMatchingWord(NOUN_PREFIX, words, ref index);
+        if (result.Object == "")
+        {
+            return;
+        }
+        // check adjectives
+        if (adjNounList.Count > 0 && !adjNounList.Contains(noun))
+        {
+            // noun doesn't match adjectives
+            return;
+        }
+        result.Object = noun;
+        result.ObjectWord = origWord;
     }
 
-    #region Private
+    private static void CheckArticles(string[] words, ref int index)
+    {
+        // look for articles (a, an, the) and ignore them
 
-    private static Grod grod = new();
+        string origWord = words[index];
+        int newIndex = index + 1;
 
-    #endregion
+        // get the origWord cut to the proper length
+        var shortWord = FixLength(origWord);
+
+        var wordList = (grod.Get(ARTICLE_LIST) ?? "").Split(',', SPLIT_OPTIONS);
+        foreach (string item in wordList)
+        {
+            var compareWord = FixLength(item);
+            if (compareWord.Equals(shortWord, OIC))
+            {
+                // found a matching article
+                index = newIndex;
+                return;
+            }
+        }
+    }
+
+    private static List<string> CheckAdjectives(string[] words, ref int index)
+    {
+        List<string> adjNounList = [];
+
+        // TODO ### check adjectives
+
+        return adjNounList;
+    }
+
+    private static string FixLength(string word)
+    {
+        return SystemData.WordSize() > 0 && word.Length > SystemData.WordSize()
+            ? word[..SystemData.WordSize()]
+            : word;
+    }
 }
