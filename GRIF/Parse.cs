@@ -3,36 +3,6 @@ using static GRIF.Constants;
 
 namespace GRIF;
 
-// This is a simple VERB or VERB NOUN parser. It looks up matches using
-// "verb." and "noun." as prefixes in the dictionary. These contain one or
-// more comma separated words, such as "GO,RUN,WALK,CLIMB" for the key
-// "verb.go". When matching, case is ignored.
-// 
-// The answers will be stored into "input." values, with "input.verb" and
-// "input.noun" being the second half of the key values found, and
-// "input.verbword" and "input.nounword" being the actual words matched.
-// 
-// When matching succeeds, a CommandKey is returned. This is the script key
-// for the proper command to be run. It is stored in the dictionary as
-// "command.verb" or "command.verb.noun" using the verb and noun identified
-// above. It must exist for this routine to succeed.
-// 
-// If a noun is entered but the command is not found, three special
-// commands will be checked to see if they are in the dictionary for this
-// verb. Avoid using more than one of these for each verb.
-//     "command.verb.#" will match any noun which is an integer number.
-//     "command.verb.*" will match any noun in the dictionary.
-//     "command.verb.?" will match anything entered as a noun.
-// "command.verb.#" is useful for combination locks, pacing off steps
-// before digging, etc., where any number might be entered.
-// "command.verb.*" is useful for generic handling, as "command.take.*"
-// displaying "I don't see that here."
-// "command.verb.?" is good for unknown words, or filenames for saving,
-// or anything undefined. Good for examining items, when the noun is not
-// defined but might be mentioned in the room text. "command.examine.?"
-// could display "There is nothing special about the " and the noun.
-// When the "#" or "?" special commands are matched, "input.noun" will
-// contain "?" or "#" and "input.nounword" will contain what was entered.
 
 public class ParseResult
 {
@@ -40,6 +10,11 @@ public class ParseResult
     public string VerbWord = "";
     public string Noun = "";
     public string NounWord = "";
+    public string Preposition = "";
+    public string PrepositionWord = "";
+    public string Object = "";
+    public string ObjectWord = "";
+
     public string CommandKey = "";
     public string Error = "";
 
@@ -49,6 +24,10 @@ public class ParseResult
         VerbWord = "";
         Noun = "";
         NounWord = "";
+        Preposition = "";
+        PrepositionWord = "";
+        Object = "";
+        ObjectWord = "";
         CommandKey = "";
         Error = "";
     }
@@ -86,11 +65,51 @@ public static class Parse
         {
             return result;
         }
-        if (words.Length > 2)
+
+        int index = 0;
+        GetVerb(result, words, ref index);
+        if (result.Error != "")
+        {
+            return result;
+        }
+        if (result.Verb == "")
         {
             result.Error = SystemData.DontUnderstand(input);
             return result;
         }
+        if (index < words.Length)
+        {
+            GetNoun(result, words, ref index);
+            if (result.Error != "")
+            {
+                return result;
+            }
+            if (result.Noun == "")
+            {
+                result.Error = SystemData.DontUnderstand(input);
+                return result;
+            }
+            if (index < words.Length)
+            {
+                GetPrepositionAndObject(result, words, ref index);
+                if (result.Error != "")
+                {
+                    return result;
+                }
+                if (result.Preposition == "" || result.Object == "")
+                {
+                    result.Error = SystemData.DontUnderstand(input);
+                    return result;
+                }
+            }
+        }
+        if (index < words.Length)
+        {
+            result.Error = SystemData.DontUnderstand(input);
+            return result;
+        }
+
+        //TODO ### left off here
 
         var tempWord0 = words[0];
         var tempWord1 = words.Length > 1 ? words[1] : "";
@@ -136,25 +155,6 @@ public static class Parse
 
         if (tempWord1 != "")
         {
-            foreach (string key in grod.Keys().Where(x => x.StartsWith(NOUN_PREFIX, OIC)))
-            {
-                var nounList = (grod.Get(key) ?? "").Split(',', SPLIT_OPTIONS);
-                foreach (string n in nounList)
-                {
-                    var noun = n;
-                    if (SystemData.WordSize() > 0 && noun.Length > SystemData.WordSize())
-                    {
-                        noun = noun[..SystemData.WordSize()];
-                    }
-                    if (noun.Equals(tempWord1, OIC))
-                    {
-                        result.Noun = key[NOUN_PREFIX.Length..];
-                        result.NounWord = words[1];
-                        break;
-                    }
-                }
-                if (result.Noun != "") break;
-            }
         }
 
         if (result.Verb == "")
@@ -208,13 +208,85 @@ public static class Parse
             return result;
         }
 
-        // Send verb/noun for use in scripts
+        // Set values for use in scripts
         grod.Set($"{INPUT_PREFIX}verb", result.Verb);
         grod.Set($"{INPUT_PREFIX}verbword", result.VerbWord);
         grod.Set($"{INPUT_PREFIX}noun", result.Noun);
         grod.Set($"{INPUT_PREFIX}nounword", result.NounWord);
+        grod.Set($"{INPUT_PREFIX}preposition", result.Preposition);
+        grod.Set($"{INPUT_PREFIX}prepositionword", result.PrepositionWord);
+        grod.Set($"{INPUT_PREFIX}object", result.Object);
+        grod.Set($"{INPUT_PREFIX}objectword", result.ObjectWord);
 
         return result;
+    }
+
+    private static string GetMatchingWord(string keyPrefix, string origWord)
+    {
+        // get the origWord cut to the proper length
+        var shortWord = SystemData.WordSize() > 0 && origWord.Length > SystemData.WordSize()
+            ? origWord[..SystemData.WordSize()]
+            : origWord;
+
+        // compare against each possible word
+        foreach (string key in grod.Keys().Where(x => x.StartsWith(keyPrefix, OIC)))
+        {
+            var wordList = (grod.Get(key) ?? "").Split(',', SPLIT_OPTIONS);
+            foreach (string item in wordList)
+            {
+                var compareWord = SystemData.WordSize() > 0 && item.Length > SystemData.WordSize()
+                    ? item[..SystemData.WordSize()]
+                    : item;
+                if (compareWord.Equals(shortWord, OIC))
+                {
+                    return key[keyPrefix.Length..];
+                }
+            }
+        }
+
+        // not found
+        return "";
+    }
+
+    private static void GetVerb(ParseResult result, string[] words, ref int index)
+    {
+        var origWord = words[index++];
+        var verb = GetMatchingWord(VERB_PREFIX, origWord);
+        result.Verb = origWord;
+        result.VerbWord = verb;
+    }
+
+    private static void GetNoun(ParseResult result, string[] words, ref int index)
+    {
+        var origNoun = words[index++];
+        var tempNoun = SystemData.WordSize() > 0 && origNoun.Length > SystemData.WordSize()
+            ? origNoun[..SystemData.WordSize()]
+            : origNoun;
+
+            foreach (string key in grod.Keys().Where(x => x.StartsWith(NOUN_PREFIX, OIC)))
+        {
+            var nounList = (grod.Get(key) ?? "").Split(',', SPLIT_OPTIONS);
+            foreach (string n in nounList)
+            {
+                var noun = n;
+                if (SystemData.WordSize() > 0 && noun.Length > SystemData.WordSize())
+                {
+                    noun = noun[..SystemData.WordSize()];
+                }
+                if (noun.Equals(tempNoun, OIC))
+                {
+                    result.Noun = key[NOUN_PREFIX.Length..];
+                    result.NounWord = tempNoun;
+                    break;
+                }
+            }
+            if (result.Noun != "") break;
+        }
+    }
+
+    private static void GetPrepositionAndObject(ParseResult result, string[] words, ref int index)
+    {
+        throw new NotImplementedException();
     }
 
     #region Private

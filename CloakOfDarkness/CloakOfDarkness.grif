@@ -91,12 +91,8 @@ adjective.cloak
 	velvet,handsome,black,dark,satin
 adjective.hook
 	brass,small
-article.a
-	a
-article.an
-	an
-article.the
-	the
+articles
+	a,an,another,the,this
 background.intro
 	@if @false(@get(value.introdone)) @then
 		@msg(message.intro)
