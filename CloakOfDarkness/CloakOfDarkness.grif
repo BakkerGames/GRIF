@@ -85,12 +85,18 @@
 	@look
 @quit
 	@setoutchannel("#GAMEOVER;")
+	@nl
 @room
 	@get(value.room)
+adjective.cloak
+	velvet,handsome,black,dark,satin
+adjective.hook
+	brass,small
+articles
+	a,an,another,the,this
 background.intro
 	@if @false(@get(value.introdone)) @then
 		@msg(message.intro)
-		@msg(message.saverestore)
 		@set(value.introdone,true)
 		@nl
 		@look
@@ -133,6 +139,8 @@ command.hang.cloak
 	@else
 		@msg(message.dont_see)
 	@endif
+command.hang.cloak.on.hook
+	@script(command.hang.cloak)
 command.inventory
 	@set(temp.count,0)
 	@foreachkey(x,"item.",".location")
@@ -341,8 +349,6 @@ message.save_complete
 	Save complete.
 message.save_slot_number
 	Enter the slot number of the save file (1-5):
-message.saverestore
-	\n[This demo allows for multiple save slots. Use "save" or "save {n}", 1-5. Same for "restore" or "restore {n}".]
 message.score
 	You have scored {0} out of {1} points.
 message.scoreup
@@ -358,13 +364,13 @@ message.you_lost
 message.you_won
 	"You have won!"
 noun.cloak
-	cloak,velvet,handsome,black,dark,satin
+	cloak
 noun.down
 	down,d,descend
 noun.east
 	east,e
 noun.hook
-	hook,hooks,brass,small,peg
+	hook,hooks,coathook,peg
 noun.message
 	message,scrawled,sawdust,floor,msg
 noun.north
@@ -377,6 +383,8 @@ noun.up
 	up,u,climb
 noun.west
 	west,w
+preposition.on
+	on,upon
 room.bar.exit.down
 	@script(script.bar_cant_go)
 room.bar.exit.east

@@ -55,14 +55,14 @@ key2
     value2
 key3
     @if @eq(@get(key1),value1) @then
-        @write(\"Value found!\")
+        @write("Value found!")
     @else
-        @write(\"Not found\")
+        @write("Not found")
     @endif
 ...
 ```
 
-The whitespace around the keys and values doesn't matter, nor does whitespace within scripts in the `GRIF` format. The order of keys doesn't matter, but keeping them alphabetical can be helpful.
+In the `JSON` format, whitespace outside the quotes around keys and values doesn't matter, nor does whitespace within scripts in either format. The order of keys doesn't matter, but keeping them alphabetical can be helpful.
 
 Any special characters within the keys or values must be escaped. For a double-quote, it would be `\"`. A backslash itself would be `\\`. Newline `\n`, carrige-return `\r, and tab `\t` are allowed. Any other non-ASCII characters (chars 0-31 and 127+) must be escaped 4-digit hexadecimal values, `\u####`.
 
@@ -110,6 +110,47 @@ The directory used for saving is in `Documents` for the current user, in `Docume
 See `InChannel and OutChannel Queues` for information on handling saving, restoring, and restarting in the game data files.
 
 
+## Parsing input
+
+GRIF has a simple parser. It can handle the following patterns. Optional items are in square brackets, and there can be multiple adjectives.
+
+```
+verb
+verb [article] [adjective...] noun
+verb [article] [adjective...] noun preposition [article] [adjective...] object
+```
+
+It looks up matches using key prefixes in the dictionary. It can understand any items starting with one of these prefixes. The "object" value uses the "noun." key prefix.
+
+```
+"verb.", "noun.", "adjective.", "preposition."
+```
+
+These contain one or more comma separated words, such as "GO,RUN,WALK,CLIMB" for the key "verb.go". When matching, case is ignored.
+
+Articles are stored in the list `articles`, which contains `a,an,the` and perhaps others. These are mostly ignored when parsing, except there can only be one before each set of adjectives and a noun.
+
+The answers will be stored into "input." values, with "input.verb" and "input.noun" being the second half of the key values found, and "input.verbword" and "input.nounword" being the actual words matched. "input.preposition", "input.prepositionword", "input.object", and "input.objectword" are filled for the last pattern.
+
+When matching succeeds, a CommandKey is returned. This is the script key for the proper command to be run. It is stored in the dictionary as "command.verb" or "command.verb.noun" using the verb and noun identified above. It must exist for this routine to succeed.
+
+If a noun is entered but the command is not found, three special commands will be checked to see if they are in the dictionary for this verb. Avoid using more than one of these for each verb.
+
+```
+"command.<verb>.#" will match any noun which is an integer number.
+"command.<verb>.*" will match any noun in the dictionary.
+"command.<verb>.?" will match anything entered as a noun, even if not in the dictionary.
+```
+
+"command.verb.#" is useful for combination locks, pacing off steps before digging, etc., where any number might be entered, but most are invalid. There should be commands for valid ones, like "command.pace.30" or "command.left.15". Or the command with "#" could check the entered number sent in "input.nounword".
+
+"command.verb.\*" is useful for generic handling, as "command.take.\*" displaying "I don't see that here."
+
+"command.verb.?" is good for unknown words, or filenames for saving, or anything undefined. Good for examining items, when the noun is not defined but might be mentioned in the room text. "command.examine.?" could display "There is nothing special about the " and the noun.
+
+When "#" or "?" special commands are matched, "input.noun" will contain "?" or "#" and "input.nounword" will contain what was entered.
+
+
 ## Data used by GRIF
 
 GRIF expects that there will be certain keys and values in the data file so it can run. They will have special prefixes to indicate their purpose. Here are the ones GRIF expects:
@@ -146,11 +187,22 @@ noun.cup
     cup,glass,goblet
 ```
 
-`command.<verb>`, `command.<verb>.<noun>`
+`adjective.???`
 
-One for each allowed verb and verb/noun combination allowed during the game. These would have scripts to be run when the command is entered. The "verb" and "noun" would match the name part of the verb and noun lines.
+The second part of `adjective.???` is the noun for which the adjectives apply, and the value is a list of valid adjectives. The adjectives within descriptive text should be included for each noun. For example:
 
-The noun part can be replaced with "*" to mean any noun which is not specifically covered in another command. (See "input.noun" for info on processing these.)
+```
+adjective.ball
+    blue,rubber,large
+adjective.vase
+    crystal,fragile
+```
+
+`command.<verb>`, `command.<verb>.<noun>`, `command.<verb>.<noun>.<preposition>.<noun>`
+
+One for each allowed verb, verb/noun, and verb/noun/preposition/noun combination allowed during the game. These would have scripts to be run when the command is entered.
+
+The noun part can be replaced with "\*" to mean any noun which is not specifically covered in another command. (See "input.noun" for info on processing these.)
 
 The noun part can be replaced with "#" to mean any number. Some commands need a number but there could be many possibilities. The value in "input.noun" will be "#" and "input.nounword" will contain the entered number. Note that if you have `command.<verb>.#` it will supercede all other commands for a verb with numeric values.
 
@@ -233,7 +285,7 @@ system.do_what_with
 
 The prefix `input.` is used by GRIF to send information typed by the player over to the game scripts so it can be used as needed. These values are temporary and change each time the player's input is parsed. They are not usually stored in the initial game data but appear as the game is run.
 
-`input.verb`, `input.noun`, `input.verbword`, `input.nounword`
+`input.verb`, `input.verbword`, `input.noun`, `input.nounword`, `input.preposition`, `input.prepositionword`, `input.object`, `input.objectword`
 
 The "verb" and "noun" entered by the player are sent to the DAGS engine in the values for `input.verb` and `input.noun`. These could then be used in a script. So `command.take.*` would be run and know that `@get(input.noun)` has the item name the player wanted to take. These are the general names, as in `noun.cup` above, even if the player entered "take goblet". The specific words the player used, such as "goblet", are sent in `input.verbword` and `input.nounword`, in case those are necessary for messages.
 
