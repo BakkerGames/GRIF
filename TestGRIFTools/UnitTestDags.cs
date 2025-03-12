@@ -1002,12 +1002,24 @@ public class UnitTestDags
     [Test]
     public void Test_Write()
     {
-        Assert.Fail();
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        var value1 = "123";
+        dags.RunScript($"@write({value1})", result);
+        Assert.That(result.ToString(), Is.EqualTo(value1));
     }
 
     [Test]
     public void Test_WriteLine()
     {
-        Assert.Fail();
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        var value1 = "123";
+        dags.RunScript($"@writeline({value1})", result);
+        // @writeline result ends with two characters, '\' and 'n'.
+        // This is the expected behavior. See Test_NL().
+        Assert.That(result.ToString(), Is.EqualTo(value1 + "\\n"));
     }
 }
