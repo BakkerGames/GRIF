@@ -40,6 +40,8 @@ public static class Parse
 
         // check through patterns:
         //     verb
+        //     verb <number>
+        //     verb <unknown_word>
         //     verb [article] [adjectives...] noun
         //     verb [article] [adjectives...] noun preposition [article] [adjectives...] object
 
@@ -65,10 +67,10 @@ public static class Parse
             }
             if (result.Noun == "")
             {
-                result.Error = SystemData.DontUnderstand(input);
-                return result;
+                // might be unknown or number, so save NounWord for later
+                result.NounWord = words[index++];
             }
-            if (index < words.Length)
+            if (result.Noun != "" && index < words.Length)
             {
                 GetPrepositionAndObject(result, words, ref index);
                 if (result.Error != "")
@@ -91,7 +93,7 @@ public static class Parse
         // find a matching command script key in the dictionary
 
         var tempCommandKey = $"{COMMAND_PREFIX}{result.Verb}";
-        if (result.Noun == "")
+        if (result.NounWord == "") // don't check result.Noun here
         {
             if (grod.ContainsKey(tempCommandKey))
             {
@@ -113,19 +115,19 @@ public static class Parse
                 result.CommandKey = $"{tempCommandKey}.{result.Noun}.{result.Preposition}.*";
             }
         }
-        else if (grod.ContainsKey($"{tempCommandKey}.{result.Noun}"))
+        else if (result.Noun != "" && grod.ContainsKey($"{tempCommandKey}.{result.Noun}"))
         {
             result.CommandKey = $"{tempCommandKey}.{result.Noun}";
-        }
-        else if (grod.ContainsKey($"{tempCommandKey}.*"))
-        {
-            result.CommandKey = $"{tempCommandKey}.*";
         }
         else if (grod.ContainsKey($"{tempCommandKey}.#") && int.TryParse(result.NounWord, out int number))
         {
             result.Noun = "#"; // special indicator for any number
             result.NounWord = number.ToString(); // normalized number
             result.CommandKey = $"{tempCommandKey}.#";
+        }
+        else if (result.Noun != "" && grod.ContainsKey($"{tempCommandKey}.*"))
+        {
+            result.CommandKey = $"{tempCommandKey}.*";
         }
         else if (grod.ContainsKey($"{tempCommandKey}.?"))
         {
