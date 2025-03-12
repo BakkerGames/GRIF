@@ -3,35 +3,6 @@ using static GRIF.Constants;
 
 namespace GRIF;
 
-public class ParseResult
-{
-    public string Verb = "";
-    public string VerbWord = "";
-    public string Noun = "";
-    public string NounWord = "";
-    public string Preposition = "";
-    public string PrepositionWord = "";
-    public string Object = "";
-    public string ObjectWord = "";
-
-    public string CommandKey = "";
-    public string Error = "";
-
-    public void Clear()
-    {
-        Verb = "";
-        VerbWord = "";
-        Noun = "";
-        NounWord = "";
-        Preposition = "";
-        PrepositionWord = "";
-        Object = "";
-        ObjectWord = "";
-        CommandKey = "";
-        Error = "";
-    }
-}
-
 public static class Parse
 {
     private static Grod grod = new();
@@ -61,11 +32,16 @@ public static class Parse
         grod.Set($"{INPUT_PREFIX}object", "");
         grod.Set($"{INPUT_PREFIX}objectword", "");
 
-        var words = input.Split(' ', SPLIT_OPTIONS);
+        var words = input.Replace(",", " ").Split(' ', SPLIT_OPTIONS);
         if (words.Length == 0)
         {
             return result;
         }
+
+        // check through patterns:
+        //     verb
+        //     verb [article] [adjectives...] noun
+        //     verb [article] [adjectives...] noun preposition [article] [adjectives...] object
 
         int index = 0;
 
@@ -176,50 +152,6 @@ public static class Parse
         return result;
     }
 
-    private static string GetMatchingWord(string keyPrefix, string[] words, ref int index)
-    {
-        string answer = "";
-        Dictionary<string, string> multiWords = [];
-
-        string origWord = words[index];
-        int newIndex = index + 1;
-
-        // get the origWord cut to the proper length
-        var shortWord = FixLength(origWord);
-
-        // compare against each possible word
-        foreach (string key in grod.Keys().Where(x => x.StartsWith(keyPrefix, OIC)))
-        {
-            var wordList = (grod.Get(key) ?? "").Split(',', SPLIT_OPTIONS);
-            foreach (string item in wordList)
-            {
-                // Check for items made of two or more words
-                if (item.Contains(' '))
-                {
-                    multiWords.Add(key[keyPrefix.Length..], item);
-                }
-                var compareWord = FixLength(item);
-                if (compareWord.Equals(shortWord, OIC) && answer == "")
-                {
-                    answer = key[keyPrefix.Length..];
-                    break; // TODO ### have to remove for multi word checking
-                }
-            }
-            if (answer != "") break; // TODO ### have to remove for multi word checking
-        }
-
-        // check multi word list
-        // TODO ### check multi word list
-
-        if (answer != "")
-        {
-            // bump index past matched word(s)
-            index = newIndex;
-        }
-
-        return answer;
-    }
-
     private static void GetVerb(ParseResult result, string[] words, ref int index)
     {
         string origWord = words[index];
@@ -237,7 +169,7 @@ public static class Parse
         CheckArticles(words, ref index);
 
         // adjectives
-        var adjNounList = CheckAdjectives(words, ref index);
+        var adjectiveNounList = CheckAdjectives(words, ref index);
 
         // get the noun
         string origWord = words[index];
@@ -246,12 +178,14 @@ public static class Parse
         {
             return;
         }
+
         // check adjectives
-        if (adjNounList.Count > 0 && !adjNounList.Contains(noun))
+        if (adjectiveNounList != null && !adjectiveNounList.Contains(noun))
         {
             // noun doesn't match adjectives
             return;
         }
+
         result.Noun = noun;
         result.NounWord = origWord;
     }
@@ -259,35 +193,75 @@ public static class Parse
     private static void GetPrepositionAndObject(ParseResult result, string[] words, ref int index)
     {
         // get the preposition
-        string origWord = words[index];
-        result.Preposition = GetMatchingWord(PREPOSITION_PREFIX, words, ref index);
-        if (result.Preposition == "")
+        string origWord1 = words[index];
+        var prep = GetMatchingWord(PREPOSITION_PREFIX, words, ref index);
+        if (prep == "")
         {
             return;
         }
-        result.PrepositionWord = origWord;
+
+        result.Preposition = prep;
+        result.PrepositionWord = origWord1;
 
         // articles
         CheckArticles(words, ref index);
 
         // adjectives
-        var adjNounList = CheckAdjectives(words, ref index);
+        var adjectiveNounList = CheckAdjectives(words, ref index);
 
         // get the preposition's object
-        origWord = words[index];
+        string origWord2 = words[index];
         string noun = GetMatchingWord(NOUN_PREFIX, words, ref index);
-        if (result.Object == "")
+        if (noun == "")
         {
             return;
         }
+
         // check adjectives
-        if (adjNounList.Count > 0 && !adjNounList.Contains(noun))
+        if (adjectiveNounList != null && !adjectiveNounList.Contains(noun))
         {
             // noun doesn't match adjectives
             return;
         }
+
         result.Object = noun;
-        result.ObjectWord = origWord;
+        result.ObjectWord = origWord2;
+    }
+
+    private static string GetMatchingWord(string keyPrefix, string[] words, ref int index)
+    {
+        string answer = "";
+
+        string origWord = words[index];
+        int newIndex = index + 1;
+
+        // get the origWord cut to the proper length
+        var shortWord = FixLength(origWord);
+
+        // compare against each possible word
+        foreach (string key in grod.Keys().Where(x => x.StartsWith(keyPrefix, OIC)))
+        {
+            var wordList = (grod.Get(key) ?? "").Split(',', SPLIT_OPTIONS);
+            foreach (string item in wordList)
+            {
+                // Check for items made of two or more words
+                var compareWord = FixLength(item);
+                if (compareWord.Equals(shortWord, OIC) && answer == "")
+                {
+                    answer = key[keyPrefix.Length..];
+                    break;
+                }
+            }
+            if (answer != "") break;
+        }
+
+        if (answer != "")
+        {
+            // bump index past matched word(s)
+            index = newIndex;
+        }
+
+        return answer;
     }
 
     private static void CheckArticles(string[] words, ref int index)
@@ -313,13 +287,70 @@ public static class Parse
         }
     }
 
-    private static List<string> CheckAdjectives(string[] words, ref int index)
+    private static List<string>? CheckAdjectives(string[] words, ref int index)
     {
-        List<string> adjNounList = [];
+        // adjectives have keys "adjective.<noun>" and a list of adjectives for that noun.
+        // when checking multiple adjectives, all must match the same noun(s).
+        // the "intersect" removes any not matching on either side.
+        // upon returning, the following noun must be in the adjective noun list, or it fails.
 
-        // TODO ### check adjectives
+        bool firstTime = true;
+        bool foundOne = false;
+        List<string> nounList = [];
+        List<string> newNounList = [];
 
-        return adjNounList;
+        int newIndex = index;
+
+        do
+        {
+            foundOne = false;
+            string origWord = words[newIndex];
+            var shortWord = FixLength(origWord);
+            newNounList.Clear();
+
+            // check adjectives
+            foreach (string key in grod.Keys().Where(x => x.StartsWith(ADJECTIVE_PREFIX, OIC)))
+            {
+                var wordList = (grod.Get(key) ?? "").Split(',', SPLIT_OPTIONS);
+                foreach (string item in wordList)
+                {
+                    var compareWord = FixLength(item);
+                    if (compareWord.Equals(shortWord, OIC))
+                    {
+                        var noun = key[ADJECTIVE_PREFIX.Length..];
+                        newNounList.Add(noun);
+                        foundOne = true;
+                        newIndex++;
+                        break;
+                    }
+                }
+            }
+
+            if (foundOne)
+            {
+                if (firstTime)
+                {
+                    // no intersect first time, just copy
+                    nounList = [.. newNounList];
+                    firstTime = false;
+                }
+                else
+                {
+                    // intersect both lists, only keeping nouns in both
+                    nounList = [.. nounList.Intersect(newNounList)];
+                }
+            }
+
+        } while (foundOne);
+
+        if (firstTime) // never found an adjective
+        {
+            return null;
+        }
+
+        // found at least one adjective. nounList could be empty though.
+        index = newIndex;
+        return nounList;
     }
 
     private static string FixLength(string word)

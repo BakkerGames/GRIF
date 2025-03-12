@@ -62,6 +62,10 @@ public static class UserIO
                 }
                 result = "";
             }
+            if (result == "" && !emptyAllowed)
+            {
+                Output(SystemData.Prompt());
+            }
         } while (result == "" && !emptyAllowed);
         LastLen = 0; // moved to new line
         if (LogFilename != "")
