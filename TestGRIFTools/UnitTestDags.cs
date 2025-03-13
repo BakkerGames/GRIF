@@ -966,37 +966,96 @@ public class UnitTestDags
     [Test]
     public void Test_AddList()
     {
-        Assert.Fail();
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        var key = "abc";
+        var value1 = "123";
+        var value2 = "456";
+        dags.RunScript($"@addlist({key},{value1}) @addlist({key},{value2})", result);
+        dags.RunScript($"@get({key})", result);
+        Assert.That(result.ToString(), Is.EqualTo(value1 + ',' + value2));
     }
 
     [Test]
     public void Test_ClearList()
     {
-        Assert.Fail();
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        var key = "abc";
+        var value1 = "123";
+        var value2 = "456";
+        dags.RunScript($"@addlist({key},{value1}) @addlist({key},{value2})", result);
+        dags.RunScript($"@clearlist({key})", result);
+        dags.RunScript($"@get({key})", result);
+        Assert.That(result.ToString(), Is.EqualTo(""));
     }
 
     [Test]
     public void Test_GetArray()
     {
-        Assert.Fail();
+        Grod data = new();
+        Dags dags = new(data);
+        var key = "abc";
+        var value = "123";
+        StringBuilder result = new();
+        dags.RunScript($"@setarray({key},2,3,{value})", result);
+        dags.RunScript($"@getarray({key},2,3)", result);
+        Assert.That(result.ToString(), Is.EqualTo(value));
     }
 
     [Test]
     public void Test_GetList()
     {
-        Assert.Fail();
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        var key = "abc";
+        var value1 = "123";
+        var value2 = "456";
+        dags.RunScript($"@addlist({key},{value1}) @addlist({key},{value2})", result);
+        dags.RunScript($"@getlist({key},0)", result);
+        Assert.That(result.ToString(), Is.EqualTo(value1));
+        result.Clear();
+        dags.RunScript($"@getlist({key},1)", result);
+        Assert.That(result.ToString(), Is.EqualTo(value2));
+        result.Clear();
+        dags.RunScript($"@getlist({key},2)", result);
+        Assert.That(result.ToString(), Is.EqualTo(""));
     }
 
     [Test]
     public void Test_IsNumber()
     {
-        Assert.Fail();
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        var value1 = "123";
+        var value2 = "abc";
+        var value3 = "";
+        dags.RunScript($"@isnumber({value1})", result);
+        Assert.That(result.ToString(), Is.EqualTo("true"));
+        result.Clear();
+        dags.RunScript($"@isnumber({value2})", result);
+        Assert.That(result.ToString(), Is.EqualTo("false"));
+        result.Clear();
+        dags.RunScript($"@isnumber({value3})", result);
+        Assert.That(result.ToString()[..5], Is.EqualTo("ERROR"));
     }
 
     [Test]
     public void Test_ListLength()
     {
-        Assert.Fail();
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        var key = "abc";
+        var value1 = "123";
+        var value2 = "456";
+        dags.RunScript($"@addlist({key},{value1}) @addlist({key},{value2})", result);
+        dags.RunScript($"@listlength({key})", result);
+        Assert.That(result.ToString(), Is.EqualTo("2"));
     }
 
     [Test]
