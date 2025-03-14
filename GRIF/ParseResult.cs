@@ -27,4 +27,14 @@ public class ParseResult
         CommandKey = "";
         Error = "";
     }
+
+    public void ClearForNoun()
+    {
+        Preposition = "";
+        PrepositionWord = "";
+        Object = "";
+        ObjectWord = "";
+        CommandKey = "";
+        Error = "";
+    }
 }

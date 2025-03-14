@@ -32,7 +32,12 @@ public static class Parse
         grod.Set($"{INPUT_PREFIX}object", "");
         grod.Set($"{INPUT_PREFIX}objectword", "");
 
-        var words = input.Replace(",", " ").Split(' ', SPLIT_OPTIONS);
+        input = input.Replace(",", " ").Trim();
+        if (input.EndsWith('.') || input.EndsWith('!') || input.EndsWith('?'))
+        {
+            input = input[..^1]; // remove punctuation
+        }
+        var words = input.Split(' ', SPLIT_OPTIONS);
         if (words.Length == 0)
         {
             return result;
@@ -42,6 +47,7 @@ public static class Parse
         //     verb
         //     verb <number>
         //     verb <unknown_word>
+        //     verb preposition [article] [adjectives...] object
         //     verb [article] [adjectives...] noun
         //     verb [article] [adjectives...] noun preposition [article] [adjectives...] object
 
@@ -60,27 +66,32 @@ public static class Parse
 
         if (index < words.Length)
         {
-            GetNoun(result, words, ref index);
-            if (result.Error != "")
+            GetPrepositionAndObject(result, words, ref index);
+            if (result.Error != "" || result.Preposition == "" || result.Object == "")
             {
-                return result;
-            }
-            if (result.Noun == "")
-            {
-                // might be unknown or number, so save NounWord for later
-                result.NounWord = words[index++];
-            }
-            if (result.Noun != "" && index < words.Length)
-            {
-                GetPrepositionAndObject(result, words, ref index);
+                result.ClearForNoun();
+                GetNoun(result, words, ref index);
                 if (result.Error != "")
                 {
                     return result;
                 }
-                if (result.Preposition == "" || result.Object == "")
+                if (result.Noun == "")
                 {
-                    result.Error = SystemData.DontUnderstand(input);
-                    return result;
+                    // might be unknown or number, so save NounWord for later
+                    result.NounWord = words[index++];
+                }
+                if (result.Noun != "" && index < words.Length)
+                {
+                    GetPrepositionAndObject(result, words, ref index);
+                    if (result.Error != "")
+                    {
+                        return result;
+                    }
+                    if (result.Preposition == "" || result.Object == "")
+                    {
+                        result.Error = SystemData.DontUnderstand(input);
+                        return result;
+                    }
                 }
             }
         }
@@ -95,7 +106,18 @@ public static class Parse
         var tempCommandKey = $"{COMMAND_PREFIX}{result.Verb}";
         if (result.NounWord == "") // don't check result.Noun here
         {
-            if (grod.ContainsKey(tempCommandKey))
+            if (result.Preposition != "" && result.Object != "")
+            {
+                if (grod.ContainsKey($"{tempCommandKey}.{result.Preposition}.{result.Object}"))
+                {
+                    result.CommandKey = $"{tempCommandKey}.{result.Preposition}.{result.Object}";
+                }
+                else if (grod.ContainsKey($"{tempCommandKey}.{result.Preposition}.*"))
+                {
+                    result.CommandKey = $"{tempCommandKey}.{result.Preposition}.*";
+                }
+            }
+            else if (grod.ContainsKey(tempCommandKey))
             {
                 result.CommandKey = tempCommandKey;
             }
@@ -194,26 +216,25 @@ public static class Parse
 
     private static void GetPrepositionAndObject(ParseResult result, string[] words, ref int index)
     {
+        int newIndex = index;
+
         // get the preposition
-        string origWord1 = words[index];
-        var prep = GetMatchingWord(PREPOSITION_PREFIX, words, ref index);
-        if (prep == "")
+        string origWord1 = words[newIndex];
+        var preposition = GetMatchingWord(PREPOSITION_PREFIX, words, ref newIndex);
+        if (preposition == "")
         {
             return;
         }
 
-        result.Preposition = prep;
-        result.PrepositionWord = origWord1;
-
         // articles
-        CheckArticles(words, ref index);
+        CheckArticles(words, ref newIndex);
 
         // adjectives
-        var adjectiveNounList = CheckAdjectives(words, ref index);
+        var adjectiveNounList = CheckAdjectives(words, ref newIndex);
 
         // get the preposition's object
-        string origWord2 = words[index];
-        string noun = GetMatchingWord(NOUN_PREFIX, words, ref index);
+        string origWord2 = words[newIndex];
+        string noun = GetMatchingWord(NOUN_PREFIX, words, ref newIndex);
         if (noun == "")
         {
             return;
@@ -226,6 +247,10 @@ public static class Parse
             return;
         }
 
+        // found a match
+        index = newIndex;
+        result.Preposition = preposition;
+        result.PrepositionWord = origWord1;
         result.Object = noun;
         result.ObjectWord = origWord2;
     }

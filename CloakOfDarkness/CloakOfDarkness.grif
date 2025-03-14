@@ -156,24 +156,32 @@ command.inventory
 		@msg(message.inv_empty)
 	@endif
 command.look
-	@set(value.fulllook,true)
-	@look
-command.look.cloak
+	@lookfull
+command.look.*
+	@script(@concat("command.examine.",@get(input.noun)))
+command.look.at.*
+	@script(@concat("command.examine.",@get(input.object)))
+command.look.room
+	@lookfull
+command.look.at.room
+	@lookfull
+command.examine.cloak
 	@if @herecarry(cloak) @or @herechild(cloak) @then
 		@write("A ")
 		@msg(item.cloak.description)
 	@else
 		@msg(message.dont_see)
 	@endif
-command.look.hook
+command.examine.hook
 	@msg(item.hook.examine)
-command.look.message
+command.examine.message
 	@script(command.read.message)
 command.north
 	@godir(north)
 command.out
 	@godir(out)
 command.quit
+	@script(command.score)
 	@quit
 command.read
 	@msg(message.read_what)
@@ -239,7 +247,6 @@ command.save.#
 	@endif
 command.score
 	@write(@format(@get(message.score),@get(value.score),@get(value.maxscore)))
-	@nl
 command.south
 	@godir(south)
 command.take.*
@@ -377,12 +384,16 @@ noun.north
 	north,n
 noun.out
 	out
+noun.room
+	room
 noun.south
 	south,s
 noun.up
 	up,u,climb
 noun.west
 	west,w
+preposition.at
+	at
 preposition.on
 	on,upon
 room.bar.exit.down
@@ -475,8 +486,6 @@ system.gamename
 	CloakOfDarkness
 system.gametitle
 	Cloak Of Darkness
-system.nl_after_prompt
-	true
 system.output_width
 	80
 system.prompt
@@ -509,8 +518,10 @@ verb.hang
 	hang,put,place
 verb.inventory
 	i,inv,inventory
+verb.examine
+	x,examine
 verb.look
-	l,look,x,examine
+	l,look
 verb.north
 	north,n
 verb.out
