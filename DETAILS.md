@@ -35,7 +35,7 @@ There are two formats supported for GRIF files: JSON format and GRIF format.
 
 The `JSON` format has `{` and `}` at the beginning and end of the file, with each line separated by commas. The last line should not end with a comma. This is less human-readable as scripts cannot have any formatting.
 
-The `GRIF` format is a more relaxed text format, where keys have no leading or trailing whitespace, and all following lines are indented with spaces or tabs and combine into a single value. If there are any leading or trailing spaces in values, use `\s` to indicate the first leading or last trailing space so it won't get trimmed.
+The `GRIF` format is a more relaxed text format, where keys have no leading or trailing whitespace, and all following lines are indented with spaces or tabs and combine into a single value. The amount of indenting doesn't matter, but scripts are usually formatted with different indent levels as seen below. If there are any leading or trailing spaces in values, use `\s` to indicate the first leading or last trailing space so it won't get trimmed.
 
 
 Examples:
