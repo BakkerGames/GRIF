@@ -65,9 +65,9 @@ key3
 
 In the `JSON` format, whitespace outside the quotes around keys and values doesn't matter, nor does whitespace within scripts in either format. The order of keys doesn't matter, but keeping them alphabetical can be helpful.
 
-Any special characters within the keys or values must be escaped. For a double-quote, it would be `\"`. A backslash itself would be `\\`. Newline `\n`, carrige-return `\r, and tab `\t` are allowed. Any other non-ASCII characters (chars 0-31 and 127+) must be escaped 4-digit hexadecimal values, `\u####`.
+Any special characters within the keys or values must be escaped. For a double-quote within other double-quotes, it would be `\"`. A backslash itself would be `\\`. Newline `\n`, carrige-return `\r`, and tab `\t` are allowed. Any other non-ASCII characters (chars 0-31 and 127+) must be escaped 4-digit hexadecimal values, `\u####`.
 
-For scripts, where the value starts with a `@`, there can be formatting in the values using newlines, tabs, and spaces. GRIF data files allow this formatting for making scripts easier to read. They will be handled properly while loading. Note that the value still starts and ends with double quotes and internal quotes are escaped.
+For scripts, where the value starts with a `@`, there can be formatting in the values using newlines, tabs, and spaces. GRIF data files allow this formatting for making scripts easier to read. They will be handled properly while loading.
 
 ```
 scriptkey
