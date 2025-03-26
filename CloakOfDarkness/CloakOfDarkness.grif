@@ -249,6 +249,13 @@ command.score
 	@write(@format(@get(message.score),@get(value.score),@get(value.maxscore)))
 command.south
 	@godir(south)
+command.take.cloak.from.hook
+	@if @here(hook) @and @herechild(cloak) @then
+		@set(item.cloak.location,@inv)
+		@msg(message.ok)
+	@else
+		@msg(message.dont_see)
+	@endif
 command.take.*
 	@if @dark @then
 		@msg(message.too_dark)
@@ -394,6 +401,8 @@ noun.west
 	west,w
 preposition.at
 	at
+preposition.from
+	from,off
 preposition.on
 	on,upon
 room.bar.exit.down

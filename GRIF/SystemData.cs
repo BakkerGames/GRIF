@@ -23,18 +23,6 @@ public static class SystemData
         return grod.Get(GAMENAME) ?? "";
     }
 
-    public static int WordSize()
-    {
-        if (grod.ContainsKey(WORD_SIZE))
-        {
-            if (int.TryParse(grod.Get(WORD_SIZE), out int answer))
-            {
-                return answer;
-            }
-        }
-        return 0;
-    }
-
     public static bool Uppercase()
     {
         if (grod.ContainsKey(UPPERCASE))
@@ -177,7 +165,6 @@ public static class SystemData
     private const string OUTPUT_WIDTH = "system.output_width";
     private const string PROMPT = "system.prompt";
     private const string UPPERCASE = "system.uppercase";
-    private const string WORD_SIZE = "system.wordsize";
 
     private const string AFTER_PROMPT_DEFAULT = "";
     private const string DONT_UNDERSTAND_DEFAULT = "I don't understand \"{0}\".";

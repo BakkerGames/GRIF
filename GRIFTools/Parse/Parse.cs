@@ -1,15 +1,15 @@
-﻿using GRIFTools;
-using static GRIF.Constants;
+﻿using static GRIFTools.Parse.ParseValues;
 
-namespace GRIF;
+namespace GRIFTools.Parse;
 
 public static class Parse
 {
-    private static Grod grod = new();
+    private static Grod _grod = new();
 
     public static void Init(Grod grod)
     {
-        Parse.grod = grod;
+        _grod = grod;
+        ParseValues.Init(grod);
     }
 
     public static ParseResult ParseInput(string input)
@@ -23,14 +23,14 @@ public static class Parse
         }
 
         // Clear answers
-        grod.Set($"{INPUT_PREFIX}verb", "");
-        grod.Set($"{INPUT_PREFIX}verbword", "");
-        grod.Set($"{INPUT_PREFIX}noun", "");
-        grod.Set($"{INPUT_PREFIX}nounword", "");
-        grod.Set($"{INPUT_PREFIX}preposition", "");
-        grod.Set($"{INPUT_PREFIX}prepositionword", "");
-        grod.Set($"{INPUT_PREFIX}object", "");
-        grod.Set($"{INPUT_PREFIX}objectword", "");
+        _grod.Set($"{INPUT_PREFIX}verb", "");
+        _grod.Set($"{INPUT_PREFIX}verbword", "");
+        _grod.Set($"{INPUT_PREFIX}noun", "");
+        _grod.Set($"{INPUT_PREFIX}nounword", "");
+        _grod.Set($"{INPUT_PREFIX}preposition", "");
+        _grod.Set($"{INPUT_PREFIX}prepositionword", "");
+        _grod.Set($"{INPUT_PREFIX}object", "");
+        _grod.Set($"{INPUT_PREFIX}objectword", "");
 
         input = input.Replace(",", " ").Trim();
         if (input.EndsWith('.') || input.EndsWith('!') || input.EndsWith('?'))
@@ -60,7 +60,7 @@ public static class Parse
         }
         if (result.Verb == "")
         {
-            result.Error = SystemData.DontUnderstand(input);
+            result.Error = DONT_UNDERSTAND_THAT;
             return result;
         }
 
@@ -89,7 +89,7 @@ public static class Parse
                     }
                     if (result.Preposition == "" || result.Object == "")
                     {
-                        result.Error = SystemData.DontUnderstand(input);
+                        result.Error = string.Format(DONT_UNDERSTAND_INPUT, input);
                         return result;
                     }
                 }
@@ -97,7 +97,7 @@ public static class Parse
         }
         if (index < words.Length)
         {
-            result.Error = SystemData.DontUnderstand(input);
+            result.Error = string.Format(DONT_UNDERSTAND_INPUT, input);
             return result;
         }
 
@@ -108,50 +108,50 @@ public static class Parse
         {
             if (result.Preposition != "" && result.Object != "")
             {
-                if (grod.ContainsKey($"{tempCommandKey}.{result.Preposition}.{result.Object}"))
+                if (_grod.ContainsKey($"{tempCommandKey}.{result.Preposition}.{result.Object}"))
                 {
                     result.CommandKey = $"{tempCommandKey}.{result.Preposition}.{result.Object}";
                 }
-                else if (grod.ContainsKey($"{tempCommandKey}.{result.Preposition}.*"))
+                else if (_grod.ContainsKey($"{tempCommandKey}.{result.Preposition}.*"))
                 {
                     result.CommandKey = $"{tempCommandKey}.{result.Preposition}.*";
                 }
             }
-            else if (grod.ContainsKey(tempCommandKey))
+            else if (_grod.ContainsKey(tempCommandKey))
             {
                 result.CommandKey = tempCommandKey;
             }
         }
         else if (result.Preposition != "" && result.Object != "")
         {
-            if (grod.ContainsKey($"{tempCommandKey}.{result.Noun}.{result.Preposition}.{result.Object}"))
+            if (_grod.ContainsKey($"{tempCommandKey}.{result.Noun}.{result.Preposition}.{result.Object}"))
             {
                 result.CommandKey = $"{tempCommandKey}.{result.Noun}.{result.Preposition}.{result.Object}";
             }
-            else if (grod.ContainsKey($"{tempCommandKey}.*.{result.Preposition}.{result.Object}"))
+            else if (_grod.ContainsKey($"{tempCommandKey}.*.{result.Preposition}.{result.Object}"))
             {
                 result.CommandKey = $"{tempCommandKey}.*.{result.Preposition}.{result.Object}";
             }
-            else if (grod.ContainsKey($"{tempCommandKey}.{result.Noun}.{result.Preposition}.*"))
+            else if (_grod.ContainsKey($"{tempCommandKey}.{result.Noun}.{result.Preposition}.*"))
             {
                 result.CommandKey = $"{tempCommandKey}.{result.Noun}.{result.Preposition}.*";
             }
         }
-        else if (result.Noun != "" && grod.ContainsKey($"{tempCommandKey}.{result.Noun}"))
+        else if (result.Noun != "" && _grod.ContainsKey($"{tempCommandKey}.{result.Noun}"))
         {
             result.CommandKey = $"{tempCommandKey}.{result.Noun}";
         }
-        else if (grod.ContainsKey($"{tempCommandKey}.#") && int.TryParse(result.NounWord, out int number))
+        else if (_grod.ContainsKey($"{tempCommandKey}.#") && int.TryParse(result.NounWord, out int number))
         {
             result.Noun = "#"; // special indicator for any number
             result.NounWord = number.ToString(); // normalized number
             result.CommandKey = $"{tempCommandKey}.#";
         }
-        else if (result.Noun != "" && grod.ContainsKey($"{tempCommandKey}.*"))
+        else if (result.Noun != "" && _grod.ContainsKey($"{tempCommandKey}.*"))
         {
             result.CommandKey = $"{tempCommandKey}.*";
         }
-        else if (grod.ContainsKey($"{tempCommandKey}.?"))
+        else if (_grod.ContainsKey($"{tempCommandKey}.?"))
         {
             result.Noun = "?"; // special indicator for any value, like a filename
             result.CommandKey = $"{tempCommandKey}.?";
@@ -159,19 +159,19 @@ public static class Parse
 
         if (result.CommandKey == "")
         {
-            result.Error = SystemData.DontUnderstand(input);
+            result.Error = string.Format(DONT_UNDERSTAND_INPUT, input);
             return result;
         }
 
         // Set values for use in scripts
-        grod.Set($"{INPUT_PREFIX}verb", result.Verb);
-        grod.Set($"{INPUT_PREFIX}verbword", result.VerbWord);
-        grod.Set($"{INPUT_PREFIX}noun", result.Noun);
-        grod.Set($"{INPUT_PREFIX}nounword", result.NounWord);
-        grod.Set($"{INPUT_PREFIX}preposition", result.Preposition);
-        grod.Set($"{INPUT_PREFIX}prepositionword", result.PrepositionWord);
-        grod.Set($"{INPUT_PREFIX}object", result.Object);
-        grod.Set($"{INPUT_PREFIX}objectword", result.ObjectWord);
+        _grod.Set($"{INPUT_PREFIX}verb", result.Verb);
+        _grod.Set($"{INPUT_PREFIX}verbword", result.VerbWord);
+        _grod.Set($"{INPUT_PREFIX}noun", result.Noun);
+        _grod.Set($"{INPUT_PREFIX}nounword", result.NounWord);
+        _grod.Set($"{INPUT_PREFIX}preposition", result.Preposition);
+        _grod.Set($"{INPUT_PREFIX}prepositionword", result.PrepositionWord);
+        _grod.Set($"{INPUT_PREFIX}object", result.Object);
+        _grod.Set($"{INPUT_PREFIX}objectword", result.ObjectWord);
 
         return result;
     }
@@ -266,9 +266,9 @@ public static class Parse
         var shortWord = FixLength(origWord);
 
         // compare against each possible word
-        foreach (string key in grod.Keys().Where(x => x.StartsWith(keyPrefix, OIC)))
+        foreach (string key in _grod.Keys().Where(x => x.StartsWith(keyPrefix, OIC)))
         {
-            var wordList = (grod.Get(key) ?? "").Split(',', SPLIT_OPTIONS);
+            var wordList = (_grod.Get(key) ?? "").Split(',', SPLIT_OPTIONS);
             foreach (string item in wordList)
             {
                 // Check for items made of two or more words
@@ -301,7 +301,7 @@ public static class Parse
         // get the origWord cut to the proper length
         var shortWord = FixLength(origWord);
 
-        var wordList = (grod.Get(ARTICLE_LIST) ?? "").Split(',', SPLIT_OPTIONS);
+        var wordList = (_grod.Get(ARTICLE_LIST_KEY) ?? "").Split(',', SPLIT_OPTIONS);
         foreach (string item in wordList)
         {
             var compareWord = FixLength(item);
@@ -336,9 +336,9 @@ public static class Parse
             newNounList.Clear();
 
             // check adjectives
-            foreach (string key in grod.Keys().Where(x => x.StartsWith(ADJECTIVE_PREFIX, OIC)))
+            foreach (string key in _grod.Keys().Where(x => x.StartsWith(ADJECTIVE_PREFIX, OIC)))
             {
-                var wordList = (grod.Get(key) ?? "").Split(',', SPLIT_OPTIONS);
+                var wordList = (_grod.Get(key) ?? "").Split(',', SPLIT_OPTIONS);
                 foreach (string item in wordList)
                 {
                     var compareWord = FixLength(item);
@@ -382,8 +382,8 @@ public static class Parse
 
     private static string FixLength(string word)
     {
-        return SystemData.WordSize() > 0 && word.Length > SystemData.WordSize()
-            ? word[..SystemData.WordSize()]
+        return WORDSIZE > 0 && word.Length > WORDSIZE
+            ? word[..WORDSIZE]
             : word;
     }
 }

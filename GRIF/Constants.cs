@@ -12,14 +12,7 @@ public static class Constants
     public const string SAVE_FILENAME = "save";
     public const string SAVE_EXTENSION = ".dat";
 
-    public const string ADJECTIVE_PREFIX = "adjective.";
-    public const string ARTICLE_LIST = "articles";
-    public const string COMMAND_PREFIX = "command.";
     public const string BACKGROUND_PREFIX = "background.";
-    public const string INPUT_PREFIX = "input.";
-    public const string NOUN_PREFIX = "noun.";
-    public const string PREPOSITION_PREFIX = "preposition.";
-    public const string VERB_PREFIX = "verb.";
 
     public const string OUTCHANNEL_ASK = "#ASK;";
     public const string OUTCHANNEL_ENTER = "#ENTER;";

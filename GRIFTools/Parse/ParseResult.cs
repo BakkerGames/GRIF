@@ -1,4 +1,4 @@
-﻿namespace GRIF;
+﻿namespace GRIFTools.Parse;
 
 public class ParseResult
 {
