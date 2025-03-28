@@ -265,8 +265,6 @@ system.output_width
     80
 system.dont_understand
     I don't understand "{0}".
-system.do_what_with
-    Do what with the {0}?
 ```
 
 `system.intro` is a script or text which will be run once at the start of the game.

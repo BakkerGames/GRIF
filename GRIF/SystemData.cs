@@ -59,30 +59,6 @@ public static class SystemData
         return value;
     }
 
-    public static string DoWhatWith(string input)
-    {
-        var value = grod.Get(DO_WHAT_WITH) ?? "";
-        if (value.StartsWith('@'))
-        {
-            StringBuilder result = new();
-            dags.RunScript(value, result);
-            value = result.ToString();
-        }
-        if (value == "")
-        {
-            value = DO_WHAT_WITH_DEFAULT;
-        }
-        if (Uppercase())
-        {
-            input = input.ToUpper();
-        }
-        if (value.Contains("{0}"))
-        {
-            return value.Replace("{0}", input);
-        }
-        return value;
-    }
-
     public static string Prompt()
     {
         if (grod.ContainsKey(PROMPT))
@@ -158,7 +134,6 @@ public static class SystemData
     private static Dags dags = new(grod);
 
     private const string AFTER_PROMPT = "system.after_prompt";
-    private const string DO_WHAT_WITH = "system.do_what_with";
     private const string DONT_UNDERSTAND = "system.dont_understand";
     private const string GAMENAME = "system.gamename";
     private const string INTRO = "system.intro";
@@ -168,7 +143,6 @@ public static class SystemData
 
     private const string AFTER_PROMPT_DEFAULT = "";
     private const string DONT_UNDERSTAND_DEFAULT = "I don't understand \"{0}\".";
-    private const string DO_WHAT_WITH_DEFAULT = "Do what with the \"{0}\"?";
     private const string PROMPT_DEFAULT = ">";
 
     private static bool CheckValue(string key, StringBuilder result)
