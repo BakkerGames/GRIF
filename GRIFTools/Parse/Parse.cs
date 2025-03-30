@@ -114,7 +114,6 @@ public static class Parse
                 }
                 else if (_grod.ContainsKey($"{tempCommandKey}.{result.Preposition}.*"))
                 {
-                    result.Object = "*";
                     result.CommandKey = $"{tempCommandKey}.{result.Preposition}.*";
                 }
             }
@@ -131,18 +130,14 @@ public static class Parse
             }
             else if (_grod.ContainsKey($"{tempCommandKey}.*.{result.Preposition}.{result.Object}"))
             {
-                result.Noun = "*";
                 result.CommandKey = $"{tempCommandKey}.*.{result.Preposition}.{result.Object}";
             }
             else if (_grod.ContainsKey($"{tempCommandKey}.{result.Noun}.{result.Preposition}.*"))
             {
-                result.Object = "*";
                 result.CommandKey = $"{tempCommandKey}.{result.Noun}.{result.Preposition}.*";
             }
             else if (_grod.ContainsKey($"{tempCommandKey}.*.{result.Preposition}.*"))
             {
-                result.Noun = "*";
-                result.Object = "*";
                 result.CommandKey = $"{tempCommandKey}.*.{result.Preposition}.*";
             }
         }
@@ -158,7 +153,6 @@ public static class Parse
         }
         else if (result.Noun != "" && _grod.ContainsKey($"{tempCommandKey}.*"))
         {
-            result.Noun = "*";
             result.CommandKey = $"{tempCommandKey}.*";
         }
         else if (_grod.ContainsKey($"{tempCommandKey}.?"))

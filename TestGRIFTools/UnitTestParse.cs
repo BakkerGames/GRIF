@@ -173,11 +173,11 @@ public class UnitTestParse
             Assert.That(result.Error, Is.EqualTo(""));
             Assert.That(result.Verb, Is.EqualTo("put"));
             Assert.That(result.VerbWord, Is.EqualTo("put"));
-            Assert.That(result.Noun, Is.EqualTo("*"));
+            Assert.That(result.Noun, Is.EqualTo("cloak"));
             Assert.That(result.NounWord, Is.EqualTo("cloak"));
             Assert.That(result.Preposition, Is.EqualTo("on"));
             Assert.That(result.PrepositionWord, Is.EqualTo("on"));
-            Assert.That(result.Object, Is.EqualTo("*"));
+            Assert.That(result.Object, Is.EqualTo("table"));
             Assert.That(result.ObjectWord, Is.EqualTo("table"));
             Assert.That(result.CommandKey, Is.EqualTo("command.put.*.on.*"));
         });
@@ -196,7 +196,7 @@ public class UnitTestParse
             Assert.That(result.NounWord, Is.EqualTo("cloak"));
             Assert.That(result.Preposition, Is.EqualTo("from"));
             Assert.That(result.PrepositionWord, Is.EqualTo("from"));
-            Assert.That(result.Object, Is.EqualTo("*"));
+            Assert.That(result.Object, Is.EqualTo("table"));
             Assert.That(result.ObjectWord, Is.EqualTo("table"));
             Assert.That(result.CommandKey, Is.EqualTo("command.take.cloak.from.*"));
         });
