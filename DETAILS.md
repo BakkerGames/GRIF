@@ -119,6 +119,7 @@ GRIF has a simple parser. It can handle the following patterns. Optional items a
 verb
 verb [article] [adjective...] noun
 verb [article] [adjective...] noun preposition [article] [adjective...] object
+verb [article] preposition [article] [adjective...] object
 ```
 
 It looks up matches using key prefixes in the dictionary. It can understand any items starting with one of these prefixes. The "object" value uses the "noun." key prefix.
@@ -135,7 +136,7 @@ The answers will be stored into "input." values, with "input.verb" and "input.no
 
 When matching succeeds, a CommandKey is returned. This is the script key for the proper command to be run. It is stored in the dictionary as "command.verb" or "command.verb.noun" using the verb and noun identified above. It must exist for this routine to succeed.
 
-If a noun is entered but the command is not found, three special commands will be checked to see if they are in the dictionary for this verb. Avoid using more than one of these for each verb.
+If a noun is entered but the command is not found, these special wildcard commands will be checked to see if they are in the dictionary. Avoid using more than one of these for a verb.
 
 ```
 "command.<verb>.#" will match any noun which is an integer number.
@@ -150,6 +151,15 @@ If a noun is entered but the command is not found, three special commands will b
 "command.verb.?" is good for unknown words, or filenames for saving, or anything undefined. Good for examining items, when the noun is not defined but might be mentioned in the room text. "command.examine.?" could display "There is nothing special about the " and the noun.
 
 When "#" or "?" special commands are matched, "input.noun" will contain "?" or "#" and "input.nounword" will contain what was entered.
+
+In addition, prepositional commands can have wildcards. These will be checked if the exact command with that noun and/or object is not found. The entered nounword and/or objectword will need to be handled by the command.
+
+```
+"command.<verb>.*.<preposition>.<object>"
+"command.<verb>.<noun>.<preposition>.*"
+"command.<verb>.*.<preposition>.*"
+"command.<verb>.<preposition>.*"
+```
 
 
 ## Data used by GRIF
@@ -199,15 +209,20 @@ adjective.vase
     crystal,fragile
 ```
 
-`command.<verb>`, `command.<verb>.<noun>`, `command.<verb>.<noun>.<preposition>.<noun>`
+```
+command.<verb>
+command.<verb>.<noun>
+command.<verb>.<noun>.<preposition>.<noun>
+command.<verb>.<preposition>.<noun>
+```
 
-One for each allowed verb, verb/noun, and verb/noun/preposition/noun combination allowed during the game. These would have scripts to be run when the command is entered.
+One command for each allowed combination. These would have scripts to be run when the command is entered.
 
 The noun part can be replaced with "\*" to mean any noun which is not specifically covered in another command. (See "input.noun" for info on processing these.)
 
 The noun part can be replaced with "#" to mean any number. Some commands need a number but there could be many possibilities. The value in "input.noun" will be "#" and "input.nounword" will contain the entered number. Note that if you have `command.<verb>.#` it will supercede all other commands for a verb with numeric values.
 
-The noun part can also be replaced with "?" to mean any word, known or unknown. Some commands need some value, such as "SAVE filename". The value in "input.noun" will be "?" and "input.nounword" will contain the value. Note that if you have `command.verb.?` it will supercede all other commands for that verb with a noun.
+The noun part can also be replaced with "?" to mean any word, known or unknown. Some commands need some value, such as "SAVE filename". The value in "input.noun" will be "?" and "input.nounword" will contain the value. Note that if you have `command.verb.?` it may supercede other commands for that verb with a noun.
 
 ```
 command.north
@@ -277,14 +292,21 @@ system.dont_understand
 
 `system.dont_understand` is used whenever the parser can't understand what has been typed. If a word doesn't match any verb or noun in the data file, this message will be used, replacing the "{0}" with the unknown value.
 
-`system.do_what_with` is used by the parser if the player enters a noun only, or uses a recognized noun but an unknown verb. It will replace "{0}" in the value with the noun entered.
-
 
 ## Input values
 
 The prefix `input.` is used by GRIF to send information typed by the player over to the game scripts so it can be used as needed. These values are temporary and change each time the player's input is parsed. They are not usually stored in the initial game data but appear as the game is run.
 
-`input.verb`, `input.verbword`, `input.noun`, `input.nounword`, `input.preposition`, `input.prepositionword`, `input.object`, `input.objectword`
+```
+input.verb
+input.verbword
+input.noun
+input.nounword
+input.preposition
+input.prepositionword
+input.object
+input.objectword
+```
 
 The "verb" and "noun" entered by the player are sent to the DAGS engine in the values for `input.verb` and `input.noun`. These could then be used in a script. So `command.take.*` would be run and know that `@get(input.noun)` has the item name the player wanted to take. These are the general names, as in `noun.cup` above, even if the player entered "take goblet". The specific words the player used, such as "goblet", are sent in `input.verbword` and `input.nounword`, in case those are necessary for messages.
 
@@ -427,7 +449,7 @@ command.10.*
 
 Many Interactive Fiction games are written in English, but players with other native languages may wish to play games too. For this reason, everything possible has been done to allow the GRIF game text to be easily changed.
 
-It is possible to have different versions of game data files for different languages. Make separate files for all the descriptions, messages, and vocabulary for each desired language. This is one reason the data files are in simple text (JSON) format, so they can be easily modified. The game scripts and other non-text values don't need to be duplicated in the language files. Make sure to leave the keys unmodified. Also remember that non-ASCII accented characters must be stored as `\u####` unicode values.
+It is possible to have different versions of game data files for different languages. Make separate files for all the descriptions, messages, and vocabulary for each desired language. This is one reason the data files are in simple text format, so they can be easily modified. The game scripts and other non-text values don't need to be duplicated in the language files. Make sure to leave the keys unmodified. Remember that non-ASCII accented characters must be stored as `\u####` unicode values.
 
 Start GRIF with a base data file (with one language, or not) and indicate the language file with the text values for the desired language. Use the `-m | --mod` command line parameter, something like this:
 
@@ -435,19 +457,13 @@ Start GRIF with a base data file (with one language, or not) and indicate the la
 GRIF basegame.grif -m spanish.grif
 ```
 
-The current parser does expect VERB or VERB NOUN commands. The verb words and noun words can be in any languages, but the pattern must be maintained. It also doesn't handle multi-word verbs or nouns (yet). Maybe soon...
-
-When using other languages for vocabulary, `system.wordsize` will probably need to be zero and all verbs and nouns given as full words.
+The current parser does expect commands with the above specified patterns, verb first. The vocabulary can be in any languages, but the patterns must be maintained. It also doesn't handle multi-word vocabulary.
 
 
-## Meta Commands
+## Meta Command
 
-There are two meta commands available while running a GRIF game, for debugging purposes. These are only enabled if a command line option `--meta` is added when running. They are very useful for displaying or modifying data and for testing scripts.
+There is a meta command available while running a GRIF game, for debugging purposes. It is only enabled if a command line option `--meta` is added when running. It is very useful for displaying or modifying data and for testing scripts.
 
 `#exec <script>`
 
-This will execute the script specified. It must start with `@`.
-
-`#debug <script>`
-
-This will execute the script specified and display script text and various values as it runs. It must start with `@`.
+This will execute any script specified. The script must be a valid DAGS command/script and start with `@`.

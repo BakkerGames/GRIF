@@ -129,7 +129,7 @@ public static class ParseValues
             {
                 return _grod.Get(CONFIG_DONT_UNDERSTAND);
             }
-            return "I don't understand {0}.";
+            return "I don't understand \"{0}\".";
         }
     }
 

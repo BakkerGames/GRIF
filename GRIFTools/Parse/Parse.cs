@@ -114,6 +114,7 @@ public static class Parse
                 }
                 else if (_grod.ContainsKey($"{tempCommandKey}.{result.Preposition}.*"))
                 {
+                    result.Object = "*";
                     result.CommandKey = $"{tempCommandKey}.{result.Preposition}.*";
                 }
             }
@@ -130,11 +131,19 @@ public static class Parse
             }
             else if (_grod.ContainsKey($"{tempCommandKey}.*.{result.Preposition}.{result.Object}"))
             {
+                result.Noun = "*";
                 result.CommandKey = $"{tempCommandKey}.*.{result.Preposition}.{result.Object}";
             }
             else if (_grod.ContainsKey($"{tempCommandKey}.{result.Noun}.{result.Preposition}.*"))
             {
+                result.Object = "*";
                 result.CommandKey = $"{tempCommandKey}.{result.Noun}.{result.Preposition}.*";
+            }
+            else if (_grod.ContainsKey($"{tempCommandKey}.*.{result.Preposition}.*"))
+            {
+                result.Noun = "*";
+                result.Object = "*";
+                result.CommandKey = $"{tempCommandKey}.*.{result.Preposition}.*";
             }
         }
         else if (result.Noun != "" && _grod.ContainsKey($"{tempCommandKey}.{result.Noun}"))
@@ -149,6 +158,7 @@ public static class Parse
         }
         else if (result.Noun != "" && _grod.ContainsKey($"{tempCommandKey}.*"))
         {
+            result.Noun = "*";
             result.CommandKey = $"{tempCommandKey}.*";
         }
         else if (_grod.ContainsKey($"{tempCommandKey}.?"))
@@ -223,6 +233,7 @@ public static class Parse
         var preposition = GetMatchingWord(PREPOSITION_PREFIX, words, ref newIndex);
         if (preposition == "")
         {
+            result.Error = $"Unknown preposition \"{origWord1}\"";
             return;
         }
 
@@ -237,6 +248,7 @@ public static class Parse
         string noun = GetMatchingWord(NOUN_PREFIX, words, ref newIndex);
         if (noun == "")
         {
+            result.Error = $"Unknown object \"{origWord2}\"";
             return;
         }
 
@@ -244,6 +256,7 @@ public static class Parse
         if (adjectiveNounList != null && !adjectiveNounList.Contains(noun))
         {
             // noun doesn't match adjectives
+            result.Error = $"Noun \"{noun}\" doesn't match adjectives";
             return;
         }
 
