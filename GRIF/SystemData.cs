@@ -1,4 +1,5 @@
 ﻿using GRIFTools;
+using System.Reflection;
 using System.Text;
 
 namespace GRIF;
@@ -111,8 +112,11 @@ public static class SystemData
 
     public static string Syntax()
     {
+        Version version = Assembly.GetEntryAssembly()?.GetName().Version ?? Version.Parse("1.0.0.0");
         StringBuilder result = new();
         result.AppendLine("GRIF - Game Runner for Interactive Fiction");
+        result.AppendLine();
+        result.AppendLine($"Version {version}");
         result.AppendLine();
         result.AppendLine("grif <filename.grif | directory>");
         result.AppendLine("     [-i | --input  <filename>]");
