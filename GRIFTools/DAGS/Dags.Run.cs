@@ -134,6 +134,11 @@ public partial class Dags
                 case COMMENT:
                     // comment for script documentation
                     CheckParamCount(token, p, 1);
+                    if (ConvertToBool(Get(DEBUG_MODE)))
+                    {
+                        // display constants in debug mode
+                        result.AppendLine(p[0]);
+                    }
                     return;
                 case CONCAT:
                     // concatenate any number of strings together

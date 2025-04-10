@@ -6,12 +6,20 @@ namespace GRIFTools;
 /// <summary>
 /// Generate a DAGS script object and assign its dictionary.
 /// </summary>
-public partial class Dags(Grod grod)
+public partial class Dags()
 {
+    /// <summary>
+    /// Initialize Dags
+    /// </summary>
+    public Dags(Grod grod) : this()
+    {
+        Data = grod;
+    }
+
     /// <summary>
     /// Grod dictionary of (key,value) pairs
     /// </summary>
-    public Grod Data { get; set; } = grod;
+    public Grod Data { get; set; } = new Grod();
 
     /// <summary>
     /// Receives metadata from the calling program, such as text input.

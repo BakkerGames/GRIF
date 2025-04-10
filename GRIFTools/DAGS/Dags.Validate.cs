@@ -11,19 +11,19 @@ public partial class Dags
     public bool ValidateDictionary(StringBuilder result)
     {
         var ok = true;
-        foreach (string s in Data.Keys())
+        foreach (string key in Data.Keys())
         {
-            if (string.IsNullOrWhiteSpace(s))
+            if (string.IsNullOrWhiteSpace(key))
             {
                 ok = false;
                 result.AppendLine("Empty or whitespace key found");
             }
             else
             {
-                var value = Data.Get(s)?.TrimStart() ?? "";
+                var value = Data.Get(key)?.TrimStart() ?? "";
                 if (value.StartsWith('@'))
                 {
-                    ok = ok && ValidateScript(value, result);
+                    ok = ok && ValidateScript(key, value, result);
                 }
             }
         }
@@ -33,13 +33,14 @@ public partial class Dags
     /// <summary>
     /// Validates one script to make sure the syntax and function names are correct.
     /// </summary>
-    public bool ValidateScript(string script, StringBuilder result)
+    public bool ValidateScript(string key, string script, StringBuilder result)
     {
         if (string.IsNullOrWhiteSpace(script) || !script.TrimStart().StartsWith('@'))
         {
             return true;
         }
-        if (!ValidateSyntax(script, result))
+
+        if (!ValidateSyntax(key, script, result))
         {
             return false;
         }
@@ -53,9 +54,9 @@ public partial class Dags
             if (token.StartsWith('@'))
             {
                 var found = false;
-                foreach (string key in KEYWORDS)
+                foreach (string word in KEYWORDS)
                 {
-                    if (token.Equals(key, OIC))
+                    if (token.Equals(word, OIC))
                     {
                         found = true;
                         break;
@@ -68,7 +69,7 @@ public partial class Dags
                     if (dict.Count == 0)
                     {
                         ok = false;
-                        result.AppendLine($"Function not found: {token}");
+                        result.AppendLine($"{key}: Function not found: {token}");
                     }
                 }
                 else
@@ -77,7 +78,7 @@ public partial class Dags
                     if (value == "")
                     {
                         ok = false;
-                        result.AppendLine($"Function not found: {token}");
+                        result.AppendLine($"{key}: Function not found: {token}");
                     }
                 }
             }
@@ -88,7 +89,7 @@ public partial class Dags
     /// <summary>
     /// Validates one script to make sure the syntax is correct.
     /// </summary>
-    public static bool ValidateSyntax(string script, StringBuilder result)
+    public static bool ValidateSyntax(string key, string script, StringBuilder result)
     {
         if (string.IsNullOrWhiteSpace(script) || !script.TrimStart().StartsWith('@'))
         {
@@ -115,7 +116,8 @@ public partial class Dags
                     if (ifLast != THEN && ifLast != ELSE && ifLast != ENDIF)
                     {
                         ok = false;
-                        throw new SystemException($"{IF} at {index} is invalid.");
+                        result.AppendLine($"{key}: {IF} at {index} is invalid.");
+                        return false;
                     }
                     ifCount++;
                     ifLast = IF;
@@ -125,7 +127,8 @@ public partial class Dags
                     if (ifLast != IF & ifLast != ELSEIF)
                     {
                         ok = false;
-                        throw new SystemException($"{THEN} at {index} is invalid.");
+                        result.AppendLine($"{key}: {THEN} at {index} is invalid.");
+                        return false;
                     }
                     thenCount++;
                     ifLast = THEN;
@@ -135,7 +138,8 @@ public partial class Dags
                     if (ifLast != THEN && ifLast != ENDIF)
                     {
                         ok = false;
-                        throw new SystemException($"{ELSEIF} at {index} is invalid.");
+                        result.AppendLine($"{key}: {ELSEIF} at {index} is invalid.");
+                        return false;
                     }
                     elseifCount++;
                     ifLast = ELSEIF;
@@ -145,7 +149,8 @@ public partial class Dags
                     if (ifLast != THEN && ifLast != ENDIF)
                     {
                         ok = false;
-                        throw new SystemException($"{ELSE} at {index} is invalid.");
+                        result.AppendLine($"{key}: {ELSE} at {index} is invalid.");
+                        return false;
                     }
                     ifLast = ELSE;
                 }
@@ -154,7 +159,8 @@ public partial class Dags
                     if (ifLast != THEN && ifLast != ELSE && ifLast != ENDIF)
                     {
                         ok = false;
-                        throw new SystemException($"{ENDIF} at {index} is invalid.");
+                        result.AppendLine($"{key}: {ENDIF} at {index} is invalid.");
+                        return false;
                     }
                     endifCount++;
                     ifLast = ENDIF;
@@ -202,32 +208,32 @@ public partial class Dags
             if (parenLevel != 0)
             {
                 ok = false;
-                result.AppendLine("Mismatched parenthesis");
+                result.AppendLine($"{key}: Mismatched parenthesis");
             }
             if (ifCount != endifCount)
             {
                 ok = false;
-                result.AppendLine($"Mismatched {IF}/{ENDIF} counts");
+                result.AppendLine($"{key}: Mismatched {IF}/{ENDIF} counts");
             }
             if (ifCount + elseifCount != thenCount)
             {
                 ok = false;
-                result.AppendLine($"Mismatched {IF}/{ELSEIF} vs {THEN} counts");
+                result.AppendLine($"{key}: Mismatched {IF}/{ELSEIF} vs {THEN} counts");
             }
             if (forLevel != 0)
             {
                 ok = false;
-                result.AppendLine($"Mismatched {FOR.Replace("(", "")}/{ENDFOR}");
+                result.AppendLine($"{key}: Mismatched {FOR.Replace("(", "")}/{ENDFOR}");
             }
             if (forEachKeyLevel != 0)
             {
                 ok = false;
-                result.AppendLine($"Mismatched {FOREACHKEY.Replace("(", "")}/{ENDFOREACHKEY}");
+                result.AppendLine($"{key}: Mismatched {FOREACHKEY.Replace("(", "")}/{ENDFOREACHKEY}");
             }
             if (forEachListLevel != 0)
             {
                 ok = false;
-                result.AppendLine($"Mismatched {FOREACHLIST.Replace("(", "")}/{ENDFOREACHLIST}");
+                result.AppendLine($"{key}: Mismatched {FOREACHLIST.Replace("(", "")}/{ENDFOREACHLIST}");
             }
             return ok;
         }

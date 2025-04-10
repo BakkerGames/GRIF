@@ -17,9 +17,9 @@ public static class Metadata
         if (input.StartsWith("#exec ", OIC))
         {
             dags.RunScript(input[6..], result);
-            if (result.Length > 0 && !result.ToString().EndsWith("\r\n"))
+            if (result.Length > 0 && !result.ToString().EndsWith("\r\n") && !result.ToString().EndsWith("\\n"))
             {
-                result.AppendLine();
+                result.Append("\\n");
             }
             return;
         }
