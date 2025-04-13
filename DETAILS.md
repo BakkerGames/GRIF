@@ -259,7 +259,7 @@ background.intro
 
 There are several values which the GRIF program expects, and they are prefixed by `system.`. The system prefix can be used in other scripts for other reasons. They are usually static configuration values.
 
-For all of these, `system.gamename` is the only critical one, as GRIF has no other way to know what game it is running! An error will be thrown if the game data file doesn't have this one.
+For all of these, `system.gamename` is the only critical one, as GRIF has no other way to know what game it is running. An error will be thrown if the game data file doesn't have this one.
 
 The value for `system.wordsize` is required if the vocabulary does not consist of whole words, but only the first few letters of each word. It is used to compare the beginning of the words typed by the player during parsing. Older games might only have the first 3 or 5 letters significant. If the vocabulary does have whole words, use "0" or don't set it to anything.
 
@@ -292,6 +292,7 @@ system.dont_understand
 
 `system.dont_understand` is used whenever the parser can't understand what has been typed. If a word doesn't match any verb or noun in the data file, this message will be used, replacing the "{0}" with the unknown value.
 
+In addition, there is one special value for debugging. If `system.debug` is set to `true`, all `@comment()` messages will be displayed instead of ignored. This will allow the developer to identify what code is being executed and even display values, since comments can be scripts. Be sure to remove this value after developing.
 
 ## Input values
 

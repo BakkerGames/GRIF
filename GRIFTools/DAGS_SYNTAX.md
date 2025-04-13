@@ -30,7 +30,7 @@ false
 
 @comment("comment text")
 
->Used for commenting code. Quotes are necessary if there are spaces or special characters.
+>Used for commenting code. Quotes are recommended and are necessary if there are spaces or special characters. If there is a value "system.debug" set to "true", comments will be output and not ignored, and can even be scripts for showing values.
 
 @exec("script")
 
