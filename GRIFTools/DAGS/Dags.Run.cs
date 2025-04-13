@@ -48,7 +48,7 @@ public partial class Dags
                         }
                         return;
                     case NL:
-                        result.Append(@"\n");
+                        result.Append(NL_VALUE);
                         return;
                     case RETURN:
                         // immediately jump to end of script
@@ -137,7 +137,8 @@ public partial class Dags
                     if (ConvertToBool(Get(DEBUG_MODE)))
                     {
                         // display constants in debug mode
-                        result.AppendLine(p[0]);
+                        result.Append(p[0]);
+                        result.Append(NL_VALUE);
                     }
                     return;
                 case CONCAT:
@@ -451,7 +452,7 @@ public partial class Dags
                         temp1 = tempResult.ToString();
                     }
                     result.Append(temp1);
-                    result.Append(@"\n");
+                    result.Append(NL_VALUE);
                     return;
                 case MUL:
                     // multiply two values
@@ -661,7 +662,7 @@ public partial class Dags
                 case TRIM:
                     // trim leading and trailing spaces from string
                     CheckParamCount(token, p, 1);
-                    result.Append(p[0].Replace(@"\n", "").Trim());
+                    result.Append(p[0].Replace(NL_VALUE, "").Trim());
                     return;
                 case TRUE:
                     // is value true (or truthy). false if error.
@@ -708,7 +709,7 @@ public partial class Dags
                         }
                         result.Append(temp1);
                     }
-                    result.Append(@"\n");
+                    result.Append(NL_VALUE);
                     return;
                 default:
                     // run a defined function with any number of replaceable parameters

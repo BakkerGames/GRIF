@@ -198,7 +198,7 @@ public class UnitTestDags
         Grod data = new();
         Dags dags = new(data);
         StringBuilder result = new();
-        bool value = dags.ValidateScript("@set(key,value)", result);
+        bool value = dags.ValidateScript("key", "@set(key,value)", result);
         Assert.That(value, Is.EqualTo(true));
     }
 
@@ -208,7 +208,7 @@ public class UnitTestDags
         Grod data = new();
         Dags dags = new(data);
         StringBuilder result = new();
-        bool value = dags.ValidateScript("@blah(key)", result);
+        bool value = dags.ValidateScript("key", "@blah(key)", result);
         Assert.That(value, Is.EqualTo(false));
     }
 
@@ -216,7 +216,7 @@ public class UnitTestDags
     public void Test_ValidateSyntaxSucceed()
     {
         StringBuilder result = new();
-        bool value = Dags.ValidateSyntax("@blah(key)", result);
+        bool value = Dags.ValidateSyntax("key", "@blah(key)", result);
         Assert.That(value, Is.EqualTo(true));
     }
 
@@ -265,6 +265,18 @@ public class UnitTestDags
         result.Clear();
         dags.RunScript("@comment(\"this is a comment\")", result);
         Assert.That(result.ToString(), Is.EqualTo(""));
+    }
+
+    [Test]
+    public void Test_Comment_Debug()
+    {
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        data.Set("system.debug", "true");
+        result.Clear();
+        dags.RunScript("@comment(\"this is a comment\")", result);
+        Assert.That(result.ToString(), Is.EqualTo("this is a comment" + DAGSConstants.NL_VALUE));
     }
 
     [Test]
@@ -653,7 +665,7 @@ public class UnitTestDags
         StringBuilder result = new();
         result.Clear();
         dags.RunScript("@set(value,abcdef) @msg(value)", result);
-        Assert.That(result.ToString(), Is.EqualTo("abcdef\\n"));
+        Assert.That(result.ToString(), Is.EqualTo("abcdef" + DAGSConstants.NL_VALUE));
     }
 
     [Test]
@@ -722,7 +734,7 @@ public class UnitTestDags
         StringBuilder result = new();
         result.Clear();
         dags.RunScript("@nl", result);
-        Assert.That(result.ToString(), Is.EqualTo("\\n"));
+        Assert.That(result.ToString(), Is.EqualTo(DAGSConstants.NL_VALUE));
     }
 
     [Test]
@@ -1079,6 +1091,6 @@ public class UnitTestDags
         dags.RunScript($"@writeline({value1})", result);
         // @writeline result ends with two characters, '\' and 'n'.
         // This is the expected behavior. See Test_NL().
-        Assert.That(result.ToString(), Is.EqualTo(value1 + "\\n"));
+        Assert.That(result.ToString(), Is.EqualTo(value1 + DAGSConstants.NL_VALUE));
     }
 }

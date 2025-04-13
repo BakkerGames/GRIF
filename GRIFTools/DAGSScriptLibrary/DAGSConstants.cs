@@ -8,6 +8,8 @@ public static class DAGSConstants
     public const string TRUE_VALUE = "true";
     public const string FALSE_VALUE = "false";
 
+    public const string NL_VALUE = "\\n";
+
     // function names must be in lowercase
 
     public const string ABS = "@abs(";

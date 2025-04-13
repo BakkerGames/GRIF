@@ -62,7 +62,6 @@
 	@endif
 @quit
 	@msg(message.thanks)
-	@nl
 	@setoutchannel("#GAMEOVER;")
 @restart
 	@clear

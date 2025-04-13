@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using GRIFTools;
+using System.Text;
 
 namespace GRIF;
 
@@ -93,7 +94,7 @@ public static class UserIO
             return;
         }
         StringBuilder result = new();
-        var lines = value.Split("\\n");
+        var lines = value.Split(DAGSConstants.NL_VALUE);
         for (int i = 0; i < lines.Length - 1; i++)
         {
             var line = lines[i];
