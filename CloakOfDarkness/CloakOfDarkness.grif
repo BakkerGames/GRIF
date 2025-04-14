@@ -378,7 +378,7 @@ message.you_lost
 message.you_won
 	"You have won!"
 noun.cloak
-	cloak
+	cloak,cape,garment,coat
 noun.down
 	down,d,descend
 noun.east

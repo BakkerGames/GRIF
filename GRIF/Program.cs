@@ -27,13 +27,27 @@ internal class Program
             int argIndex = 0;
             while (argIndex < args.Length)
             {
-                var value = args[argIndex++];
+                var argValue = args[argIndex++];
+                var value = argValue;
+                if (value.StartsWith('/'))
+                {
+                    if (value.Length == 2)
+                    {
+                        value = "-" + value[1..];
+                    }
+                    else
+                    {
+                        value = "--" + value[1..];
+                    }
+                }
                 if (value.Equals("--input", OIC) || value.Equals("-i", OIC))
                 {
                     var inputFilename = args[argIndex++];
                     if (!File.Exists(inputFilename))
                     {
                         UserIO.Output("Input file not found: " + inputFilename);
+                        UserIO.Output(DAGSConstants.NL_VALUE + DAGSConstants.NL_VALUE);
+                        UserIO.Output(SystemData.Syntax());
                         return;
                     }
                     // Input commands
@@ -54,11 +68,24 @@ internal class Program
                     // allows special commands starting with "#".
                     allowMeta = true;
                 }
+                else if (value.StartsWith('-'))
+                {
+                    UserIO.Output("Unknown parameter: " + argValue);
+                    UserIO.Output(DAGSConstants.NL_VALUE + DAGSConstants.NL_VALUE);
+                    UserIO.Output(SystemData.Syntax());
+                    return;
+                }
                 else
                 {
                     // Data filename or path to all data files
                     dataPath = value;
                 }
+            }
+
+            if (string.IsNullOrWhiteSpace(dataPath))
+            {
+                UserIO.Output(SystemData.Syntax());
+                return;
             }
 
             // Prepare engines
@@ -86,19 +113,31 @@ internal class Program
             }
             else
             {
-                var pathName = Path.GetDirectoryName(dataPath) ?? "";
-                var fileName = Path.GetFileName(dataPath);
-                var files = Directory.GetFiles(pathName, fileName);
-                if (files.Length > 0)
+                try
                 {
-                    foreach (string filename in files)
+                    var pathName = Path.GetDirectoryName(dataPath) ?? "";
+                    var fileName = Path.GetFileName(dataPath);
+                    var files = Directory.GetFiles(pathName, fileName);
+                    if (files.Length > 0)
                     {
-                        GrodDataIO.LoadDataFromFile(filename, grod);
+                        foreach (string filename in files)
+                        {
+                            GrodDataIO.LoadDataFromFile(filename, grod);
+                        }
+                    }
+                    else
+                    {
+                        UserIO.Output("File or directory not found: " + dataPath);
+                        UserIO.Output(DAGSConstants.NL_VALUE + DAGSConstants.NL_VALUE);
+                        UserIO.Output(SystemData.Syntax());
+                        return;
                     }
                 }
-                else
+                catch (Exception)
                 {
                     UserIO.Output("File or directory not found: " + dataPath);
+                    UserIO.Output(DAGSConstants.NL_VALUE + DAGSConstants.NL_VALUE);
+                    UserIO.Output(SystemData.Syntax());
                     return;
                 }
             }
@@ -135,6 +174,8 @@ internal class Program
                 else
                 {
                     UserIO.Output("Modification file or directory not found: " + modFile);
+                    UserIO.Output(DAGSConstants.NL_VALUE + DAGSConstants.NL_VALUE);
+                    UserIO.Output(SystemData.Syntax());
                     return;
                 }
             }

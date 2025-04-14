@@ -363,7 +363,10 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # binaries
-binaries/
+binaries/*.zip
+binaries/*.tgz
+binaries/linux*/
+binaries/win*/
 
 # batch files
 *.bat

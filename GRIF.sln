@@ -7,6 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GRIF", "GRIF\GRIF.csproj", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "binaries", "binaries", "{E0E514C6-F7A6-4DD1-8F5D-E69286B74AD5}"
 	ProjectSection(SolutionItems) = preProject
+		binaries\README.md = binaries\README.md
 		binaries\_package.bat = binaries\_package.bat
 	EndProjectSection
 EndProject
