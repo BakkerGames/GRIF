@@ -292,7 +292,7 @@ system.dont_understand
 
 `system.dont_understand` is used whenever the parser can't understand what has been typed. If a word doesn't match any verb or noun in the data file, this message will be used, replacing the "{0}" with the unknown value.
 
-In addition, there is one special value for debugging. If `system.debug` is set to `true`, all `@comment()` messages will be displayed instead of ignored. This will allow the developer to identify what code is being executed and even display values, since comments can be scripts. Be sure to remove this value after developing.
+In addition, there is one special value for debugging. If `system.debug` is set to `true`, the `@debug()` command will display messages. The parameter value will be displayed if text (enclosed in quotes), or executed and displayed if a script. When `system.debug` is `false` or doesn't exist, `@debug()` commands are ignored.
 
 ## Input values
 

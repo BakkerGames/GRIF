@@ -132,20 +132,24 @@ public partial class Dags
                     Set(p[0], "");
                     return;
                 case COMMENT:
-                    // comment for script documentation
+                    // comment for script documentation, do nothing
                     CheckParamCount(token, p, 1);
-                    if (ConvertToBool(Get(DEBUG_MODE)))
-                    {
-                        // display constants in debug mode
-                        result.Append(p[0]);
-                        result.Append(NL_VALUE);
-                    }
                     return;
                 case CONCAT:
                     // concatenate any number of strings together
                     foreach (string s in p)
                     {
                         result.Append(s);
+                    }
+                    return;
+                case DEBUG:
+                    // output the value if system.debug=true
+                    CheckParamCount(token, p, 1);
+                    if (ConvertToBool(Get(DEBUG_MODE)))
+                    {
+                        // display values in debug mode
+                        result.Append(p[0]);
+                        result.Append(NL_VALUE);
                     }
                     return;
                 case DIV:

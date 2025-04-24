@@ -21,6 +21,7 @@ public static class DAGSConstants
     public const string CLEARLIST = "@clearlist(";
     public const string COMMENT = "@comment(";
     public const string CONCAT = "@concat(";
+    public const string DEBUG = "@debug(";
     public const string DIV = "@div(";
     public const string DIVTO = "@divto(";
     public const string ELSE = "@else";

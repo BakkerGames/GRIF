@@ -268,18 +268,6 @@ public class UnitTestDags
     }
 
     [Test]
-    public void Test_Comment_Debug()
-    {
-        Grod data = new();
-        Dags dags = new(data);
-        StringBuilder result = new();
-        data.Set("system.debug", "true");
-        result.Clear();
-        dags.RunScript("@comment(\"this is a comment\")", result);
-        Assert.That(result.ToString(), Is.EqualTo("this is a comment" + DAGSConstants.NL_VALUE));
-    }
-
-    [Test]
     public void Test_Concat()
     {
         Grod data = new();
@@ -288,6 +276,25 @@ public class UnitTestDags
         result.Clear();
         dags.RunScript("@write(@concat(abc,def,123))", result);
         Assert.That(result.ToString(), Is.EqualTo("abcdef123"));
+    }
+
+    [Test]
+    public void Test_Debug()
+    {
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        data.Set("system.debug", "true");
+        result.Clear();
+        dags.RunScript("@debug(\"this is a comment\")", result);
+        Assert.That(result.ToString(), Is.EqualTo("this is a comment" + DAGSConstants.NL_VALUE));
+        result.Clear();
+        dags.RunScript("@debug(@add(123,456))", result);
+        Assert.That(result.ToString(), Is.EqualTo("579" + DAGSConstants.NL_VALUE));
+        data.Set("system.debug", "false");
+        result.Clear();
+        dags.RunScript("@debug(\"this is a comment\")", result);
+        Assert.That(result.ToString(), Is.EqualTo(""));
     }
 
     [Test]

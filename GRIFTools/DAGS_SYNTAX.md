@@ -32,6 +32,10 @@ false
 
 >Used for commenting code. Quotes are recommended and are necessary if there are spaces or special characters. If there is a value "system.debug" set to "true", comments will be output and not ignored, and can even be scripts for showing values.
 
+@debug(value)
+
+>If `system.debug` is `true`, display the value if text, or execute the value and display the results if a script. If `system.debug` is false or doesn't exists, these are ignored. Text values should be quoted.
+
 @exec("script")
 
 >Executes the script specified by "script". "script" should be quoted.
