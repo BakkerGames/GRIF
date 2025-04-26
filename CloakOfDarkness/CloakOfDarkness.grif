@@ -25,6 +25,7 @@
 		@write(false)
 	@endif
 @godir(x)
+	@debug(@concat("going to room.",@room,".exit.",$x))
 	@set(temp.key,@concat("room.",@room,".exit.",$x))
 	@if @not @exists(@get(temp.key)) @then
 		@msg(message.cant_go)
@@ -34,6 +35,7 @@
 		@goto(@get(@get(temp.key)))
 	@endif
 @goto(x)
+	@debug("goto $x")
 	@set(value.room,$x)
 	@look
 @here(x)

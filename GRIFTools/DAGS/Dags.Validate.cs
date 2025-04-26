@@ -257,6 +257,7 @@ public partial class Dags
         CLEARLIST,
         COMMENT,
         CONCAT,
+        DEBUG,
         DIV,
         DIVTO,
         ELSE,

@@ -5,7 +5,7 @@
     },
     "CloakOfDarkness": {
       "commandName": "Project",
-      "commandLineArgs": "\"..\\..\\..\\..\\CloakOfDarkness\\CloakOfDarkness.grif\""
+      "commandLineArgs": "\"..\\..\\..\\..\\CloakOfDarkness\\CloakOfDarkness.grif\" --meta"
     },
     "TicTacToe": {
       "commandName": "Project",
