@@ -100,6 +100,10 @@ internal class Program
             {
                 GrodDataIO.LoadDataFromFile(dataPath, grod);
             }
+            else if (File.Exists(dataPath + DATA_EXTENSION))
+            {
+                GrodDataIO.LoadDataFromFile(dataPath + DATA_EXTENSION, grod);
+            }
             else if (Directory.Exists(dataPath))
             {
                 var files = Directory.GetFiles(dataPath, "*" + DATA_EXTENSION);
