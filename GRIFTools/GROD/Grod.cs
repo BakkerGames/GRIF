@@ -1,4 +1,5 @@
-﻿using static GRIFTools.GrodEnums;
+﻿using GRIFTools.GROD;
+using static GRIFTools.GrodEnums;
 
 namespace GRIFTools;
 
@@ -10,13 +11,17 @@ public partial class Grod
     public bool UseOverlay { get; set; } = false;
 
     /// <summary>
+    /// Indicates if the Undo snapshots are tracked.
+    /// </summary>
+    public bool AllowUndo { get; set; } = false;
+
+    /// <summary>
     /// Gets a single value, or "" if not found.
     /// </summary>
     public string Get(string key)
     {
         key = NormalizeKey(key);
-        string? item;
-        if (UseOverlay && _overlay.TryGetValue(key, out item))
+        if (UseOverlay && _overlay.TryGetValue(key, out string? item))
         {
             return item ?? "";
         }
@@ -40,6 +45,10 @@ public partial class Grod
     public void Set(string key, string? item)
     {
         key = NormalizeKey(key);
+        if (AllowUndo)
+        {
+            _snapshot.Items.Push(new UndoItem(key, Get(key)));
+        }
         if (UseOverlay)
         {
             if (!_overlay.TryAdd(key, item ?? ""))
@@ -66,6 +75,10 @@ public partial class Grod
         {
             _overlay.Clear();
         }
+        if (AllowUndo)
+        {
+            _undo.Clear();
+        }
     }
 
     /// <summary>
@@ -75,13 +88,13 @@ public partial class Grod
     {
         if (UseOverlay && which == WhichData.Overlay)
         {
-            return _overlay.Keys.ToList();
+            return [.. _overlay.Keys];
         }
         if (!UseOverlay || which == WhichData.Base)
         {
-            return _base.Keys.ToList();
+            return [.. _base.Keys];
         }
-        return _base.Keys.Union(_overlay.Keys).ToList();
+        return [.. _base.Keys.Union(_overlay.Keys)];
     }
 
     /// <summary>
@@ -116,7 +129,49 @@ public partial class Grod
     public void Remove(string key)
     {
         key = NormalizeKey(key);
+        if (AllowUndo)
+        {
+            _snapshot.Items.Push(new UndoItem(key, Get(key)));
+        }
         _base.Remove(key);
         _overlay.Remove(key);
+    }
+
+    /// <summary>
+    /// Save snapshot image into undo stack
+    /// </summary>
+    public void SaveSnapshot()
+    {
+        if (AllowUndo && _snapshot.Items.Count > 0)
+        {
+            _undo.Push(_snapshot);
+            _snapshot.Items.Clear();
+        }
+    }
+
+    /// <summary>
+    /// Undo one snapshot image
+    /// </summary>
+    public void UndoSnapshot()
+    {
+        if (AllowUndo && _undo.Count > 0)
+        {
+            var snapshot = _undo.Pop();
+            while (snapshot.Items.Count > 0)
+            {
+                var item = snapshot.Items.Pop();
+                if (UseOverlay)
+                {
+                    if (!_overlay.TryAdd(item.Key, item.OldValue))
+                    {
+                        _overlay[item.Key] = item.OldValue;
+                    }
+                }
+                else if (!_base.TryAdd(item.Key, item.OldValue))
+                {
+                    _base[item.Key] = item.OldValue;
+                }
+            }
+        }
     }
 }

@@ -54,6 +54,12 @@ public partial class Dags
                         // immediately jump to end of script
                         index = tokens.Length;
                         return;
+                    case SNAPSHOT:
+                        Snapshot();
+                        return;
+                    case UNDO:
+                        Undo();
+                        return;
                     default:
                         // run a defined function with no parameters
                         // @func=...
@@ -112,6 +118,19 @@ public partial class Dags
                         throw new SystemException($"{ADDTO}[{p[0]}]{int1},{int2}): Numeric overflow");
                     }
                     Set(p[0], numericAnswer.ToString());
+                    return;
+                case ALLOWUNDO:
+                    // turns on or off undo logic
+                    CheckParamCount(token, p, 1);
+                    try
+                    {
+                        answer = ConvertToBool(p[0]);
+                    }
+                    catch (Exception)
+                    {
+                        answer = false;
+                    }
+                    AllowUndo(answer);
                     return;
                 case CLEARARRAY:
                     // clears the named array
