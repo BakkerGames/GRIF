@@ -55,13 +55,16 @@ public partial class Dags
                         index = tokens.Length;
                         return;
                     case SNAPSHOT:
+                        // takes a snapshot for later undo
                         Snapshot();
                         return;
                     case UNDO:
-                        Undo();
+                        // does an undo and returns result
+                        result.Append(Undo() ? TRUE_VALUE : FALSE_VALUE);
                         return;
-                    case UNDOCLEAR:
-                        UndoClear();
+                    case CLEARUNDO:
+                        // clears the undo snapshot, such as after a restore or restart
+                        ClearUndo();
                         return;
                     default:
                         // run a defined function with no parameters
@@ -121,19 +124,6 @@ public partial class Dags
                         throw new SystemException($"{ADDTO}[{p[0]}]{int1},{int2}): Numeric overflow");
                     }
                     Set(p[0], numericAnswer.ToString());
-                    return;
-                case ALLOWUNDO:
-                    // turns on or off undo logic
-                    CheckParamCount(token, p, 1);
-                    try
-                    {
-                        answer = ConvertToBool(p[0]);
-                    }
-                    catch (Exception)
-                    {
-                        answer = false;
-                    }
-                    AllowUndo(answer);
                     return;
                 case CLEARARRAY:
                     // clears the named array

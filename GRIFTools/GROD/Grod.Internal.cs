@@ -4,10 +4,7 @@ public partial class Grod
 {
     private readonly Dictionary<string, string> _base = [];
     private readonly Dictionary<string, string> _overlay = [];
-
-    private readonly Stack<UndoSnapshot> _undo = [];
-
-    private UndoSnapshot _snapshot = new();
+    private readonly Dictionary<string, string> _snapshot = [];
 
     private static string NormalizeKey(string key)
     {
@@ -24,22 +21,5 @@ public partial class Grod
             }
         }
         return key;
-    }
-}
-
-internal class UndoSnapshot
-{
-    public Stack<UndoItem> Items = [];
-}
-
-internal class UndoItem(string key, string oldValue)
-{
-    public string Key { get; } = key;
-
-    public string OldValue { get; } = oldValue;
-
-    public override string ToString()
-    {
-        return $"{{\"{Key}\",\"{OldValue}\"}}";
     }
 }

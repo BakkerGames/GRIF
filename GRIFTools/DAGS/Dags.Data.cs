@@ -236,24 +236,19 @@ public partial class Dags
 
     #region Undo Routines
 
-    private void AllowUndo(bool value)
-    {
-        Data.AllowUndo = value;
-    }
-
     private void Snapshot()
     {
-        Data.SaveSnapshot();
+        Data.Snapshot();
     }
 
-    private void Undo()
+    private bool Undo()
     {
-        Data.UndoSnapshot();
+        return Data.Undo();
     }
 
-    private void UndoClear()
+    private void ClearUndo()
     {
-        Data.UndoClear();
+        Data.ClearUndo();
     }
 
     #endregion

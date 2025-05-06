@@ -88,7 +88,6 @@
 	@look
 @quit
 	@setoutchannel("#GAMEOVER;")
-	@nl
 @room
 	@get(value.room)
 adjective.cloak
@@ -103,7 +102,6 @@ background.intro
 		@set(value.introdone,true)
 		@nl
 		@look
-		@allowundo(true)
 	@endif
 command.down
 	@godir(down)
@@ -281,10 +279,13 @@ command.take.*
 		@msg(message.dont_see)
 	@endif
 command.undo
-	@undo
-	@msg(message.ok)
-	@nl
-	@look
+	@if @undo @then
+		@msg(message.ok)
+		@nl
+		@lookfull
+	@else
+		@msg(message.nothing_happens)
+	@endif
 command.up
 	@godir(up)
 command.use.hook
@@ -362,6 +363,8 @@ message.leave_operahouse
 	You've only just arrived, and besides, the weather outside seems to be getting worse.
 message.movedark
 	Blundering around in the dark isn't a good idea!
+message.nothing_happens
+	Nothing happens.
 message.ok
 	OK
 message.otherdark
@@ -459,6 +462,7 @@ room.foyer.shortdesc
 	Foyer of the Opera House
 script.bar_cant_go
 	@if @dark @then
+		@snapshot
 		@msg(message.movedark)
 		@addto(value.scuffed,1)
 	@else
@@ -468,7 +472,7 @@ script.restart
 	@set(temp.yorn,@getinchannel)
 	@if @true(@get(temp.yorn)) @then
 		@setoutchannel("#RESTART;")
-		@undoclear
+		@clearundo
 	@elseif @false(@get(temp.yorn)) @then
 		@msg(message.ok)
 	@else
@@ -483,7 +487,7 @@ script.restore_slot
 		@setoutchannel(@get(temp.slot))
 		@setoutchannel("@msg(message.restore_complete) @nl")
 		@setoutchannel("@lookfull")
-		@undoclear
+		@clearundo
 	@else
 		@msg(message.save_slot_number)
 		@setoutchannel("#ASK;")

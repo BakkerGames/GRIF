@@ -423,6 +423,31 @@ script.restart
 >Gets the next value from the InChannel queue and returns it. The script would use or process that value as appropriate.
 
 
+## Undo Commands
+
+A simple undo system is built into DAGS. It allows taking a snapshot of the current state and reversing any changes afterwards back to that point. Only one snapshot can be made. A snapshot is like a save file in memory, and it can be very helpful for fixing an accidental action. (Oops!)
+
+The game script has to perform the snapshots by adding `@snapshot` commands at appropriate places. For example, just before moving to another room, before taking or dropping objects, or any other such events. If the game is to handle undo, it needs to be carefully modified so that performing an undo only takes the player back one action. This means putting `@snapshot` before every action of consequence! Actions with no effect such as "Look" or "Inventory" shouldn't have a snapshot, though.
+
+If there is no snapshot, or the snapshot has been used, `@undo` will return `false`. This allows the script to show an appropriate "Nothing happens" message. Otherwise an "OK" message could be shown.
+
+The snapshot is not saved in the save file, only in memory.
+
+The `Cloak Of Darkness` sample game has undo commands. Look there to see how it was implemented.
+
+@snapshot
+
+>Take a snapshot at the current state of the game. This should be done before EVERY action of consequence if used at all.
+
+@undo
+
+>Perform an undo back to the last snapshot. Returns `true` if successful, or `false` if no snapshot exists. You will need an "UNDO" verb and `command.undo` to handle this.
+
+@clearundo
+
+>Clears out the snapshot so an undo cannot happen. This should be done just after a Restore or Restart of the game, and any other place where the snapshot becomes useless or invalid.
+
+
 ## Public Interface
 
 new Dags(IDictionary<string, string?> dictionary)

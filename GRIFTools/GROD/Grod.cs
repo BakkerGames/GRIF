@@ -4,31 +4,10 @@ namespace GRIFTools;
 
 public partial class Grod
 {
-    private bool _allowUndo = false;
-
     /// <summary>
     /// Indicates if the overlay is used for storing data.
     /// </summary>
     public bool UseOverlay { get; set; } = false;
-
-    /// <summary>
-    /// Indicates if the Undo snapshots are tracked.
-    /// </summary>
-    public bool AllowUndo
-    {
-        get
-        {
-            return _allowUndo;
-        }
-        set
-        {
-            if (value == false)
-            {
-                UndoClear();
-            }
-            _allowUndo = value;
-        }
-    }
 
     /// <summary>
     /// Gets a single value, or "" if not found.
@@ -47,6 +26,9 @@ public partial class Grod
         return "";
     }
 
+    /// <summary>
+    /// Return the value, or the supplied default value if not found
+    /// </summary>
     public string GetOrDefault(string key, string value)
     {
         var result = Get(key);
@@ -60,10 +42,6 @@ public partial class Grod
     public void Set(string key, string? item)
     {
         key = NormalizeKey(key);
-        if (AllowUndo)
-        {
-            _snapshot.Items.Push(new UndoItem(key, Get(key)));
-        }
         if (UseOverlay)
         {
             if (!_overlay.TryAdd(key, item ?? ""))
@@ -90,10 +68,7 @@ public partial class Grod
         {
             _overlay.Clear();
         }
-        if (AllowUndo)
-        {
-            _undo.Clear();
-        }
+        _snapshot.Clear();
     }
 
     /// <summary>
@@ -144,73 +119,48 @@ public partial class Grod
     public void Remove(string key)
     {
         key = NormalizeKey(key);
-        if (AllowUndo)
-        {
-            _snapshot.Items.Push(new UndoItem(key, Get(key)));
-        }
         _base.Remove(key);
         _overlay.Remove(key);
     }
 
     /// <summary>
-    /// Save snapshot image into undo stack
+    /// Save snapshot image
     /// </summary>
-    public void SaveSnapshot()
+    public void Snapshot()
     {
-        if (AllowUndo && _snapshot.Items.Count > 0)
+        if (UseOverlay)
         {
-            _undo.Push(_snapshot);
-            _snapshot = new();
+            _snapshot.Clear();
+            foreach (KeyValuePair<string, string> kv in _overlay)
+            {
+                _snapshot.Add(kv.Key, kv.Value);
+            }
         }
     }
 
     /// <summary>
-    /// Undo changes since the previous snapshot
+    /// Undo changes since the snapshot
     /// </summary>
-    public void UndoSnapshot()
+    public bool Undo()
     {
-        if (AllowUndo)
+        if (!UseOverlay || _snapshot.Count == 0)
         {
-            while (_snapshot.Items.Count > 0)
-            {
-                var item = _snapshot.Items.Pop();
-                if (UseOverlay)
-                {
-                    if (!_overlay.TryAdd(item.Key, item.OldValue))
-                    {
-                        _overlay[item.Key] = item.OldValue;
-                    }
-                }
-                else if (!_base.TryAdd(item.Key, item.OldValue))
-                {
-                    _base[item.Key] = item.OldValue;
-                }
-            }
-            if (_undo.Count > 0)
-            {
-                var snapshot = _undo.Pop();
-                while (snapshot.Items.Count > 0)
-                {
-                    var item = snapshot.Items.Pop();
-                    if (UseOverlay)
-                    {
-                        if (!_overlay.TryAdd(item.Key, item.OldValue))
-                        {
-                            _overlay[item.Key] = item.OldValue;
-                        }
-                    }
-                    else if (!_base.TryAdd(item.Key, item.OldValue))
-                    {
-                        _base[item.Key] = item.OldValue;
-                    }
-                }
-            }
+            return false;
         }
+        _overlay.Clear();
+        foreach (KeyValuePair<string, string> kv in _snapshot)
+        {
+            _overlay.Add(kv.Key, kv.Value);
+        }
+        _snapshot.Clear();
+        return true;
     }
 
-    public void UndoClear()
+    /// <summary>
+    /// Clear the snapshot so it can't be undone
+    /// </summary>
+    public void ClearUndo()
     {
-        _undo.Clear();
-        _snapshot = new();
+        _snapshot.Clear();
     }
 }
