@@ -1,10 +1,11 @@
-﻿using GRIFTools.GROD;
-using static GRIFTools.GrodEnums;
+﻿using static GRIFTools.GrodEnums;
 
 namespace GRIFTools;
 
 public partial class Grod
 {
+    private bool _allowUndo = false;
+
     /// <summary>
     /// Indicates if the overlay is used for storing data.
     /// </summary>
@@ -13,7 +14,21 @@ public partial class Grod
     /// <summary>
     /// Indicates if the Undo snapshots are tracked.
     /// </summary>
-    public bool AllowUndo { get; set; } = false;
+    public bool AllowUndo
+    {
+        get
+        {
+            return _allowUndo;
+        }
+        set
+        {
+            if (value == false)
+            {
+                UndoClear();
+            }
+            _allowUndo = value;
+        }
+    }
 
     /// <summary>
     /// Gets a single value, or "" if not found.
@@ -145,21 +160,20 @@ public partial class Grod
         if (AllowUndo && _snapshot.Items.Count > 0)
         {
             _undo.Push(_snapshot);
-            _snapshot.Items.Clear();
+            _snapshot = new();
         }
     }
 
     /// <summary>
-    /// Undo one snapshot image
+    /// Undo changes since the previous snapshot
     /// </summary>
     public void UndoSnapshot()
     {
-        if (AllowUndo && _undo.Count > 0)
+        if (AllowUndo)
         {
-            var snapshot = _undo.Pop();
-            while (snapshot.Items.Count > 0)
+            while (_snapshot.Items.Count > 0)
             {
-                var item = snapshot.Items.Pop();
+                var item = _snapshot.Items.Pop();
                 if (UseOverlay)
                 {
                     if (!_overlay.TryAdd(item.Key, item.OldValue))
@@ -172,6 +186,31 @@ public partial class Grod
                     _base[item.Key] = item.OldValue;
                 }
             }
+            if (_undo.Count > 0)
+            {
+                var snapshot = _undo.Pop();
+                while (snapshot.Items.Count > 0)
+                {
+                    var item = snapshot.Items.Pop();
+                    if (UseOverlay)
+                    {
+                        if (!_overlay.TryAdd(item.Key, item.OldValue))
+                        {
+                            _overlay[item.Key] = item.OldValue;
+                        }
+                    }
+                    else if (!_base.TryAdd(item.Key, item.OldValue))
+                    {
+                        _base[item.Key] = item.OldValue;
+                    }
+                }
+            }
         }
+    }
+
+    public void UndoClear()
+    {
+        _undo.Clear();
+        _snapshot = new();
     }
 }

@@ -1,6 +1,4 @@
-﻿using GRIFTools.GROD;
-
-namespace GRIFTools;
+﻿namespace GRIFTools;
 
 public partial class Grod
 {
@@ -8,7 +6,8 @@ public partial class Grod
     private readonly Dictionary<string, string> _overlay = [];
 
     private readonly Stack<UndoSnapshot> _undo = [];
-    private readonly UndoSnapshot _snapshot = new();
+
+    private UndoSnapshot _snapshot = new();
 
     private static string NormalizeKey(string key)
     {
@@ -25,5 +24,22 @@ public partial class Grod
             }
         }
         return key;
+    }
+}
+
+internal class UndoSnapshot
+{
+    public Stack<UndoItem> Items = [];
+}
+
+internal class UndoItem(string key, string oldValue)
+{
+    public string Key { get; } = key;
+
+    public string OldValue { get; } = oldValue;
+
+    public override string ToString()
+    {
+        return $"{{\"{Key}\",\"{OldValue}\"}}";
     }
 }

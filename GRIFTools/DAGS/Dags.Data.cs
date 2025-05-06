@@ -243,14 +243,17 @@ public partial class Dags
 
     private void Snapshot()
     {
-        // Set AllowUndo in case they forgot to
-        Data.AllowUndo = true;
         Data.SaveSnapshot();
     }
 
     private void Undo()
     {
         Data.UndoSnapshot();
+    }
+
+    private void UndoClear()
+    {
+        Data.UndoClear();
     }
 
     #endregion

@@ -35,6 +35,7 @@
 		@goto(@get(@get(temp.key)))
 	@endif
 @goto(x)
+	@snapshot
 	@debug("goto $x")
 	@set(value.room,$x)
 	@look
@@ -102,6 +103,7 @@ background.intro
 		@set(value.introdone,true)
 		@nl
 		@look
+		@allowundo(true)
 	@endif
 command.down
 	@godir(down)
@@ -110,6 +112,7 @@ command.drop.*
 		@if @isroom(bar) @and @dark @then
 			@msg(message.otherdark)
 		@else
+			@snapshot
 			@set(@concat("item.",@get(input.noun),".location"),@room)
 			@msg(message.ok)
 			@exec(@getvalue(@concat("item.",@get(input.noun),".afterdrop")))
@@ -129,6 +132,7 @@ command.hang
 	@msg(message.hang_what)
 command.hang.cloak
 	@if @here(hook) @and @herecarry(cloak) @then
+		@snapshot
 		@set(item.cloak.location,hook)
 		@msg(message.cloak_hanging)
 		@if @ne(@get(value.cloakscore),0) @then
@@ -248,11 +252,12 @@ command.save.#
 		@setoutchannel("@script(script.save_slot)")
 	@endif
 command.score
-	@write(@format(@get(message.score),@get(value.score),@get(value.maxscore)))
+	@writeline(@format(@get(message.score),@get(value.score),@get(value.maxscore)))
 command.south
 	@godir(south)
 command.take.cloak.from.hook
 	@if @here(hook) @and @herechild(cloak) @then
+		@snapshot
 		@set(item.cloak.location,@inv)
 		@msg(message.ok)
 	@else
@@ -265,6 +270,7 @@ command.take.*
 		@if @true(@get(@concat("item.",@get(input.noun),".scenery"))) @then
 			@msg(message.cant_take)
 		@else
+			@snapshot
 			@set(@concat("item.",@get(input.noun),".location"),@inv)
 			@msg(message.ok)
 			@script(@concat("item.",@get(input.noun),".aftertake"))
@@ -274,6 +280,11 @@ command.take.*
 	@else
 		@msg(message.dont_see)
 	@endif
+command.undo
+	@undo
+	@msg(message.ok)
+	@nl
+	@look
 command.up
 	@godir(up)
 command.use.hook
@@ -457,6 +468,7 @@ script.restart
 	@set(temp.yorn,@getinchannel)
 	@if @true(@get(temp.yorn)) @then
 		@setoutchannel("#RESTART;")
+		@undoclear
 	@elseif @false(@get(temp.yorn)) @then
 		@msg(message.ok)
 	@else
@@ -471,6 +483,7 @@ script.restore_slot
 		@setoutchannel(@get(temp.slot))
 		@setoutchannel("@msg(message.restore_complete) @nl")
 		@setoutchannel("@lookfull")
+		@undoclear
 	@else
 		@msg(message.save_slot_number)
 		@setoutchannel("#ASK;")
@@ -553,6 +566,8 @@ verb.south
 	south,s
 verb.take
 	take,t,get
+verb.undo
+	undo
 verb.up
 	up,u,climb
 verb.use

@@ -60,6 +60,9 @@ public partial class Dags
                     case UNDO:
                         Undo();
                         return;
+                    case UNDOCLEAR:
+                        UndoClear();
+                        return;
                     default:
                         // run a defined function with no parameters
                         // @func=...

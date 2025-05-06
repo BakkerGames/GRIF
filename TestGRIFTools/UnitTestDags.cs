@@ -1100,4 +1100,44 @@ public class UnitTestDags
         // This is the expected behavior. See Test_NL().
         Assert.That(result.ToString(), Is.EqualTo(value1 + DAGSConstants.NL_VALUE));
     }
+
+    [Test]
+    public void Test_Undo()
+    {
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        dags.RunScript("@allowundo(true)", result);
+        dags.RunScript("@set(key,1)", result);
+        dags.RunScript("@set(key2,a)", result);
+        dags.RunScript("@snapshot", result); // saves ""
+        dags.RunScript("@set(key,2)", result);
+        dags.RunScript("@set(key2,b)", result);
+        dags.RunScript("@snapshot", result); // saves "1"
+        dags.RunScript("@set(key,3)", result);
+        dags.RunScript("@set(key2,c)", result);
+        dags.RunScript("@snapshot", result); // saves "2"
+        dags.RunScript("@set(key,4)", result);
+        dags.RunScript("@set(key2,d)", result);
+        Assert.That(result.ToString(), Is.EqualTo(""));
+        dags.RunScript("@snapshot", result); // saves "3"
+        dags.RunScript("@get(key)", result);
+        dags.RunScript("@get(key2)", result);
+        Assert.That(result.ToString(), Is.EqualTo("4d"));
+        result.Clear();
+        dags.RunScript("@undo", result);
+        dags.RunScript("@get(key)", result);
+        dags.RunScript("@get(key2)", result);
+        Assert.That(result.ToString(), Is.EqualTo("3c"));
+        result.Clear();
+        dags.RunScript("@undo", result);
+        dags.RunScript("@get(key)", result);
+        dags.RunScript("@get(key2)", result);
+        Assert.That(result.ToString(), Is.EqualTo("2b"));
+        result.Clear();
+        dags.RunScript("@undo", result);
+        dags.RunScript("@get(key)", result);
+        dags.RunScript("@get(key2)", result);
+        Assert.That(result.ToString(), Is.EqualTo("1a"));
+    }
 }

@@ -2,6 +2,8 @@
 
 public static class DAGSConstants
 {
+    // be sure to add new values to Dags.Validate!
+
     // defined constants
 
     public const string NULL_VALUE = "null";
@@ -88,6 +90,7 @@ public static class DAGSConstants
     public const string TRIM = "@trim(";
     public const string TRUE = "@true(";
     public const string UNDO = "@undo";
+    public const string UNDOCLEAR = "@undoclear";
     public const string UPPER = "@upper(";
     public const string WRITE = "@write(";
     public const string WRITELINE = "@writeline(";
