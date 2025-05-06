@@ -1,14 +1,9 @@
-﻿using GRIFTools.GROD;
-
-namespace GRIFTools;
+﻿namespace GRIFTools;
 
 public partial class Grod
 {
     private readonly Dictionary<string, string> _base = [];
     private readonly Dictionary<string, string> _overlay = [];
-
-    private readonly Stack<UndoSnapshot> _undo = [];
-    private readonly UndoSnapshot _snapshot = new();
 
     private static string NormalizeKey(string key)
     {

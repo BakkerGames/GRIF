@@ -16,7 +16,6 @@ public static class DAGSConstants
     public const string ADD = "@add(";
     public const string ADDLIST = "@addlist(";
     public const string ADDTO = "@addto(";
-    public const string ALLOWUNDO = "@allowundo(";
     public const string AND = "@and";
     public const string CLEARARRAY = "@cleararray(";
     public const string CLEARLIST = "@clearlist(";
@@ -79,7 +78,6 @@ public static class DAGSConstants
     public const string SETARRAY = "@setarray(";
     public const string SETLIST = "@setlist(";
     public const string SETOUTCHANNEL = "@setoutchannel(";
-    public const string SNAPSHOT = "@snapshot";
     public const string SUB = "@sub(";
     public const string SUBSTRING = "@substring(";
     public const string SUBTO = "@subto(";
@@ -87,7 +85,6 @@ public static class DAGSConstants
     public const string THEN = "@then";
     public const string TRIM = "@trim(";
     public const string TRUE = "@true(";
-    public const string UNDO = "@undo";
     public const string UPPER = "@upper(";
     public const string WRITE = "@write(";
     public const string WRITELINE = "@writeline(";
