@@ -1,4 +1,6 @@
 // CloakOfDarkness.grif - GRIF format
+@__version
+	Version 2025.05.22
 @addscore(x)
 	@if @ne($x,0) @then
 		@addto(value.score,$x)
@@ -87,7 +89,6 @@
 	@look
 @quit
 	@setoutchannel("#GAMEOVER;")
-	@nl
 @room
 	@get(value.room)
 adjective.cloak
@@ -248,7 +249,7 @@ command.save.#
 		@setoutchannel("@script(script.save_slot)")
 	@endif
 command.score
-	@write(@format(@get(message.score),@get(value.score),@get(value.maxscore)))
+	@writeline(@format(@get(message.score),@get(value.score),@get(value.maxscore)))
 command.south
 	@godir(south)
 command.take.cloak.from.hook
@@ -278,6 +279,8 @@ command.up
 	@godir(up)
 command.use.hook
 	@script(command.hang.cloak)
+command.version
+	@writeline(@__version)
 command.west
 	@godir(west)
 item.cloak.afterdrop
@@ -557,5 +560,7 @@ verb.up
 	up,u,climb
 verb.use
 	use
+verb.version
+	ver,version
 verb.west
 	west,w

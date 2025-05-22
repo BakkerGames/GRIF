@@ -15,8 +15,7 @@ public partial class Grod
     public string Get(string key)
     {
         key = NormalizeKey(key);
-        string? item;
-        if (UseOverlay && _overlay.TryGetValue(key, out item))
+        if (UseOverlay && _overlay.TryGetValue(key, out string? item))
         {
             return item ?? "";
         }
@@ -27,6 +26,9 @@ public partial class Grod
         return "";
     }
 
+    /// <summary>
+    /// Return the value, or the supplied default value if not found
+    /// </summary>
     public string GetOrDefault(string key, string value)
     {
         var result = Get(key);
@@ -75,13 +77,13 @@ public partial class Grod
     {
         if (UseOverlay && which == WhichData.Overlay)
         {
-            return _overlay.Keys.ToList();
+            return [.. _overlay.Keys];
         }
         if (!UseOverlay || which == WhichData.Base)
         {
-            return _base.Keys.ToList();
+            return [.. _base.Keys];
         }
-        return _base.Keys.Union(_overlay.Keys).ToList();
+        return [.. _base.Keys.Union(_overlay.Keys)];
     }
 
     /// <summary>

@@ -27,7 +27,7 @@ public partial class Dags
     {
         Dictionary<string, string?> result = [];
         List<string> keys;
-        keys = Data.Keys().Where(x => x.StartsWith(prefix, OIC)).ToList();
+        keys = [.. Data.Keys().Where(x => x.StartsWith(prefix, OIC))];
         foreach (string k in keys)
         {
             result.Add(k, Get(k));
