@@ -5,10 +5,10 @@ VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GRIF", "GRIF\GRIF.csproj", "{395968DB-A154-425E-9E4F-074D792C95F3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "binaries", "binaries", "{E0E514C6-F7A6-4DD1-8F5D-E69286B74AD5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "executables", "executables", "{E0E514C6-F7A6-4DD1-8F5D-E69286B74AD5}"
 	ProjectSection(SolutionItems) = preProject
-		binaries\_package.bat = binaries\_package.bat
-		binaries\BINARIES.md = binaries\BINARIES.md
+		executables\_package.bat = executables\_package.bat
+		executables\README.md = executables\README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GRIFTools", "GRIFTools\GRIFTools.csproj", "{29E4B706-3973-466C-B256-FA028C31475F}"

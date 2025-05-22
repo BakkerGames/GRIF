@@ -87,7 +87,6 @@
 	@look
 @quit
 	@setoutchannel("#GAMEOVER;")
-	@nl
 @room
 	@get(value.room)
 adjective.cloak
@@ -248,7 +247,7 @@ command.save.#
 		@setoutchannel("@script(script.save_slot)")
 	@endif
 command.score
-	@write(@format(@get(message.score),@get(value.score),@get(value.maxscore)))
+	@writeline(@format(@get(message.score),@get(value.score),@get(value.maxscore)))
 command.south
 	@godir(south)
 command.take.cloak.from.hook

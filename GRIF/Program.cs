@@ -96,7 +96,11 @@ internal class Program
             Dags dags = new(grod);
 
             // Load data
-            if (File.Exists(dataPath))
+            if (File.Exists(dataPath + DATA_EXTENSION))
+            {
+                GrodDataIO.LoadDataFromFile(dataPath + DATA_EXTENSION, grod);
+            }
+            else if (File.Exists(dataPath))
             {
                 GrodDataIO.LoadDataFromFile(dataPath, grod);
             }

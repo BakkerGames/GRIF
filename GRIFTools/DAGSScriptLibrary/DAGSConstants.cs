@@ -2,6 +2,8 @@
 
 public static class DAGSConstants
 {
+    // be sure to add new values to Dags.Validate!
+
     // defined constants
 
     public const string NULL_VALUE = "null";

@@ -362,11 +362,11 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-# binaries
-binaries/*.zip
-binaries/*.tgz
-binaries/linux*/
-binaries/win*/
+# executables
+executables/*.zip
+executables/*.tgz
+executables/linux*/
+executables/win*/
 
 # batch files
 *.bat
