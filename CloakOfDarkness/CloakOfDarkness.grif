@@ -1,4 +1,6 @@
 // CloakOfDarkness.grif - GRIF format
+@__version
+	Version 2025.05.22
 @addscore(x)
 	@if @ne($x,0) @then
 		@addto(value.score,$x)
@@ -277,6 +279,8 @@ command.up
 	@godir(up)
 command.use.hook
 	@script(command.hang.cloak)
+command.version
+	@writeline(@__version)
 command.west
 	@godir(west)
 item.cloak.afterdrop
@@ -556,5 +560,7 @@ verb.up
 	up,u,climb
 verb.use
 	use
+verb.version
+	ver,version
 verb.west
 	west,w
