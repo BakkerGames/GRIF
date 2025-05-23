@@ -2,7 +2,7 @@
 
 public static class DAGSConstants
 {
-    // be sure to add new values to Dags.Validate!
+    // be sure to add new values to Dags.Validate and Dags.Help!
 
     // defined constants
 
