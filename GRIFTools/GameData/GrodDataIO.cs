@@ -527,49 +527,5 @@ public static class GrodDataIO
         return result.ToString();
     }
 
-    //private static List<string> StringToList(string value)
-    //{
-    //    if (!value.StartsWith('[') || !value.EndsWith(']'))
-    //    {
-    //        throw new SystemException($"Value is not a list: {value}");
-    //    }
-    //    var result = new List<string>();
-    //    StringBuilder item = new();
-    //    foreach (char c in value[1..])
-    //    {
-    //        if (c == ',' || c == ']')
-    //        {
-    //            result.Add(item.ToString());
-    //            item.Clear();
-    //        }
-    //        else
-    //        {
-    //            item.Append(c);
-    //        }
-    //    }
-    //    return result;
-    //}
-
-    //private static string ListToString(List<string> rawValue)
-    //{
-    //    StringBuilder result = new();
-    //    result.Append('[');
-    //    var comma = false;
-    //    foreach (string s in rawValue)
-    //    {
-    //        if (comma)
-    //        {
-    //            result.Append(',');
-    //        }
-    //        else
-    //        {
-    //            comma = true;
-    //        }
-    //        result.Append(s);
-    //    }
-    //    result.Append(']');
-    //    return result.ToString();
-    //}
-
     #endregion
 }
