@@ -42,7 +42,7 @@ public static class SystemData
         if (value.StartsWith('@'))
         {
             StringBuilder result = new();
-            dags.RunScript(value, result);
+            dags.RunScriptInternal(value, result);
             value = result.ToString();
         }
         if (value == "")
@@ -68,7 +68,7 @@ public static class SystemData
             if (value.StartsWith('@'))
             {
                 StringBuilder result = new();
-                dags.RunScript(value, result);
+                dags.RunScriptInternal(value, result);
                 return result.ToString();
             }
             return value;
@@ -87,7 +87,7 @@ public static class SystemData
             if (value.StartsWith('@'))
             {
                 StringBuilder result = new();
-                dags.RunScript(value, result);
+                dags.RunScriptInternal(value, result);
                 return result.ToString();
             }
             return value;

@@ -4,6 +4,11 @@ namespace GRIFTools;
 
 public partial class Dags
 {
+    private Dictionary<string, string> undo1 = [];
+    private Dictionary<string, string> undo2 = [];
+    private string saveCommand1 = "";
+    private string saveCommand2 = "";
+
     private string Get(string key)
     {
         var result = Data.Get(key);
@@ -230,6 +235,67 @@ public partial class Dags
         }
         var itemKey = $"{key}:{y}";
         SetListItem(itemKey, x, value);
+    }
+
+    #endregion
+
+    #region Undo routines
+
+    /// <summary>
+    /// Must make two backups, one for last command, one for this UNDO command which is ignored.
+    /// </summary>
+    private void PrepareUndoData()
+    {
+        if (!Data.UseOverlay) return;
+        if (!ConvertToBool(Get(UNDO_MODE))) return;
+        undo1.Clear();
+        foreach (string key in undo2.Keys)
+        {
+            undo1.Add(key, undo2[key]);
+        }
+        undo2.Clear();
+        foreach (string key in Data.Keys(GrodEnums.WhichData.Overlay))
+        {
+            undo2.Add(key, Get(key));
+        }
+    }
+
+    /// <summary>
+    /// Restore the undo data from undo1 back into the overlay.
+    /// </summary>
+    private void RestoreUndoData()
+    {
+        if (!Data.UseOverlay) return;
+        if (!ConvertToBool(Get(UNDO_MODE))) return;
+        if (undo1.Count == 0) return;
+        Data.Clear(GrodEnums.WhichData.Overlay);
+        foreach (string key in undo1.Keys)
+        {
+            Set(key, undo1[key]);
+        }
+        ClearUndoData();
+    }
+
+    /// <summary>
+    /// Clear the undo data until the next time.
+    /// </summary>
+    private void ClearUndoData()
+    {
+        undo1.Clear();
+        undo2.Clear();
+    }
+
+    #endregion
+
+    #region Again command
+
+    /// <summary>
+    /// Must make two copies, one for last command, one for this AGAIN command which is ignored.
+    /// </summary>
+    private void SaveLastCommand(string script)
+    {
+        saveCommand1 = saveCommand2;
+        saveCommand2 = script;
     }
 
     #endregion

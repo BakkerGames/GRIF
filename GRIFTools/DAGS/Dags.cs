@@ -32,9 +32,29 @@ public partial class Dags()
     public Queue<string> OutChannel { get; set; } = new();
 
     /// <summary>
-    /// Run one script and return any text in result.
+    /// Run one script and return any text in result. Handles UNDO and AGAIN.
     /// </summary>
     public void RunScript(string script, StringBuilder result)
+    {
+        if (string.IsNullOrWhiteSpace(script) || script.Equals(NULL_VALUE, OIC))
+        {
+            return;
+        }
+        // TODO ### handle undo and again
+        PrepareUndoData();
+        SaveLastCommand(script);
+        RunScriptInternal(script, result);
+    }
+
+    /// <summary>
+    /// Run one script and return any text in result. Does not handle UNDO or AGAIN.
+    /// </summary>
+    public void RunScriptBackground(string script, StringBuilder result)
+    {
+        RunScriptInternal(script, result);
+    }
+
+    private void RunScriptInternal(string script, StringBuilder result)
     {
         if (string.IsNullOrWhiteSpace(script) || script.Equals(NULL_VALUE, OIC))
         {

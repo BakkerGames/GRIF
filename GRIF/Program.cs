@@ -212,7 +212,7 @@ internal class Program
 
             // Introduction
             result.Clear();
-            dags.RunScript(SystemData.Intro(), result);
+            dags.RunScriptBackground(SystemData.Intro(), result);
             UserIO.Output(result);
             DagsIO.CheckOutChannel();
 

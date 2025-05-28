@@ -31,6 +31,17 @@ public partial class Dags
             {
                 switch (token)
                 {
+                    case AGAIN:
+                        if (saveCommand1 == "")
+                        {
+                            throw new SystemException("Nothing happens.");
+                        }
+                        RunScriptInternal(saveCommand1, result);
+                        saveCommand2 = saveCommand1; // for another AGAIN
+                        return;
+                    case CLEARUNDO:
+                        ClearUndoData();
+                        return;
                     case IF:
                         // begins an @if block
                         HandleIf(tokens, ref index, result);
@@ -54,6 +65,13 @@ public partial class Dags
                         // immediately jump to end of script
                         index = tokens.Length;
                         return;
+                    case UNDO:
+                        if (undo1.Count == 0)
+                        {
+                            throw new SystemException("Nothing happens.");
+                        }
+                        RestoreUndoData();
+                        return;
                     default:
                         // run a defined function with no parameters
                         // @func=...
@@ -62,7 +80,7 @@ public partial class Dags
                         {
                             throw new SystemException($"Function not found: {token}");
                         }
-                        RunScript(value, result);
+                        RunScriptInternal(value, result);
                         return;
                 }
                 throw new SystemException($"Unknown script token: {token}");
@@ -198,7 +216,7 @@ public partial class Dags
                         while (temp1.StartsWith('@'))
                         {
                             StringBuilder tempResult = new();
-                            RunScript(temp1, tempResult);
+                            RunScriptInternal(temp1, tempResult);
                             temp1 = tempResult.ToString();
                         }
                         value.Append(temp1);
@@ -303,7 +321,7 @@ public partial class Dags
                     while (temp1.StartsWith('@'))
                     {
                         StringBuilder tempResult = new();
-                        RunScript(temp1, tempResult);
+                        RunScriptInternal(temp1, tempResult);
                         temp1 = tempResult.ToString();
                     }
                     result.Append(temp1);
@@ -452,7 +470,7 @@ public partial class Dags
                     while (temp1.StartsWith('@'))
                     {
                         StringBuilder tempResult = new();
-                        RunScript(temp1, tempResult);
+                        RunScriptInternal(temp1, tempResult);
                         temp1 = tempResult.ToString();
                     }
                     result.Append(temp1);
@@ -560,7 +578,7 @@ public partial class Dags
                 case SCRIPT:
                     // run a script
                     CheckParamCount(token, p, 1);
-                    RunScript(Get(p[0]), result);
+                    RunScriptInternal(Get(p[0]), result);
                     return;
                 case SET:
                     // set a value
@@ -694,7 +712,7 @@ public partial class Dags
                         while (temp1.StartsWith('@'))
                         {
                             StringBuilder tempResult = new();
-                            RunScript(temp1, tempResult);
+                            RunScriptInternal(temp1, tempResult);
                             temp1 = tempResult.ToString();
                         }
                         result.Append(temp1);
@@ -708,7 +726,7 @@ public partial class Dags
                         while (temp1.StartsWith('@'))
                         {
                             StringBuilder tempResult = new();
-                            RunScript(temp1, tempResult);
+                            RunScriptInternal(temp1, tempResult);
                             temp1 = tempResult.ToString();
                         }
                         result.Append(temp1);
@@ -736,7 +754,7 @@ public partial class Dags
                     {
                         tempValue = tempValue?.Replace($"${s}", p[pIndex++]) ?? "";
                     }
-                    RunScript(tempValue ?? "", result);
+                    RunScriptInternal(tempValue ?? "", result);
                     return;
             }
             throw new SystemException($"Unknown script token: {token}");
@@ -997,7 +1015,7 @@ public partial class Dags
         for (int value = int.Parse(p[1]); value <= int.Parse(p[2]); value++)
         {
             var script = newTokens.ToString().Replace($"${p[0]}", value.ToString());
-            RunScript(script, result);
+            RunScriptInternal(script, result);
         }
     }
 
@@ -1039,7 +1057,7 @@ public partial class Dags
                 value = value[..^p[2].Length];
             }
             var script = newTokens.ToString().Replace($"${p[0]}", value);
-            RunScript(script, result);
+            RunScriptInternal(script, result);
         }
     }
 
@@ -1079,7 +1097,7 @@ public partial class Dags
                 if (!string.IsNullOrEmpty(value))
                 {
                     var script = newTokens.ToString().Replace($"${p[0]}", value);
-                    RunScript(script, result);
+                    RunScriptInternal(script, result);
                 }
             }
         }

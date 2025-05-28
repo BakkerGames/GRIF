@@ -18,9 +18,11 @@ public static class DAGSConstants
     public const string ADD = "@add(";
     public const string ADDLIST = "@addlist(";
     public const string ADDTO = "@addto(";
+    public const string AGAIN = "@again";
     public const string AND = "@and";
     public const string CLEARARRAY = "@cleararray(";
     public const string CLEARLIST = "@clearlist(";
+    public const string CLEARUNDO = "@clearundo";
     public const string COMMENT = "@comment(";
     public const string CONCAT = "@concat(";
     public const string DEBUG = "@debug(";
@@ -87,6 +89,7 @@ public static class DAGSConstants
     public const string THEN = "@then";
     public const string TRIM = "@trim(";
     public const string TRUE = "@true(";
+    public const string UNDO = "@undo";
     public const string UPPER = "@upper(";
     public const string WRITE = "@write(";
     public const string WRITELINE = "@writeline(";
