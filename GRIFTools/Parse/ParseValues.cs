@@ -7,6 +7,7 @@ public static class ParseValues
     private const string CONFIG_COMMAND_PREFIX = "system.command_prefix";
     private const string CONFIG_DONT_UNDERSTAND = "system.dont_understand";
     private const string CONFIG_DONT_UNDERSTAND_THAT = "system.dont_understand_that";
+    private const string CONFIG_DONT_UNDERSTAND_WORD = "system.dont_understand_word";
     private const string CONFIG_INPUT_PREFIX = "system.input_prefix";
     private const string CONFIG_NOUN_PREFIX = "system.noun_prefix";
     private const string CONFIG_PREPOSITION_PREFIX = "system.preposition_prefix";
@@ -130,6 +131,18 @@ public static class ParseValues
                 return _grod.Get(CONFIG_DONT_UNDERSTAND);
             }
             return "I don't understand \"{0}\".";
+        }
+    }
+
+    public static string DONT_UNDERSTAND_WORD
+    {
+        get
+        {
+            if (_grod.ContainsKey(CONFIG_DONT_UNDERSTAND_WORD))
+            {
+                return _grod.Get(CONFIG_DONT_UNDERSTAND_WORD);
+            }
+            return "I don't know the word \"{0}\".";
         }
     }
 

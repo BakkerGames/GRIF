@@ -7,5 +7,5 @@ public partial class Dags
     private readonly Random _random = new();
 
     private const string DEBUG_MODE = "system.debug";
-    private const string UNDO_MODE = "system.enableundo";
+    private const string UNDO_MODE = "system.enable_undo";
 }

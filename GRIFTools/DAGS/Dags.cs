@@ -40,7 +40,6 @@ public partial class Dags()
         {
             return;
         }
-        // TODO ### handle undo and again
         PrepareUndoData();
         SaveLastCommand(script);
         RunScriptInternal(script, result);

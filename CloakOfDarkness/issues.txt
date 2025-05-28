@@ -1,0 +1,50 @@
+
+>take off cloak
+
+I don't understand "take off cloak".
+
+>remove cloak
+
+I don't know the word "remove".
+
+>drop cloak
+
+OK
+
+This isn't the best place to leave a smart cloak lying around.
+
+>put on cloak
+
+I don't understand "put on cloak".
+
+>wear cloak
+
+I don't know the word "wear".
+
+>
+
+>help cloak
+
+I don't know the word "help".
+
+>help
+
+I don't know the word "help".
+
+>put on
+
+I don't understand "put on".
+
+>take
+
+I don't understand "take".
+
+>take cloak
+
+OK
+
+>drop
+
+I don't understand "drop".
+
+>

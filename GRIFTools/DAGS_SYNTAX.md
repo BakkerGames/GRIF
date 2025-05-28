@@ -377,9 +377,20 @@ Note that the array values are referenced by row (y) first and then column (x), 
 
 ## Special Commands
 
-GRIF has two built-in special features if your game wishes to use them.
+GRIF has some built-in special commands if your game wishes to use them. You will need to enable them and/or add verbs and command scripts to make them work.
 
-The "@again" command will re-run the last
+@again
+
+>This command will re-run the last command typed. If it is done at the start of game, a message is displayed. Often given the synonym of "g".
+
+@undo
+
+>This command will undo the last command. However, it is very limited, so if the last command was LOOK or something else simple, not much will happen. This needs the "system.allow_undo" value to be "true".
+
+@clearundo
+
+>This is to be used within a script when they can't undo, such as after restoring or starting over. The game may use this whenever important, permanent events happen, or logicaly there is no undo available.
+
 
 ## InChannel/OutChannel Commands
 
