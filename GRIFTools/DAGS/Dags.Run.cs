@@ -13,8 +13,7 @@ public partial class Dags
         string temp2;
         bool answer;
         long numericAnswer;
-        //List<string> list = [];
-        //List<List<string>> array = [];
+
         var token = tokens[index++];
 
         // static value
