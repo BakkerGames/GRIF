@@ -35,9 +35,13 @@ public partial class Dags
                     }
                     else
                     {
+                        result.Append(saveInput1);
+                        result.Append("\\n");
+                        result.Append(Get("system.after_prompt"));
                         RunScriptInternal(saveCommand1, result);
                     }
                     saveCommand2 = saveCommand1; // for another AGAIN
+                    saveInput2 = saveInput1;
                     return;
                 case CLEARUNDO:
                     ClearUndoData();

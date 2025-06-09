@@ -175,6 +175,7 @@ public static class DagsIO
     private static void Restart()
     {
         grod.Clear(GrodEnums.WhichData.Overlay);
+        dags.ClearUndoData();
     }
 
     private static void SaveState(string filename)
@@ -187,6 +188,7 @@ public static class DagsIO
     {
         grod.Clear(GrodEnums.WhichData.Overlay);
         GrodDataIO.LoadDataFromFile(filename, grod);
+        dags.ClearUndoData();
     }
 
     #endregion

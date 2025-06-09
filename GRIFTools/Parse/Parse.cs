@@ -23,6 +23,7 @@ public static class Parse
         }
 
         // Clear answers
+        _grod.Set($"{INPUT_PREFIX}full", input);
         _grod.Set($"{INPUT_PREFIX}verb", "");
         _grod.Set($"{INPUT_PREFIX}verbword", "");
         _grod.Set($"{INPUT_PREFIX}noun", "");
@@ -60,7 +61,15 @@ public static class Parse
         }
         if (result.Verb == "")
         {
-            result.Error = string.Format(DONT_UNDERSTAND_WORD, words[0]);
+            GetNoun(result, words, ref index);
+            if (result.Error == "" && result.Noun != "")
+            {
+                result.Error = string.Format(DO_WHAT_WITH_NOUN, words[0]);
+            }
+            else
+            {
+                result.Error = string.Format(DONT_UNDERSTAND_WORD, words[0]);
+            }
             return result;
         }
 

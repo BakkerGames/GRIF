@@ -8,6 +8,8 @@ public partial class Dags
     private Dictionary<string, string> undo2 = [];
     private string saveCommand1 = "";
     private string saveCommand2 = "";
+    private string saveInput1 = "";
+    private string saveInput2 = "";
 
     private string Get(string key)
     {
@@ -277,9 +279,10 @@ public partial class Dags
     }
 
     /// <summary>
-    /// Clear the undo data until the next time.
+    /// Clear the undo data after RESTART or RESTORE.
+    /// Public so it can be called by GRIF.
     /// </summary>
-    private void ClearUndoData()
+    public void ClearUndoData()
     {
         undo1.Clear();
         undo2.Clear();
@@ -296,6 +299,8 @@ public partial class Dags
     {
         saveCommand1 = saveCommand2;
         saveCommand2 = script;
+        saveInput1 = saveInput2;
+        saveInput2 = Get("input.full");
     }
 
     #endregion

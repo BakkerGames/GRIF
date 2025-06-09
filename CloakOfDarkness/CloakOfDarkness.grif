@@ -236,7 +236,6 @@ command.restore.#
 		@setoutchannel(@get(temp.slot))
 		@setoutchannel("@msg(message.restore_complete) @nl")
 		@setoutchannel("@lookfull")
-		@clearundo
 	@else
 		@msg(message.save_slot_number)
 		@setoutchannel("#ASK;")
@@ -490,7 +489,6 @@ script.restart
 	@set(temp.yorn,@getinchannel)
 	@if @true(@get(temp.yorn)) @then
 		@setoutchannel("#RESTART;")
-		@clearundo
 	@elseif @false(@get(temp.yorn)) @then
 		@msg(message.ok)
 	@else
@@ -505,7 +503,6 @@ script.restore_slot
 		@setoutchannel(@get(temp.slot))
 		@setoutchannel("@msg(message.restore_complete) @nl")
 		@setoutchannel("@lookfull")
-		@clearundo
 	@else
 		@msg(message.save_slot_number)
 		@setoutchannel("#ASK;")
@@ -524,6 +521,8 @@ script.save_slot
 	@endif
 system.after_prompt
 	\n
+system.do_what_with_noun
+	Do what with the {0}?
 system.dont_understand
 	I don't understand "{0}".
 system.dont_understand_that

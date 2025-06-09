@@ -256,6 +256,21 @@ public class UnitTestDags
         Assert.That(result.ToString(), Is.EqualTo("19"));
     }
 
+
+    [Test]
+    public void Test_Again()
+    {
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        result.Clear();
+        data.Set("input.full", "add 1 plus 2");
+        dags.RunScript("@writeline(@add(1,2))", result);
+        data.Set("input.full", "again");
+        dags.RunScript("@again", result);
+        Assert.That(result.ToString(), Is.EqualTo("3\\nadd 1 plus 2\\n3\\n"));
+    }
+
     [Test]
     public void Test_Comment()
     {
