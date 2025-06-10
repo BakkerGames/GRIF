@@ -9,7 +9,6 @@ public static class ParseValues
     private const string CONFIG_DONT_UNDERSTAND_THAT = "system.dont_understand_that";
     private const string CONFIG_DONT_UNDERSTAND_WORD = "system.dont_understand_word";
     private const string CONFIG_DO_WHAT_WITH_NOUN = "system.do_what_with_noun";
-    private const string CONFIG_INPUT_PREFIX = "system.input_prefix";
     private const string CONFIG_NOUN_PREFIX = "system.noun_prefix";
     private const string CONFIG_PREPOSITION_PREFIX = "system.preposition_prefix";
     private const string CONFIG_VERB_PREFIX = "system.verb_prefix";
@@ -63,17 +62,7 @@ public static class ParseValues
         }
     }
 
-    public static string INPUT_PREFIX
-    {
-        get
-        {
-            if (_grod.ContainsKey(CONFIG_INPUT_PREFIX))
-            {
-                return _grod.Get(CONFIG_INPUT_PREFIX);
-            }
-            return "input.";
-        }
-    }
+    public const string INPUT_PREFIX = "input."; // cannot be modified
 
     public static string NOUN_PREFIX
     {

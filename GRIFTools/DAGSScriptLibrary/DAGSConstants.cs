@@ -20,7 +20,11 @@ public static class DAGSConstants
     public const string ADDTO = "@addto(";
     public const string AGAIN = "@again";
     public const string AND = "@and";
+    public const string BITWISEAND = "@bitwiseand(";
+    public const string BITWISEOR = "@bitwiseor(";
+    public const string BITWISEXOR = "@bitwisexor(";
     public const string CLEARARRAY = "@cleararray(";
+    public const string CLEARBIT = "@clearbit(";
     public const string CLEARLIST = "@clearlist(";
     public const string CLEARUNDO = "@clearundo";
     public const string COMMENT = "@comment(";
@@ -45,6 +49,7 @@ public static class DAGSConstants
     public const string GE = "@ge(";
     public const string GET = "@get(";
     public const string GETARRAY = "@getarray(";
+    public const string GETBIT = "@getbit(";
     public const string GETINCHANNEL = "@getinchannel";
     public const string GETLIST = "@getlist(";
     public const string GETVALUE = "@getvalue(";
@@ -80,6 +85,7 @@ public static class DAGSConstants
     public const string SCRIPT = "@script(";
     public const string SET = "@set(";
     public const string SETARRAY = "@setarray(";
+    public const string SETBIT = "@setbit(";
     public const string SETLIST = "@setlist(";
     public const string SETOUTCHANNEL = "@setoutchannel(";
     public const string SUB = "@sub(";
@@ -87,6 +93,8 @@ public static class DAGSConstants
     public const string SUBTO = "@subto(";
     public const string SWAP = "@swap(";
     public const string THEN = "@then";
+    public const string TOBINARY = "@tobinary(";
+    public const string TOINTEGER = "@tointeger(";
     public const string TRIM = "@trim(";
     public const string TRUE = "@true(";
     public const string UNDO = "@undo";

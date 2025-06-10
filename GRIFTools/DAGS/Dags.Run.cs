@@ -138,6 +138,39 @@ public partial class Dags
                 }
                 Set(p[0], numericAnswer.ToString());
                 return;
+            case BITWISEAND:
+                CheckParamCount(token, p, 2);
+                int1 = ConvertToInt(p[0]);
+                int2 = ConvertToInt(p[1]);
+                if (int1 < 0 || int2 < 0)
+                {
+                    throw new SystemException($"{BITWISEAND}{int1},{int2}): Invalid parameters");
+                }
+                numericAnswer = int1 & int2;
+                result.Append(numericAnswer);
+                return;
+            case BITWISEOR:
+                CheckParamCount(token, p, 2);
+                int1 = ConvertToInt(p[0]);
+                int2 = ConvertToInt(p[1]);
+                if (int1 < 0 || int2 < 0)
+                {
+                    throw new SystemException($"{BITWISEOR}{int1},{int2}): Invalid parameters");
+                }
+                numericAnswer = int1 | int2;
+                result.Append(numericAnswer);
+                return;
+            case BITWISEXOR:
+                CheckParamCount(token, p, 2);
+                int1 = ConvertToInt(p[0]);
+                int2 = ConvertToInt(p[1]);
+                if (int1 < 0 || int2 < 0)
+                {
+                    throw new SystemException($"{BITWISEXOR}{int1},{int2}): Invalid parameters");
+                }
+                numericAnswer = int1 ^ int2;
+                result.Append(numericAnswer);
+                return;
             case CLEARARRAY:
                 // clears the named array
                 CheckParamCount(token, p, 1);
@@ -146,6 +179,18 @@ public partial class Dags
                     throw new SystemException("Array name cannot be blank");
                 }
                 ClearArray(p[0]);
+                return;
+            case CLEARBIT:
+                // clears the specified bit, 0..30
+                CheckParamCount(token, p, 2);
+                int1 = ConvertToInt(p[0]);
+                int2 = ConvertToInt(p[1]);
+                if (int1 < 0 || int2 < 0 || int2 > 30)
+                {
+                    throw new SystemException($"{CLEARBIT}{int1},{int2}): Invalid parameters");
+                }
+                numericAnswer = int1 ^ (int)Math.Pow(2, int2);
+                result.Append(numericAnswer);
                 return;
             case CLEARLIST:
                 // clears the named list
@@ -307,6 +352,19 @@ public partial class Dags
                     throw new SystemException($"Invalid (y,x) for array: ({p[1]},{p[2]})");
                 }
                 result.Append(GetArrayItem(p[0], int1, int2));
+                return;
+            case GETBIT:
+                // gets the specified bit, 0..30
+                CheckParamCount(token, p, 2);
+                int1 = ConvertToInt(p[0]);
+                int2 = ConvertToInt(p[1]);
+                if (int1 < 0 || int2 < 0 || int2 > 30)
+                {
+                    throw new SystemException($"{GETBIT}{int1},{int2}): Invalid parameters");
+                }
+                numericAnswer = int1 & (int)Math.Pow(2, int2);
+                if (numericAnswer != 0) numericAnswer = 1;
+                result.Append(numericAnswer);
                 return;
             case GETLIST:
                 // get a name,x value
@@ -613,6 +671,18 @@ public partial class Dags
                 }
                 SetArrayItem(p[0], int1, int2, p[3]);
                 return;
+            case SETBIT:
+                // sets the specified bit, 0..30
+                CheckParamCount(token, p, 2);
+                int1 = ConvertToInt(p[0]);
+                int2 = ConvertToInt(p[1]);
+                if (int1 < 0 || int2 < 0 || int2 > 30)
+                {
+                    throw new SystemException($"{SETBIT}{int1},{int2}): Invalid parameters");
+                }
+                numericAnswer = int1 | (int)Math.Pow(2, int2);
+                result.Append(numericAnswer);
+                return;
             case SETLIST:
                 // set a name,x,value
                 CheckParamCount(token, p, 3);
@@ -687,6 +757,18 @@ public partial class Dags
                 temp1 = Get(p[0]);
                 Set(p[0], Get(p[1]));
                 Set(p[1], temp1);
+                return;
+            case TOBINARY:
+                // convert integer to binary
+                CheckParamCount(token, p, 1);
+                int1 = int.Parse(p[0]);
+                result.Append(Convert.ToString(int1, 2));
+                return;
+            case TOINTEGER:
+                // convert binary to integer
+                CheckParamCount(token, p, 1);
+                int1 = Convert.ToInt32(p[0], 2);
+                result.Append(int1);
                 return;
             case TRIM:
                 // trim leading and trailing spaces from string
