@@ -1,5 +1,6 @@
-﻿using GRIFTools;
-using System.Text;
+﻿using System.Text;
+using static GRIF.Constants;
+using static GRIFTools.DAGSConstants;
 
 namespace GRIF;
 
@@ -94,10 +95,27 @@ public static class UserIO
             return;
         }
         StringBuilder result = new();
-        var lines = value.Split(DAGSConstants.NL_VALUE);
-        for (int i = 0; i < lines.Length - 1; i++)
+        var lines = value.Split(NL_VALUE);
+        int i = 0;
+        while(i < lines.Length - 1)
         {
-            var line = lines[i];
+            var line = lines[i++];
+            // check for embedded codes in result text
+            if (line.Equals(OUTCHANNEL_PICTURE, OIC))
+            {
+                result.AppendLine($"### PICTURE {lines[i++]} ###");
+                continue;
+            }
+            if (line.Equals(OUTCHANNEL_SLEEP, OIC))
+            {
+                OutputResult(result);
+                result.Clear();
+                if (int.TryParse(lines[i++], out int sleepTime) && sleepTime > 0)
+                {
+                    Thread.Sleep(sleepTime);
+                }
+                continue;
+            }
             if (SystemData.OutputWidth() > 0)
             {
                 while (LastLen + line.Length > SystemData.OutputWidth())
@@ -118,14 +136,7 @@ public static class UserIO
             result.AppendLine();
             LastLen = 0;
         }
-        if (result.Length > 0)
-        {
-            Console.Write(result.ToString());
-            if (LogFilename != "")
-            {
-                File.AppendAllText(LogFilename, result.ToString());
-            }
-        }
+        OutputResult(result);
     }
 
     #region Private
@@ -135,6 +146,18 @@ public static class UserIO
     private static Queue<string> InputQueue { get; set; } = new();
 
     private static string LogFilename { get; set; } = "";
+
+    private static void OutputResult(StringBuilder result)
+    {
+        if (result.Length > 0)
+        {
+            Console.Write(result.ToString());
+            if (LogFilename != "")
+            {
+                File.AppendAllText(LogFilename, result.ToString());
+            }
+        }
+    }
 
     #endregion
 }

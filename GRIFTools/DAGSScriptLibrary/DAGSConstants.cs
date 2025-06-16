@@ -77,6 +77,7 @@ public static class DAGSConstants
     public const string NOT = "@not";
     public const string NULL = "@null(";
     public const string OR = "@or";
+    public const string PICTURE = "@picture(";
     public const string RAND = "@rand(";
     public const string REMOVEATLIST = "@removeatlist(";
     public const string REPLACE = "@replace(";
@@ -88,6 +89,7 @@ public static class DAGSConstants
     public const string SETBIT = "@setbit(";
     public const string SETLIST = "@setlist(";
     public const string SETOUTCHANNEL = "@setoutchannel(";
+    public const string SLEEP = "@sleep(";
     public const string SUB = "@sub(";
     public const string SUBSTRING = "@substring(";
     public const string SUBTO = "@subto(";
@@ -101,4 +103,22 @@ public static class DAGSConstants
     public const string UPPER = "@upper(";
     public const string WRITE = "@write(";
     public const string WRITELINE = "@writeline(";
+
+    // OutChannel constants used by GRIF
+
+    public const string OUTCHANNEL_ASK = "#ASK;";
+    public const string OUTCHANNEL_ENTER = "#ENTER;";
+    public const string OUTCHANNEL_EXISTS_SAVE = "#EXISTS;";
+    public const string OUTCHANNEL_EXISTS_SAVE_NAME = "#EXISTSNAME;";
+    public const string OUTCHANNEL_GAMEOVER = "#GAMEOVER;";
+    public const string OUTCHANNEL_RESTART = "#RESTART;";
+    public const string OUTCHANNEL_RESTORE = "#RESTORE;";
+    public const string OUTCHANNEL_RESTORE_NAME = "#RESTORENAME;";
+    public const string OUTCHANNEL_SAVE = "#SAVE;";
+    public const string OUTCHANNEL_SAVE_NAME = "#SAVENAME;";
+
+    // Embedded commands in result text
+
+    public const string OUTCHANNEL_PICTURE = "#PICTURE;";
+    public const string OUTCHANNEL_SLEEP = "#SLEEP;";
 }

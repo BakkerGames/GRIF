@@ -22,6 +22,7 @@ public partial class Dags
         result.AppendLine($"   {RETURN}");
         result.AppendLine($"   {SCRIPT}key)");
         result.AppendLine($"   {SET}key,value)");
+        result.AppendLine($"   {SLEEP}milliseconds)");
         result.AppendLine($"   {SWAP}key1,key2)");
         result.AppendLine();
 
@@ -37,6 +38,7 @@ public partial class Dags
         result.AppendLine("Output statements:");
         result.AppendLine($"   {NL}");
         result.AppendLine($"   {MSG}key)");
+        result.AppendLine($"   {PICTURE}value)");
         result.AppendLine($"   {WRITE}value[,value,...])");
         result.AppendLine($"   {WRITELINE}value[,value,...])");
         result.AppendLine();

@@ -410,6 +410,7 @@ GRIF has some built-in special commands if your game wishes to use them. You wil
 >"#RESTORENAME;"
 >"#SAVE;"
 >"#SAVENAME;"
+>"#SLEEP;"
 
 > Some special commands would be followed by a script to handle the result. The script is called after doing the special command, and that script would use @getinchannel to retrieve the answer. Here is a partial example:
 

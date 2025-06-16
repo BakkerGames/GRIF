@@ -36,7 +36,7 @@ public partial class Dags
                     else
                     {
                         result.Append(saveInput1);
-                        result.Append("\\n");
+                        result.Append(NL_VALUE);
                         result.Append(Get("system.after_prompt"));
                         RunScriptInternal(saveCommand1, result);
                     }
@@ -608,6 +608,25 @@ public partial class Dags
                 answer = p[0] == "" || p[0].Equals(NULL_VALUE, OIC);
                 result.Append(ConvertToBoolString(answer));
                 return;
+            case PICTURE:
+                // draw picture, embedded in result
+                CheckParamCount(token, p, 1);
+                if (result.Length > 0 && !result.ToString().EndsWith(NL_VALUE))
+                {
+                    result.Append(NL_VALUE);
+                }
+                result.Append(OUTCHANNEL_PICTURE);
+                result.Append(NL_VALUE);
+                if (Get(p[0]) != "")
+                {
+                    result.Append(Get(p[0]));
+                }
+                else
+                {
+                    result.Append(p[0]);
+                }
+                result.Append(NL_VALUE);
+                return;
             case RAND:
                 // is random 0-99 less than percent value (1-100)
                 CheckParamCount(token, p, 1);
@@ -700,6 +719,16 @@ public partial class Dags
                 // adds the value to the OutChannel queue
                 CheckParamCount(token, p, 1);
                 OutChannel.Enqueue(p[0]);
+                return;
+            case SLEEP:
+                // sleep for x milliseconds, embedded in result
+                CheckParamCount(token, p, 1);
+                int1 = ConvertToInt(p[0]);
+                if (result.Length > 0 && !result.ToString().EndsWith(NL_VALUE))
+                {
+                    result.Append(NL_VALUE);
+                }
+                result.Append($"{OUTCHANNEL_SLEEP}{NL_VALUE}{int1}{NL_VALUE}");
                 return;
             case SUB:
                 // subtract two values

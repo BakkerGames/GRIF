@@ -1,6 +1,7 @@
 ﻿using GRIFTools;
 using System.Text;
 using static GRIF.Constants;
+using static GRIFTools.DAGSConstants;
 
 namespace GRIF;
 
