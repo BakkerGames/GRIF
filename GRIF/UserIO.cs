@@ -112,7 +112,8 @@ public static class UserIO
                 result.Clear();
                 if (int.TryParse(lines[i++], out int sleepTime) && sleepTime > 0)
                 {
-                    Thread.Sleep(sleepTime);
+                    // pauses execution without blocking the thread
+                    Task.Run(async () => await Task.Delay(sleepTime));
                 }
                 continue;
             }
