@@ -109,11 +109,11 @@ command.quit
 command.restart
 	@msg(message.ask_restart)
 	@setoutchannel("#ASK;")
-	@setoutchannel("@restart")
+	@setoutchannel("@script(script.restart)")
 command.restore
 	@msg(message.ask_restore)
 	@setoutchannel("#ASK;")
-	@setoutchannel("@restore")
+	@setoutchannel("@script(script.restore)")
 command.save
 	@setoutchannel("#SAVE;")
 	@setoutchannel("@msg(message.ok)")
@@ -149,6 +149,17 @@ script.restart
 		@msg(message.yorn_error)
 		@setoutchannel("#ASK;")
 		@setoutchannel("@script(script.restart)")
+	@endif
+script.restore
+	@set(temp.yorn,@getinchannel)
+	@if @true(@get(temp.yorn)) @then
+		@restore
+	@elseif @false(@get(temp.yorn)) @then
+		@msg(message.ok)
+	@else
+		@msg(message.yorn_error)
+		@setoutchannel("#ASK;")
+		@setoutchannel("@script(script.restore)")
 	@endif
 system.after_prompt
 	\n
