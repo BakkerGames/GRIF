@@ -23,6 +23,7 @@ public static class Parse
         }
 
         // Clear answers
+        _grod.Set($"{INPUT_PREFIX}full", input);
         _grod.Set($"{INPUT_PREFIX}verb", "");
         _grod.Set($"{INPUT_PREFIX}verbword", "");
         _grod.Set($"{INPUT_PREFIX}noun", "");
@@ -60,7 +61,15 @@ public static class Parse
         }
         if (result.Verb == "")
         {
-            result.Error = DONT_UNDERSTAND_THAT;
+            GetNoun(result, words, ref index);
+            if (result.Error == "" && result.Noun != "")
+            {
+                result.Error = string.Format(DO_WHAT_WITH_NOUN, words[0]);
+            }
+            else
+            {
+                result.Error = string.Format(DONT_UNDERSTAND_WORD, words[0]);
+            }
             return result;
         }
 
@@ -220,6 +229,11 @@ public static class Parse
 
     private static void GetPrepositionAndObject(ParseResult result, string[] words, ref int index)
     {
+        if (index >= words.Length)
+        {
+            return;
+        }
+
         int newIndex = index;
 
         // get the preposition
@@ -231,11 +245,26 @@ public static class Parse
             return;
         }
 
+        if (newIndex >= words.Length)
+        {
+            return;
+        }
+
         // articles
         CheckArticles(words, ref newIndex);
 
+        if (newIndex >= words.Length)
+        {
+            return;
+        }
+
         // adjectives
         var adjectiveNounList = CheckAdjectives(words, ref newIndex);
+
+        if (newIndex >= words.Length)
+        {
+            return;
+        }
 
         // get the preposition's object
         string origWord2 = words[newIndex];
@@ -302,6 +331,8 @@ public static class Parse
     {
         // look for articles (a, an, the) and ignore them
 
+        if (index >= words.Length) return;
+
         string origWord = words[index];
         int newIndex = index + 1;
 
@@ -327,6 +358,11 @@ public static class Parse
         // when checking multiple adjectives, all must match the same noun(s).
         // the "intersect" removes any not matching on either side.
         // upon returning, the following noun must be in the adjective noun list, or it fails.
+
+        if (index >= words.Length)
+        {
+            return null;
+        }
 
         bool firstTime = true;
         bool foundOne = false;

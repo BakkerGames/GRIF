@@ -239,7 +239,7 @@ public class UnitTestGrod
         g.Set("a", "1");
         g.Set("b", "2");
         g.Set("c", "3");
-        g.Remove("b");
+        g.Delete("b");
         var answer = "";
         foreach (string s in g.Keys())
         {
@@ -273,7 +273,7 @@ public class UnitTestGrod
         g.Set("a", "1");
         g.Set("b", "2");
         g.Set("c", "3");
-        g.Remove("b");
+        g.Delete("b");
         Assert.That(g.ContainsKey("a") && !g.ContainsKey("b") && g.ContainsKey("c"), Is.True);
     }
 

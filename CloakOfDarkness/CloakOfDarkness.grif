@@ -106,6 +106,8 @@ background.intro
 	@endif
 command.down
 	@godir(down)
+command.drop
+	@msg(message.drop_what)
 command.drop.*
 	@if @carry(@get(input.noun)) @then
 		@if @isroom(bar) @and @dark @then
@@ -120,6 +122,19 @@ command.drop.*
 	@endif
 command.east
 	@godir(east)
+command.examine
+	@msg(message.examine_what)
+command.examine.cloak
+	@if @herecarry(cloak) @or @herechild(cloak) @then
+		@write("A ")
+		@msg(item.cloak.description)
+	@else
+		@msg(message.dont_see)
+	@endif
+command.examine.hook
+	@msg(item.hook.examine)
+command.examine.message
+	@script(command.read.message)
 command.go.*
 	@if @null(@get(input.noun)) @then
 		@msg(system.dont_understand_that)
@@ -144,6 +159,8 @@ command.hang.cloak
 	@endif
 command.hang.cloak.on.hook
 	@script(command.hang.cloak)
+command.help
+	@msg(message.help)
 command.inventory
 	@set(temp.count,0)
 	@foreachkey(x,"item.",".location")
@@ -168,17 +185,6 @@ command.look.room
 	@lookfull
 command.look.at.room
 	@lookfull
-command.examine.cloak
-	@if @herecarry(cloak) @or @herechild(cloak) @then
-		@write("A ")
-		@msg(item.cloak.description)
-	@else
-		@msg(message.dont_see)
-	@endif
-command.examine.hook
-	@msg(item.hook.examine)
-command.examine.message
-	@script(command.read.message)
 command.north
 	@godir(north)
 command.out
@@ -252,6 +258,8 @@ command.score
 	@writeline(@format(@get(message.score),@get(value.score),@get(value.maxscore)))
 command.south
 	@godir(south)
+command.take
+	@msg(message.take_what)
 command.take.cloak.from.hook
 	@if @here(hook) @and @herechild(cloak) @then
 		@set(item.cloak.location,@inv)
@@ -334,10 +342,24 @@ message.dont_have
 	You don't have that.
 message.dont_see
 	I don't see that here.
+message.drop_what
+	Drop what?
 message.dropcloak
 	This isn't the best place to leave a smart cloak lying around.
+message.examine_what
+	Examine what?
 message.hang_what
 	Hang what?
+message.help
+	There are just three rooms and three objects.\n
+	\nThe Foyer of the Opera House is where the game begins. This empty room has doors to the south and west, also an unusable exit to the north. There is nobody else around.\n
+	\nThe Bar lies south of the Foyer, and is initially unlit. Trying to do anything other than return northwards results in a warning message about disturbing things in the dark.\n
+	\nOn the wall of the Cloakroom, to the west of the Foyer, is fixed a small brass hook.\n
+	\nTaking an inventory of possessions reveals that the player is wearing a black velvet cloak which, upon examination, is found to be light-absorbent. The player can drop the cloak on the floor of the Cloakroom or, better, put it on the hook.\n
+	\nReturning to the Bar without the cloak reveals that the room is now lit. A message is scratched in the sawdust on the floor.\n
+	\nThe message reads either "You have won" or "You have lost", depending on how much it was disturbed by the player while the room was dark.\n
+	\nThe act of reading the message ends the game.\n
+	\nAnd that's all there is to it...
 message.hook_desc_cloak
 	with a cloak hanging on it.
 message.hook_desc_empty
@@ -372,6 +394,8 @@ message.score
 	You have scored {0} out of {1} points.
 message.scoreup
 	Your score has gone up by {0} point{1}.
+message.take_what
+	Take what?
 message.too_dark
 	It is completely dark in here. You can't see a thing.
 message.unreadable
@@ -492,6 +516,8 @@ script.save_slot
 	@endif
 system.after_prompt
 	\n
+system.do_what_with_noun
+	Do what with the {0}?
 system.dont_understand
 	I don't understand "{0}".
 system.dont_understand_that
@@ -523,13 +549,15 @@ value.scuffed.comment
 verb.down
 	down,d,descend
 verb.drop
-	drop,throw
+	drop,throw,remove
 verb.east
 	east,e
 verb.go
 	go,walk,run
 verb.hang
 	hang,put,place
+verb.help
+	help,info
 verb.inventory
 	i,inv,inventory
 verb.examine
@@ -555,7 +583,7 @@ verb.score
 verb.south
 	south,s
 verb.take
-	take,t,get
+	take,t,get,wear
 verb.up
 	up,u,climb
 verb.use
