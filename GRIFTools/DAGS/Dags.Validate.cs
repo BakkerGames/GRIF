@@ -244,8 +244,6 @@ public partial class Dags
         }
     }
 
-    #region Keywords
-
     private static readonly List<string> KEYWORDS =
     [
         ABS,
@@ -253,7 +251,11 @@ public partial class Dags
         ADDLIST,
         ADDTO,
         AND,
+        BITWISEAND,
+        BITWISEOR,
+        BITWISEXOR,
         CLEARARRAY,
+        CLEARBIT,
         CLEARLIST,
         COMMENT,
         CONCAT,
@@ -277,6 +279,7 @@ public partial class Dags
         GE,
         GET,
         GETARRAY,
+        GETBIT,
         GETINCHANNEL,
         GETLIST,
         GETVALUE,
@@ -312,6 +315,7 @@ public partial class Dags
         SCRIPT,
         SET,
         SETARRAY,
+        SETBIT,
         SETLIST,
         SETOUTCHANNEL,
         SUB,
@@ -319,12 +323,12 @@ public partial class Dags
         SUBTO,
         SWAP,
         THEN,
+        TOBINARY,
+        TOINTEGER,
         TRIM,
         TRUE,
         UPPER,
         WRITE,
         WRITELINE,
     ];
-
-    #endregion
 }

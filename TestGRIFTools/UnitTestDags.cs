@@ -1100,4 +1100,111 @@ public class UnitTestDags
         // This is the expected behavior. See Test_NL().
         Assert.That(result.ToString(), Is.EqualTo(value1 + DAGSConstants.NL_VALUE));
     }
+
+    [Test]
+    public void Test_GetBit()
+    {
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        dags.RunScript($"@getbit(4,2)", result);
+        Assert.That(result.ToString(), Is.EqualTo("1"));
+        result.Clear();
+        dags.RunScript($"@getbit(8,2)", result);
+        Assert.That(result.ToString(), Is.EqualTo("0"));
+        result.Clear();
+        dags.RunScript($"@getbit(1073741824,30)", result);
+        Assert.That(result.ToString(), Is.EqualTo("1"));
+    }
+
+    [Test]
+    public void Test_SetBit()
+    {
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        dags.RunScript($"@setbit(0,2)", result);
+        Assert.That(result.ToString(), Is.EqualTo("4"));
+        result.Clear();
+        dags.RunScript($"@setbit(0,0)", result);
+        Assert.That(result.ToString(), Is.EqualTo("1"));
+        result.Clear();
+        dags.RunScript($"@setbit(0,30)", result);
+        Assert.That(result.ToString(), Is.EqualTo("1073741824"));
+    }
+
+    [Test]
+    public void Test_ClearBit()
+    {
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        dags.RunScript($"@clearbit(7,2)", result);
+        Assert.That(result.ToString(), Is.EqualTo("3"));
+        result.Clear();
+        dags.RunScript($"@clearbit(7,0)", result);
+        Assert.That(result.ToString(), Is.EqualTo("6"));
+        result.Clear();
+        dags.RunScript($"@clearbit(1073741824,30)", result);
+        Assert.That(result.ToString(), Is.EqualTo("0"));
+    }
+
+    [Test]
+    public void Test_BitwiseAnd()
+    {
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        dags.RunScript($"@bitwiseand(7,2)", result);
+        Assert.That(result.ToString(), Is.EqualTo("2"));
+        result.Clear();
+        dags.RunScript($"@bitwiseand(8,2)", result);
+        Assert.That(result.ToString(), Is.EqualTo("0"));
+    }
+
+    [Test]
+    public void Test_BitwiseOr()
+    {
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        dags.RunScript($"@bitwiseor(7,2)", result);
+        Assert.That(result.ToString(), Is.EqualTo("7"));
+        result.Clear();
+        dags.RunScript($"@bitwiseor(8,2)", result);
+        Assert.That(result.ToString(), Is.EqualTo("10"));
+    }
+
+    [Test]
+    public void Test_BitwiseXor()
+    {
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        dags.RunScript($"@bitwisexor(7,2)", result);
+        Assert.That(result.ToString(), Is.EqualTo("5"));
+        result.Clear();
+        dags.RunScript($"@bitwisexor(8,7)", result);
+        Assert.That(result.ToString(), Is.EqualTo("15"));
+    }
+
+    [Test]
+    public void Test_ToBinary()
+    {
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        dags.RunScript($"@tobinary(7)", result);
+        Assert.That(result.ToString(), Is.EqualTo("111"));
+    }
+
+    [Test]
+    public void Test_ToInteger()
+    {
+        Grod data = new();
+        Dags dags = new(data);
+        StringBuilder result = new();
+        dags.RunScript($"@tointeger(111)", result);
+        Assert.That(result.ToString(), Is.EqualTo("7"));
+    }
 }

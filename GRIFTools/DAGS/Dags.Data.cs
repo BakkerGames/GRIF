@@ -200,7 +200,7 @@ public partial class Dags
         var keys = Data.Keys().Where(x => x.StartsWith($"{key}:", OIC)).ToList();
         foreach (string s in keys)
         {
-            Data.Remove(s);
+            Data.Delete(s);
         }
     }
 

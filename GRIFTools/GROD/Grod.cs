@@ -15,6 +15,10 @@ public partial class Grod
     public string Get(string key)
     {
         key = NormalizeKey(key);
+        if (_deleted.Contains(key))
+        {
+            return "";
+        }
         if (UseOverlay && _overlay.TryGetValue(key, out string? item))
         {
             return item ?? "";
@@ -42,6 +46,7 @@ public partial class Grod
     public void Set(string key, string? item)
     {
         key = NormalizeKey(key);
+        _deleted.Remove(key);
         if (UseOverlay)
         {
             if (!_overlay.TryAdd(key, item ?? ""))
@@ -68,22 +73,32 @@ public partial class Grod
         {
             _overlay.Clear();
         }
+        if (which == WhichData.Both)
+        {
+            _deleted.Clear();
+        }
     }
 
     /// <summary>
-    /// Returns a list of keys from the proper dictionary(s).
+    /// Returns a list of keys from the dictionary(s).
     /// </summary>
     public List<string> Keys(WhichData which = WhichData.Both)
     {
+        List<string> result = [];
         if (UseOverlay && which == WhichData.Overlay)
         {
-            return [.. _overlay.Keys];
+            result = [.. _overlay.Keys];
         }
-        if (!UseOverlay || which == WhichData.Base)
+        else if (!UseOverlay || which == WhichData.Base)
         {
-            return [.. _base.Keys];
+            result = [.. _base.Keys];
         }
-        return [.. _base.Keys.Union(_overlay.Keys)];
+        else
+        {
+            result = [.. _base.Keys.Union(_overlay.Keys)];
+        }
+        result.RemoveAll(x => _deleted.Contains(x));
+        return result;
     }
 
     /// <summary>
@@ -96,11 +111,15 @@ public partial class Grod
     }
 
     /// <summary>
-    /// Indicates whether the proper dictionary(s) contains the key.
+    /// Indicates whether the dictionary(s) contains the key.
     /// </summary>
     public bool ContainsKey(string key)
     {
         key = NormalizeKey(key);
+        if (_deleted.Contains(key))
+        {
+            return false;
+        }
         if (_base.ContainsKey(key))
         {
             return true;
@@ -113,12 +132,45 @@ public partial class Grod
     }
 
     /// <summary>
-    /// Removed the specified key from both dictonaries.
+    /// Adds the key to the _deleted list, but it may still exist in the dictionaries
     /// </summary>
-    public void Remove(string key)
+    public void Delete(string key)
     {
         key = NormalizeKey(key);
-        _base.Remove(key);
-        _overlay.Remove(key);
+        if (!_deleted.Contains(key))
+        {
+            _deleted.Add(key);
+        }
+    }
+
+    /// <summary>
+    /// Remove the key from the _deleted list
+    /// </summary>
+    public void Undelete(string key)
+    {
+        key = NormalizeKey(key);
+        _deleted.Remove(key);
+    }
+
+    /// <summary>
+    /// Reset the overlay value to the base value
+    /// </summary>
+    public void ResetValue(string key)
+    {
+        if (UseOverlay)
+        {
+            key = NormalizeKey(key);
+            if (!_deleted.Contains(key))
+            {
+                if (_base.TryGetValue(key, out var value))
+                {
+                    _overlay[key] = value ?? "";
+                }
+                else
+                {
+                    _overlay[key] = "";
+                }
+            }
+        }
     }
 }

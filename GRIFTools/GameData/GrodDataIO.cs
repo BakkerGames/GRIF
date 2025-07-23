@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Text;
-using static GRIFTools.GrodEnums;
 using static GRIFTools.DAGSRoutines;
+using static GRIFTools.GrodEnums;
 
 namespace GRIFTools;
 

@@ -40,6 +40,23 @@ public partial class Dags()
         {
             return;
         }
+        RunScriptInternal(script, result);
+    }
+
+    /// <summary>
+    /// Run one script and return any text in result.
+    /// </summary>
+    public void RunScriptBackground(string script, StringBuilder result)
+    {
+        RunScriptInternal(script, result);
+    }
+
+    private void RunScriptInternal(string script, StringBuilder result)
+    {
+        if (string.IsNullOrWhiteSpace(script) || script.Equals(NULL_VALUE, OIC))
+        {
+            return;
+        }
         if (!script.TrimStart().StartsWith('@'))
         {
             result.Append(script);

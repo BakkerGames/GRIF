@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <Version>2025.3.30</Version>
+    <Version>2025.7.21</Version>
   </PropertyGroup>
 
   <ItemGroup>

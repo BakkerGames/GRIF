@@ -132,6 +132,16 @@ public partial class Dags
         result.AppendLine($"   {GETINCHANNEL}");
         result.AppendLine($"   {SETOUTCHANNEL}value)");
 
+        result.AppendLine("Bitwise statements/functions:");
+        result.AppendLine($"   {BITWISEAND}value,bitmask)");
+        result.AppendLine($"   {BITWISEOR}value,bitmask)");
+        result.AppendLine($"   {BITWISEXOR}value,bitmask)");
+        result.AppendLine($"   {CLEARBIT}value,bitnum)");
+        result.AppendLine($"   {GETBIT}value,bitnum)");
+        result.AppendLine($"   {SETBIT}value,bitnum)");
+        result.AppendLine($"   {TOBINARY}integer)");
+        result.AppendLine($"   {TOINTEGER}binary)");
+
         return result.ToString();
     }
 
