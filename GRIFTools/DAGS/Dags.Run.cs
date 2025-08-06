@@ -190,6 +190,7 @@ public partial class Dags
                 if (ConvertToBool(Get(DEBUG_MODE)))
                 {
                     // display values in debug mode
+                    result.Append("### "); // debug prefix
                     result.Append(p[0]);
                     result.Append(NL_VALUE);
                 }
@@ -865,7 +866,8 @@ public partial class Dags
         // @if <conditions> @then ... [@elseif <conditions> @then ...] [<repeat>] [@else ...] @endif
         if (CheckConditions(tokens, ref index))
         {
-            while (!tokens[index].Equals(ELSE, OIC) &&
+            while (index < tokens.Length &&
+                   !tokens[index].Equals(ELSE, OIC) &&
                    !tokens[index].Equals(ELSEIF, OIC) &&
                    !tokens[index].Equals(ENDIF, OIC))
             {
@@ -983,7 +985,7 @@ public partial class Dags
     private static void SkipPastEndif(string[] tokens, ref int index)
     {
         int level = 0;
-        while (!tokens[index].Equals(ENDIF, OIC) || level > 0)
+        while (index < tokens.Length && !tokens[index].Equals(ENDIF, OIC) || level > 0)
         {
             if (tokens[index].Equals(IF, OIC))
             {

@@ -1,6 +1,6 @@
 // CloakOfDarkness.grif - GRIF format
 @__version
-	Version 2025.05.22
+	Version 2025.07.31
 @addscore(x)
 	@if @ne($x,0) @then
 		@addto(value.score,$x)
@@ -38,6 +38,10 @@
 	@endif
 @goto(x)
 	@debug("goto $x")
+	@if @null(@get(room.$x.longdesc)) @and @null(@get(room.$x.shortdesc)) @then
+		@writeline("Invalid room: $x")
+		@return
+	@endif
 	@set(value.room,$x)
 	@look
 @here(x)
