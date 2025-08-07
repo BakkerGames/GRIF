@@ -64,11 +64,11 @@ public static class Parse
             GetNoun(result, words, ref index);
             if (result.Error == "" && result.Noun != "")
             {
-                result.Error = string.Format(DO_WHAT_WITH_NOUN, words[0]);
+                result.Error = string.Format(DO_WHAT_WITH_NOUN, input);
             }
             else
             {
-                result.Error = string.Format(DONT_UNDERSTAND_WORD, words[0]);
+                result.Error = string.Format(DONT_UNDERSTAND_INPUT, input);
             }
             return result;
         }
@@ -207,6 +207,10 @@ public static class Parse
 
         // adjectives
         var adjectiveNounList = CheckAdjectives(words, ref index);
+        if (index >= words.Length)
+        {
+            return;
+        }
 
         // get the noun
         string origWord = words[index];
@@ -373,6 +377,15 @@ public static class Parse
 
         do
         {
+            if (newIndex >= words.Length)
+            {
+                // no more words to check
+                if (firstTime)
+                {
+                    return null; // never found an adjective
+                }
+                break; // found at least one adjective, but no more words
+            }
             foundOne = false;
             string origWord = words[newIndex];
             var shortWord = FixLength(origWord);
