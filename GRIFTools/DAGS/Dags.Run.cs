@@ -1044,7 +1044,7 @@ public partial class Dags
 
     private void HandleForEachKey(List<string> p, string[] tokens, ref int index, StringBuilder result)
     {
-        // @foreach(i,prefix,[suffix])=...$i...@endforeach
+        // @foreachkey(i,prefix,[suffix])=...$i...@endforeachkey
         var newTokens = new StringBuilder();
         var level = 0;
         do
@@ -1086,7 +1086,7 @@ public partial class Dags
 
     private void HandleForEachList(List<string> p, string[] tokens, ref int index, StringBuilder result)
     {
-        // @foreachinlist(x,listname)=...$x...@endforeachinlist
+        // @foreachlist(x,listname)=...$x...@endforeachlist
         var newTokens = new StringBuilder();
         var level = 0;
         do
