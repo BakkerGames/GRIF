@@ -892,6 +892,9 @@ public class UnitTestDags
         result.Clear();
         dags.RunScript("@write(@true(1))", result);
         Assert.That(result.ToString(), Is.EqualTo("true"));
+        result.Clear();
+        dags.RunScript("@write(@true(abc))", result);
+        Assert.That(result.ToString(), Is.EqualTo("false"));
     }
 
     [Test]
