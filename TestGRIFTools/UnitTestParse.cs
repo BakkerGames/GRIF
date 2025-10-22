@@ -154,7 +154,7 @@ public class UnitTestParse
     public void Test_Verb_Unknown()
     {
         var result = Parse.ParseInput("eat");
-        Assert.That(result.Error, Is.EqualTo("I don't know the word \"eat\"."));
+        Assert.That(result.Error, Is.EqualTo("I don't understand \"eat\"."));
     }
 
     [Test]

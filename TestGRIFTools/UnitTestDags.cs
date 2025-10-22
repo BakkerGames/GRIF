@@ -287,10 +287,10 @@ public class UnitTestDags
         data.Set("system.debug", "true");
         result.Clear();
         dags.RunScript("@debug(\"this is a comment\")", result);
-        Assert.That(result.ToString(), Is.EqualTo("this is a comment" + DAGSConstants.NL_VALUE));
+        Assert.That(result.ToString(), Is.EqualTo("### this is a comment" + DAGSConstants.NL_VALUE));
         result.Clear();
         dags.RunScript("@debug(@add(123,456))", result);
-        Assert.That(result.ToString(), Is.EqualTo("579" + DAGSConstants.NL_VALUE));
+        Assert.That(result.ToString(), Is.EqualTo("### 579" + DAGSConstants.NL_VALUE));
         data.Set("system.debug", "false");
         result.Clear();
         dags.RunScript("@debug(\"this is a comment\")", result);
@@ -892,6 +892,9 @@ public class UnitTestDags
         result.Clear();
         dags.RunScript("@write(@true(1))", result);
         Assert.That(result.ToString(), Is.EqualTo("true"));
+        result.Clear();
+        dags.RunScript("@write(@true(abc))", result);
+        Assert.That(result.ToString(), Is.EqualTo("false"));
     }
 
     [Test]
