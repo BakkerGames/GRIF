@@ -366,6 +366,7 @@ FodyWeavers.xsd
 executables/*.zip
 executables/*.tgz
 executables/linux*/
+executables/osx*/
 executables/win*/
 
 # batch files
