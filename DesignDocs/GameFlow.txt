@@ -1,0 +1,19 @@
+Get base filename
+Load into GROD with file path
+Add modifications into GROD with file paths
+Get save folder path
+Start GAME with GROD, resource base path, and save folder path
+	GAME starts with empty overlay GROD
+	If RESTORE and save file exists
+		Load overlay GROD from save file
+	End If
+	While GAME is not over
+		Advance GAME by one step
+		Get Output Messages from queue
+			Render Output Messages
+		Get Input Messages into queue
+			Process Input Messages in GAME
+		Get Output Messages from queue
+			Render Output Messages
+	End While
+End GAME

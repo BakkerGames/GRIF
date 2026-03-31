@@ -1,22 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Version>2.2026.3.30</Version>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <InvariantGlobalization>true</InvariantGlobalization>
-    <Authors>Scott Bakker</Authors>
-    <Company>BakkerGames</Company>
-    <Copyright>Copyright 2023-2025 Scott Bakker</Copyright>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/BakkerGames/GRIF</PackageProjectUrl>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/BakkerGames/GRIF</RepositoryUrl>
-    <Title>GRIF - Game Runner for Interactive Fiction</Title>
-    <Version>2025.7.31</Version>
-    <PackageTags>grif;game;engine;runner;interactive;fiction;text;adventure;if</PackageTags>
-    <AssemblyName>grif</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -28,24 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="executables\**" />
-    <Compile Remove="CloakOfDarkness\**" />
-    <Compile Remove="TicTacToe\**" />
-    <EmbeddedResource Remove="executables\**" />
-    <EmbeddedResource Remove="CloakOfDarkness\**" />
-    <EmbeddedResource Remove="TicTacToe\**" />
-    <None Remove="executables\**" />
-    <None Remove="CloakOfDarkness\**" />
-    <None Remove="TicTacToe\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove=".gitattributes" />
-    <None Remove=".gitignore" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\GRIFTools\GRIFTools.csproj" />
+    <PackageReference Include="griflib" Version="2.2026.3.31" />
   </ItemGroup>
 
 </Project>

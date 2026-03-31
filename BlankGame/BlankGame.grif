@@ -1,0 +1,328 @@
+// blankgame.grif - GRIF format
+@inv
+	player
+@look
+	@comment("look")
+	@if @false(@get(@concat("room.",@room,".visited"))) @then
+		@msg(@concat("room.",@room,".longdesc"))
+		@set(@concat("room.",@room,".visited"),true)
+	@else
+		@msg(@concat("room.",@room,".shortdesc"))
+	@endif
+	@foreachkey(x,"item.",".location")
+		@if @eq(@get(item.$x.location),@room) @then
+			@msg(item.$x.longdesc)
+			@if @true(@get(item.$x.container)) @then
+				@set(__inmsg,false)
+				@foreachkey(y,"item.",".location")
+					@if @eq(@get(item.$y.location),$x) @then
+						@if @false(@get(__inmsg)) @then
+							@writeline(@format(@get(message.item_contains),$x))
+							@set(__inmsg,true)
+						@endif
+						@write("\t")
+						@msg(item.$y.shortdesc)
+					@endif
+				@endforeachkey
+			@endif
+		@endif
+	@endforeachkey
+@room
+	@get(player.location)
+adjective.blue
+	box
+adjective.red
+	ball
+command.drop.*
+	@if @eq(@get(@concat("item.",@get(input.noun),".location")),@inv) @then
+		@set(@concat("item.",@get(input.noun),".location"),@room)
+		@write(@get(message.drop_one))
+		@write(@get(@concat("item.",@get(input.noun),".shortdesc")))
+		@writeline(".")
+	@else
+		@msg(message.not_carrying)
+	@endif
+command.drop.all
+	@set(__found,false)
+	@foreachkey(x,"item.",".location")
+		@if @eq(@get(item.$x.location),@inv) @then
+			@if @false(@get(__found)) @then
+				@set(__found,true)
+				@msg(message.dropping)
+			@endif
+			@msg(item.$x.shortdesc)
+			@set(item.$x.location,@room)
+		@endif
+	@endforeachkey
+	@if @false(@get(__found)) @then
+		@msg(message.inv_empty)
+	@endif
+command.east
+	@set(__newroom,@get(@concat("room.",@room,".exit.east")))
+	@if @isnull(@get(__newroom)) @then
+		@msg(message.cant_go)
+	@else
+		@set(player.location,@get(__newroom))
+		@look
+	@endif
+command.help
+	@msg(message.help)
+command.inventory
+	@set(__found,false)
+	@foreachkey(x,"item.",".location")
+		@if @eq(@get(item.$x.location),@inv) @then
+			@if @false(@get(__found)) @then
+				@set(__found,true)
+				@msg(message.carrying)
+			@endif
+			@msg(item.$x.shortdesc)
+			@if @true(@get(item.$x.container)) @then
+				@set(__inmsg,false)
+				@foreachkey(y,"item.",".location")
+					@if @eq(@get(item.$y.location),$x) @then
+						@if @false(@get(__inmsg)) @then
+							@writeline(@format(@get(message.item_contains),$x))
+							@set(__inmsg,true)
+						@endif
+						@write("\t")
+						@msg(item.$y.shortdesc)
+					@endif
+				@endforeachkey
+			@endif
+		@endif
+	@endforeachkey
+	@if @false(@get(__found)) @then
+		@msg(message.inv_empty)
+	@endif
+command.look
+	@comment("set visited back to false for longdesc")
+	@set(@concat("room.",@room,".visited"),false)
+	@look
+command.north
+	@set(__newroom,@get(@concat("room.",@room,".exit.north")))
+	@if @isnull(@get(__newroom)) @then
+		@msg(message.cant_go)
+	@else
+		@set(player.location,@get(__newroom))
+		@look
+	@endif
+command.put.*.in.*
+	@if @ne(@get(@concat("item.",@get(input.noun),".location")),@room) @and @ne(@get(@concat("item.",@get(input.noun),".location")),@inv) @then
+		@writeline(@get(input.nounword),": ",@get(message.not_here))
+	@elseif @ne(@get(@concat("item.",@get(input.indirectnoun),".location")),@room) @and @ne(@get(@concat("item.",@get(input.indirectnoun),".location")),@inv) @then
+		@writeline(@get(input.indirectnounword),": ",@get(message.not_here))
+	@elseif @false(@get(@concat("item.",@get(input.indirectnoun),".container"))) @then
+		@msg(message.cant_do_that)
+	@elseif @eq(@get(input.noun),@get(input.indirectnoun)) @then
+		@msg(message.cant_do_that)
+	@else
+		@set(@concat("item.",@get(input.noun),".location"),@get(input.indirectnoun))
+		@msg(message.done)
+	@endif
+command.quit
+	@msg(message.gameover)
+	@setoutchannel("#GAMEOVER;")
+command.restart
+	@setoutchannel("#RESTART;")
+	@setoutchannel("@msg(message.restarted)")
+	@setoutchannel("@script(system.intro)")
+command.restore
+	@setoutchannel("#RESTORE;")
+	@setoutchannel("@msg(message.restore_complete) @look")
+command.save
+	@setoutchannel("#SAVE;")
+	@setoutchannel("@msg(message.save_complete)")
+command.south
+	@set(__newroom,@get(@concat("room.",@room,".exit.south")))
+	@if @isnull(@get(__newroom)) @then
+		@msg(message.cant_go)
+	@else
+		@set(player.location,@get(__newroom))
+		@look
+	@endif
+command.take.*
+	@if @eq(@get(@concat("item.",@get(input.noun),".location")),@inv) @then
+		@msg(message.already_carrying)
+	@elseif @eq(@get(@concat("item.",@get(input.noun),".location")),@room) @then
+		@set(@concat("item.",@get(input.noun),".location"),@inv)
+		@write(@get(message.take_one)," ")
+		@write(@get(@concat("item.",@get(input.noun),".shortdesc")))
+		@writeline(".")
+	@else
+		@comment("check inside containers")
+		@set(__found,false)
+		@foreachkey(x,"item.",".location")
+			@if @false(@get(__found)) @then
+				@if @eq(@get(item.$x.location),@room) @or @eq(@get(item.$x.location),@inv) @then
+					@if @true(@get(item.$x.container)) @then
+						@if @eq(@get(@concat("item.",@get(input.noun),".location")),$x) @then
+							@set(@concat("item.",@get(input.noun),".location"),@inv)
+							@write(@get(message.take_one)," ")
+							@write(@get(@concat("item.",@get(input.noun),".shortdesc")))
+							@writeline(".")
+							@set(__found,true)
+						@endif
+					@endif
+				@endif
+			@endif
+		@endforeachkey
+		@if @false(@get(__found)) @then
+			@msg(message.not_here)
+		@endif
+	@endif
+command.take.all
+	@set(__found,false)
+	@foreachkey(x,"item.",".location")
+		@if @eq(@get(item.$x.location),@room) @then
+			@if @false(@get(__found)) @then
+				@set(__found,true)
+				@msg(message.taking)
+			@endif
+			@msg(item.$x.shortdesc)
+			@set(item.$x.location,@inv)
+		@endif
+	@endforeachkey
+	@if @false(@get(__found)) @then
+		@msg(message.nothing_here)
+	@endif
+command.west
+	@set(__newroom,@get(@concat("room.",@room,".exit.west")))
+	@if @isnull(@get(__newroom)) @then
+		@msg(message.cant_go)
+	@else
+		@set(player.location,@get(__newroom))
+		@look
+	@endif
+direction.east
+	east,e
+direction.north
+	north,n
+direction.south
+	south,s
+direction.west
+	west,w
+item.ball.location
+	second
+item.ball.longdesc
+	There is a red ball here.
+item.ball.shortdesc
+	a red ball
+item.box.container
+	true
+item.box.location
+	first
+item.box.longdesc
+	There is a blue box here.
+item.box.shortdesc
+	a blue box
+message.already_carrying
+	You are already carrying that!
+message.cant_do_that
+	I don't know how to do that!
+message.cant_go
+	You can't go that direction.
+message.carrying
+	You are carrying:
+message.done
+	Done.
+message.dropping
+	You drop:
+message.drop_one
+	You drop\s
+message.gameover
+	Thanks for playing!
+message.help
+	This is a very simple game. It knows a few verbs:\n\tlook, inventory, take, drop, put\n\nIt knows a few nouns:\n\tbox, ball\n\nThere are four directions and two rooms to move between:\n\tnorth (or n)\n\tsouth (or s)\n\teast (or e)\n\twest (or w)\n\nThere are some extra commands for handling the game itself:\n\tsave, restore, restart, quit\n\nThe ball has the adjective "red", so you can "take red ball".\n\nThe box has the adjective "blue", so you can "drop blue box".\n\nYou can use "the" and "a" when talking about the ball or the box.\n\nThe noun "all" can be used with "take" or "drop", as in "take all".\n\nThe box is a container, so you can "put the red ball in the blue box".\n\nHave fun!
+message.intro
+	This is a starting blank game file. It has two rooms, a blue box, a red ball, and you. It also contains all the scripts and starting values to make this simple game work.
+message.inv_empty
+	You aren't carrying anything.
+message.item_contains
+	The {0} contains:
+message.nothing_here
+	There is nothing to take.
+message.not_carrying
+	You aren't carrying that.
+message.not_here
+	I don't see that here.
+message.restarted
+	Restarted.\n
+message.restore_complete
+	Restore complete.
+message.save_complete
+	Save complete.
+message.take_one
+	You take
+message.taking
+	You pick up:
+message.you_see_here
+	You can see:
+noun.all
+	all,everything
+noun.ball
+	ball
+noun.box
+	box
+player.location
+	first
+preposition.in
+	in,into,within,inside
+room.first.exit.north
+	second
+room.first.longdesc
+	You are in the first room.
+room.first.shortdesc
+	First Room
+room.second.exit.south
+	first
+room.second.longdesc
+	This is the second room.
+room.second.shortdesc
+	Second Room
+script.intro
+	@if @false(@get(value.intro)) @then
+		@set(value.intro,true)
+		@msg(message.intro)
+		@nl
+		@look
+	@endif
+system.articles
+	a,an,the
+system.gamename
+	blankgame
+system.gametitle
+	Blank Game
+system.intro
+	@script(script.intro)
+system.output_width
+	80
+system.player.location
+	player.location
+system.prompt
+	\n>\s
+system.tab_length
+	4
+system.version
+	2026.03.25
+value.intro
+	false
+verb.drop
+	drop,throw
+verb.help
+	help,info
+verb.inventory
+	inventory,inv,i
+verb.look
+	look,l
+verb.put
+	put,place,insert
+verb.quit
+	quit
+verb.restart
+	restart
+verb.restore
+	restore
+verb.save
+	save
+verb.take
+	take,get

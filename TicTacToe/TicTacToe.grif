@@ -6,27 +6,28 @@
 		@write(@get(value.winner))
 		@nl
 		@nl
-		@msg(message.playagain)
+		@msg(message.ask_playagain)
+		@set(value.askflag,true)
 		@setoutchannel("#ASK;")
-		@setoutchannel("@script(script.restart)")
+		@setoutchannel("@script(script.playagain)")
 	@elseif @eq(@get(value.moves),9) @then
 		@set(value.gameover,true)
 		@nl
 		@msg(message.tie)
 		@nl
-		@msg(message.playagain)
+		@msg(message.ask_playagain)
 		@setoutchannel("#ASK;")
-		@setoutchannel("@script(script.restart)")
+		@setoutchannel("@script(script.playagain)")
 	@endif
 @checkwin(x,y,z)
-	@set(temp.count,0)
-	@addto(temp.count,@getlist(ttt,$x))
-	@addto(temp.count,@getlist(ttt,$y))
-	@addto(temp.count,@getlist(ttt,$z))
-	@if @eq(@get(temp.count),-3) @then
+	@set(__count,0)
+	@addto(__count,@getlist(ttt,$x))
+	@addto(__count,@getlist(ttt,$y))
+	@addto(__count,@getlist(ttt,$z))
+	@if @eq(@get(__count),-3) @then
 		@set(value.winner,@get(message.x_won))
 		@write(true)
-	@elseif @eq(@get(temp.count),3) @then
+	@elseif @eq(@get(__count),3) @then
 		@set(value.winner,@get(message.o_won))
 		@write(true)
 	@else
@@ -73,11 +74,11 @@
 	@setoutchannel("#RESTORE;")
 	@setoutchannel("@showboard")
 @showboard
-	@write(" ",@value(1)," | ",@value(2)," | ",@value(3)," \n")
-	@write("---+---+---\n")
-	@write(" ",@value(4)," | ",@value(5)," | ",@value(6)," \n")
-	@write("---+---+---\n")
-	@write(" ",@value(7)," | ",@value(8)," | ",@value(9)," \n")
+	@writeline(" ",@value(1)," | ",@value(2)," | ",@value(3)," ")
+	@writeline("---+---+---")
+	@writeline(" ",@value(4)," | ",@value(5)," | ",@value(6)," ")
+	@writeline("---+---+---")
+	@writeline(" ",@value(7)," | ",@value(8)," | ",@value(9)," ")
 @value(x)
 	@write(@piece(@getlist(ttt,$x)))
 command.1
@@ -108,15 +109,17 @@ command.quit
 	@quit
 command.restart
 	@msg(message.ask_restart)
+	@set(value.askflag,true)
 	@setoutchannel("#ASK;")
 	@setoutchannel("@script(script.restart)")
 command.restore
-	@msg(message.ask_restore)
-	@setoutchannel("#ASK;")
-	@setoutchannel("@script(script.restore)")
+	@setoutchannel("#EXISTS;")
+	@setoutchannel("@script(script.checksavefile)")
 command.save
 	@setoutchannel("#SAVE;")
 	@setoutchannel("@msg(message.ok)")
+message.ask_playagain
+	Do you want to play again?
 message.ask_restart
 	Are you sure you want to restart the game?
 message.ask_restore
@@ -129,8 +132,8 @@ message.ok
 	OK
 message.o_won
 	O has won!
-message.playagain
-	Do you want to play again?
+message.savefile_not_found
+	Cannot find a save file to restore.
 message.thanks
 	Thanks for playing!
 message.tie
@@ -139,25 +142,53 @@ message.x_won
 	X has won!
 message.yorn_error
 	Please answer YES or NO.
-script.restart
-	@set(temp.yorn,@getinchannel)
-	@if @true(@get(temp.yorn)) @then
+script.checksavefile
+	@set(__yorn,@getinchannel)
+	@if @true(@get(__yorn)) @then
+		@msg(message.ask_restore)
+		@set(value.askflag,true)
+		@setoutchannel("#ASK;")
+		@setoutchannel("@script(script.restore)")
+	@else
+		@msg(message.savefile_not_found)
+	@endif
+script.playagain
+	@set(__yorn,@getinchannel)
+	@if @true(@get(__yorn)) @then
 		@restart
-	@elseif @false(@get(temp.yorn)) @then
+	@elseif @false(@get(__yorn)) @then
 		@quit
 	@else
 		@msg(message.yorn_error)
+		@set(value.askflag,true)
+		@setoutchannel("#ASK;")
+		@setoutchannel("@script(script.playagain)")
+	@endif
+script.restart
+	@set(__yorn,@getinchannel)
+	@if @true(@get(__yorn)) @then
+		@restart
+	@elseif @false(@get(__yorn)) @then
+		@msg(message.ok)
+		@nl
+		@showboard
+	@else
+		@msg(message.yorn_error)
+		@set(value.askflag,true)
 		@setoutchannel("#ASK;")
 		@setoutchannel("@script(script.restart)")
 	@endif
 script.restore
-	@set(temp.yorn,@getinchannel)
-	@if @true(@get(temp.yorn)) @then
+	@set(__yorn,@getinchannel)
+	@if @true(@get(__yorn)) @then
 		@restore
-	@elseif @false(@get(temp.yorn)) @then
+	@elseif @false(@get(__yorn)) @then
 		@msg(message.ok)
+		@nl
+		@showboard
 	@else
 		@msg(message.yorn_error)
+		@set(value.askflag,true)
 		@setoutchannel("#ASK;")
 		@setoutchannel("@script(script.restore)")
 	@endif
@@ -167,23 +198,35 @@ system.dont_understand
 	I don't understand that.
 system.gamename
 	TicTacToe
+system.gametitle
+	Tic-Tac-Toe
 system.intro
-	@comment("script run at the beginning of the game")
-	@write("Tic-Tac-Toe\n\n")
-	@write("Board positions:\n\n")
-	@write(" 1 | 2 | 3 \n")
-	@write("---+---+---\n")
-	@write(" 4 | 5 | 6 \n")
-	@write("---+---+---\n")
-	@write(" 7 | 8 | 9 \n\n")
-	@clear
-	@showboard
-system.prompt
-	@if @false(@get(value.gameover)) @then
-		@write("\n",@piece(@get(value.player)),"'s turn>")
-	@else
-		@write("\n>")
+	@if @false(@get(value.intro)) @then
+		@set(value.intro,true)
+		@comment("script run at the beginning of the game")
+		@msg(system.gametitle)
+		@nl
+		@writeline("Version ",@get(system.version),@nl)
+		@writeline("Board positions:",@nl)
+		@writeline(" 1 | 2 | 3 ")
+		@writeline("---+---+---")
+		@writeline(" 4 | 5 | 6 ")
+		@writeline("---+---+---")
+		@writeline(" 7 | 8 | 9 ",@nl)
+		@clear
+		@showboard
 	@endif
+system.prompt
+	@if @true(@get(value.askflag)) @then
+		@set(value.askflag,null)
+		@write(@nl,">")
+	@else
+		@write(@nl,@piece(@get(value.player)),"'s turn>")
+	@endif
+system.version
+	2026.01.06
+value.intro
+	false
 value.moves
 	0
 value.player

@@ -1,0 +1,35 @@
+* adjectives
+* script object with internal index
+* script object return
+__config values
+* system.uppercase
+* example game with adjectives, red ball/blue ball/small box/large box
+DAGS example scripts for various useful concepts
+Command-line parameter for pausing at end of game.
+* @setchar(value,index,char)
+* @getchar(value,index)
+* ParseInput should check if ParseInit has been run
+* Fix wordwrap to be smarter, as routine in IFGame, don't dupe code in Ide.
+Help
+Float Play
+Debug window
+Exploded view of script
+Fix Play char handling, allow Ctrl chars
+Context menu for rtf editor 
+Fix rename
+Colorize!
+Room and item windows
+Undo and again
+Rename rooms and items
+Validate option for scripts
+Ide config dialog
+Is there still a problem with leading spaces in scripts?
+Wrap line at @and and @or
+Aoc, while loop for next char
+Ide pick command from list, context menu?
+Message next number
+Firstdesc on items, touched flag
+A, an, the handling on shortdesc
+Config prefix names, longdesc, exit
+* @setgrod(grodname, key, value)
+Make wolf and gnome be actors

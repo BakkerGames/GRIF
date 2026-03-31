@@ -1,0 +1,23 @@
+<Solution>
+  <Folder Name="/CloakOfDarkness/">
+    <File Path="CloakOfDarkness/CloakOfDarkness.grif" />
+    <File Path="CloakOfDarkness/Input.txt" />
+    <File Path="CloakOfDarkness/Output.txt" />
+    <File Path="CloakOfDarkness/Specification.txt" />
+  </Folder>
+  <Folder Name="/DesignDocs/">
+    <File Path="DesignDocs/Dags.md" />
+    <File Path="DesignDocs/DesignLog.txt" />
+    <File Path="DesignDocs/GameFlow.txt" />
+    <File Path="DesignDocs/Grod.md" />
+    <File Path="DesignDocs/TODO.txt" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="LICENSE.txt" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/TicTacToe/">
+    <File Path="TicTacToe/TicTacToe.grif" />
+  </Folder>
+  <Project Path="grif/grif.csproj" />
+</Solution>

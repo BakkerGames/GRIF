@@ -1,274 +1,391 @@
-﻿using GRIFTools;
-using GRIFTools.Parse;
-using System.Text;
-using static GRIF.Constants;
+﻿using System.Text;
+using GrifLib;
+using static GrifLib.Common;
 
-namespace GRIF;
+namespace Grif;
 
 internal class Program
 {
-    static void Main(string[] args)
+    #region Private Constants
+
+    private const string OUTCHANNEL_SLEEP = "#SLEEP;";
+
+    private static readonly Queue<string> inputQueue = new();
+
+    private static int outputCount = 0;
+    private static int maxOutputWidth = 0;
+    private static string tabChars = "    ";
+    private static bool uppercaseInput = false;
+
+    private static readonly List<string> inputFilenames = [];
+    private static string? splitInput;
+    private static string? outputFilename;
+
+    #endregion
+
+    internal static async Task Main(string[] args)
     {
+        Grod baseGrod = new();
+        var parseResult = ParseParameters(args, ref baseGrod);
+        if (baseGrod == null)
+        {
+            Environment.Exit(1);
+            return;
+        }
+        if (parseResult != 0)
+        {
+            Environment.Exit(parseResult);
+            return;
+        }
+        // load data
+        var game = new IFGame();
+        var gameName = baseGrod.Get(GAMENAME, true);
+        if (string.IsNullOrWhiteSpace(gameName))
+        {
+            OutputText($"Error: {GAMENAME} not found in data file.");
+            Environment.Exit(1);
+            return;
+        }
+        game.Initialize(baseGrod, gameName, null);
+        string inputFilename = "";
         try
         {
-            // Path for data files, default to current directory
-            var dataPath = ".";
-            var modFilenames = new List<string>();
-            var allowMeta = false;
-
-            // Nothing specified
-            if (args.Length == 0)
+            foreach (var filename in inputFilenames)
             {
-                UserIO.Output(SystemData.Syntax());
-                return;
-            }
-
-            // Parse command-line arguments
-            int argIndex = 0;
-            while (argIndex < args.Length)
-            {
-                var argValue = args[argIndex++];
-                var value = argValue;
-                if (value.StartsWith('/'))
+                inputFilename = filename;
+                var inStream = File.ReadAllLines(inputFilename);
+                foreach (var line in inStream)
                 {
-                    if (value.Length == 2)
+                    var tempLine = line;
+                    if (tempLine.Contains("//"))
                     {
-                        value = "-" + value[1..];
+                        tempLine = tempLine[..tempLine.IndexOf("//")].Trim();
                     }
-                    else
+                    if (!string.IsNullOrWhiteSpace(tempLine))
                     {
-                        value = "--" + value[1..];
-                    }
-                }
-                if (value.Equals("--input", OIC) || value.Equals("-i", OIC))
-                {
-                    var inputFilename = args[argIndex++];
-                    if (!File.Exists(inputFilename))
-                    {
-                        UserIO.Output("Input file not found: " + inputFilename);
-                        UserIO.Output(DAGSConstants.NL_VALUE + DAGSConstants.NL_VALUE);
-                        UserIO.Output(SystemData.Syntax());
-                        return;
-                    }
-                    // Input commands
-                    UserIO.InitInputFile(inputFilename);
-                }
-                else if (value.Equals("--output", OIC) || value.Equals("-o", OIC))
-                {
-                    // Output to a log file
-                    UserIO.InitLogFile(args[argIndex++]);
-                }
-                else if (value.Equals("--mod", OIC) || value.Equals("-m", OIC))
-                {
-                    // Modiification files
-                    modFilenames.Add(args[argIndex++]);
-                }
-                else if (value.Equals("--meta", OIC))
-                {
-                    // allows special commands starting with "#".
-                    allowMeta = true;
-                }
-                else if (value.StartsWith('-'))
-                {
-                    UserIO.Output("Unknown parameter: " + argValue);
-                    UserIO.Output(DAGSConstants.NL_VALUE + DAGSConstants.NL_VALUE);
-                    UserIO.Output(SystemData.Syntax());
-                    return;
-                }
-                else
-                {
-                    // Data filename or path to all data files
-                    dataPath = value;
-                }
-            }
-
-            if (string.IsNullOrWhiteSpace(dataPath))
-            {
-                UserIO.Output(SystemData.Syntax());
-                return;
-            }
-
-            // Prepare engines
-            Grod grod = new()
-            {
-                UseOverlay = false
-            };
-            Dags dags = new(grod);
-
-            // Load data
-            if (File.Exists(dataPath + DATA_EXTENSION))
-            {
-                GrodDataIO.LoadDataFromFile(dataPath + DATA_EXTENSION, grod);
-            }
-            else if (File.Exists(dataPath))
-            {
-                GrodDataIO.LoadDataFromFile(dataPath, grod);
-            }
-            else if (Directory.Exists(dataPath))
-            {
-                var files = Directory.GetFiles(dataPath, "*" + DATA_EXTENSION);
-                if (files.Length > 0)
-                {
-                    foreach (string filename in files)
-                    {
-                        GrodDataIO.LoadDataFromFile(filename, grod);
-                    }
-                }
-            }
-            else
-            {
-                try
-                {
-                    var pathName = Path.GetDirectoryName(dataPath) ?? "";
-                    var fileName = Path.GetFileName(dataPath);
-                    var files = Directory.GetFiles(pathName, fileName);
-                    if (files.Length > 0)
-                    {
-                        foreach (string filename in files)
+                        if (splitInput != null && tempLine.Contains(splitInput))
                         {
-                            GrodDataIO.LoadDataFromFile(filename, grod);
+                            var splitLines = tempLine.Split(splitInput);
+                            foreach (var splitLine in splitLines)
+                            {
+                                inputQueue.Enqueue(splitLine.Trim());
+                            }
+                        }
+                        else
+                        {
+                            inputQueue.Enqueue(tempLine);
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception)
+        {
+            OutputText($"Error opening input file: {inputFilename}");
+            return;
+        }
+        // get settings
+        maxOutputWidth = (int)(baseGrod.GetNumber(OUTPUT_WIDTH, true) ?? 0);
+        if ((baseGrod.GetNumber(OUTPUT_TAB_LENGTH, true) ?? 0) > 0)
+        {
+            tabChars = new string(' ', (int)(baseGrod.GetNumber(OUTPUT_TAB_LENGTH, true) ?? 4));
+        }
+        uppercaseInput = baseGrod.GetBool(UPPERCASE, true) ?? false;
+        // start game loop
+        game.InputEvent += Input;
+        game.OutputEvent += Output;
+        await game.Intro();
+        await game.GameLoop();
+    }
+
+    #region Private Methods
+
+    /// <summary>
+    /// Output syntax information.
+    /// </summary>
+    private static string Syntax()
+    {
+        StringBuilder result = new();
+        result.AppendLine("GRIF - Game Runner for Interactive Fiction");
+        result.AppendLine();
+        result.AppendLine($"Version {Common.Version}");
+        result.AppendLine();
+        result.AppendLine("grif <filename.grif | filename.grifstack | directory>");
+        result.AppendLine("     [-h  | --help | -?]");
+        result.AppendLine("     [-i  | --input  <filename>]");
+        result.AppendLine("     [-si | --split-input <splitchar>]");
+        result.AppendLine("     [-o  | --output <filename>]");
+        result.AppendLine("     [-m  | --mod    <filename.grif | directory>]");
+        result.AppendLine();
+        result.AppendLine("There may be multiple -m/--mod parameters.");
+        return result.ToString();
+    }
+
+    /// <summary>
+    /// Parse command line parameters.
+    /// </summary>
+    private static int ParseParameters(string[] args, ref Grod baseGrod)
+    {
+        if (args.Length == 0)
+        {
+            OutputText(Syntax());
+            return 1;
+        }
+        try
+        {
+            int index = 0;
+            while (index < args.Length)
+            {
+                if (args[index].StartsWith('-'))
+                {
+                    if (index + 1 >= args.Length)
+                    {
+                        OutputText($"Argument must have a value: {args[index]}\\n\\n");
+                        OutputText(Syntax());
+                        return 2;
+                    }
+                    if (args[index].Equals("-h", OIC) ||
+                        args[index].Equals("--help", OIC) ||
+                        args[index].Equals("-?"))
+                    {
+                        OutputText(Syntax());
+                        return 2;
+                    }
+                    else if (args[index].Equals("-i", OIC) ||
+                        args[index].Equals("--input", OIC))
+                    {
+                        index++;
+                        var inputFilename = args[index++];
+                        if (!File.Exists(inputFilename))
+                        {
+                            OutputText($"Input file not found: {inputFilename}\\n\\n");
+                            OutputText(Syntax());
+                            return 2;
+                        }
+                        inputFilenames.Add(inputFilename);
+                    }
+                    else if (args[index].Equals("-si", OIC) ||
+                        args[index].Equals("--split-input", OIC))
+                    {
+                        index++;
+                        splitInput = args[index++];
+                    }
+                    else if (args[index].Equals("-o", OIC) ||
+                        args[index].Equals("--output", OIC))
+                    {
+                        index++;
+                        var tempFilename = args[index++];
+                        try
+                        {
+                            var path = Path.GetDirectoryName(tempFilename);
+                            if (!string.IsNullOrEmpty(path) && !Directory.Exists(path))
+                            {
+                                Directory.CreateDirectory(path);
+                            }
+                            // check if file can be created
+                            var outStream = File.CreateText(tempFilename);
+                            outStream.Close();
+                            outputFilename = tempFilename;
+                        }
+                        catch (Exception)
+                        {
+                            OutputText($"Error creating output file: {tempFilename}\\n\\n");
+                            OutputText(Syntax());
+                            return 2;
+                        }
+                    }
+                    else if (args[index].Equals("-m", OIC) ||
+                        args[index].Equals("--mod", OIC))
+                    {
+                        index++;
+                        var modFilename = args[index++];
+                        var grod = IO.OpenFile(modFilename); // to check if valid
+                        if (grod == null)
+                        {
+                            OutputText($"Error opening mod file: {modFilename}\\n\\n");
+                            OutputText(Syntax());
+                            return 2;
+                        }
+                        if (baseGrod == null || baseGrod.Count(false) == 0)
+                        {
+                            baseGrod = grod;
+                        }
+                        else
+                        {
+                            grod.Parent = baseGrod;
+                            baseGrod = grod;
                         }
                     }
                     else
                     {
-                        UserIO.Output("File or directory not found: " + dataPath);
-                        UserIO.Output(DAGSConstants.NL_VALUE + DAGSConstants.NL_VALUE);
-                        UserIO.Output(SystemData.Syntax());
-                        return;
-                    }
-                }
-                catch (Exception)
-                {
-                    UserIO.Output("File or directory not found: " + dataPath);
-                    UserIO.Output(DAGSConstants.NL_VALUE + DAGSConstants.NL_VALUE);
-                    UserIO.Output(SystemData.Syntax());
-                    return;
-                }
-            }
-
-            // Check if anything was loaded
-            if (grod.Count() == 0)
-            {
-                UserIO.Output(SystemData.Syntax());
-                return;
-            }
-
-            // Load the modification file(s) afterwards so base values will be overwritten
-            foreach (string modFile in modFilenames)
-            {
-                if (File.Exists(modFile + DATA_EXTENSION))
-                {
-                    GrodDataIO.LoadDataFromFile(modFile + DATA_EXTENSION, grod);
-                }
-                else if (File.Exists(modFile))
-                {
-                    GrodDataIO.LoadDataFromFile(modFile, grod);
-                }
-                else if (Directory.Exists(modFile))
-                {
-                    var files = Directory.GetFiles(modFile, "*" + DATA_EXTENSION);
-                    if (files.Length > 0)
-                    {
-                        foreach (string filename in files)
-                        {
-                            GrodDataIO.LoadDataFromFile(filename, grod);
-                        }
+                        OutputText($"Unknown argument: {args[index++]}\\n\\n");
+                        OutputText(Syntax());
+                        return 2;
                     }
                 }
                 else
                 {
-                    UserIO.Output("Modification file or directory not found: " + modFile);
-                    UserIO.Output(DAGSConstants.NL_VALUE + DAGSConstants.NL_VALUE);
-                    UserIO.Output(SystemData.Syntax());
-                    return;
-                }
-            }
-
-            // Validate data
-            StringBuilder result = new();
-            if (!dags.ValidateDictionary(result))
-            {
-                UserIO.Output(result);
-                return;
-            }
-
-            // Initialize static classes
-            SystemData.Init(grod, dags);
-            DagsIO.Init(grod, dags);
-            Metadata.Init(grod, dags);
-            Parse.Init(grod);
-
-            // Make sure necessary values exist
-            if (!SystemData.SystemValidate(result))
-            {
-                UserIO.Output(result);
-                return;
-            }
-
-            // Initialize game variables
-            grod.UseOverlay = true;
-            ParseResult parseResult = new();
-            DagsIO.GameOver = false;
-
-            // Introduction
-            result.Clear();
-            dags.RunScriptBackground(SystemData.Intro(), result);
-            UserIO.Output(result);
-            DagsIO.CheckOutChannel();
-
-            // Game loop
-            while (!DagsIO.GameOver)
-            {
-                // Run all background scripts
-                result.Clear();
-                parseResult.Clear();
-                DagsIO.RunBackgroundScripts(result);
-                UserIO.Output(result);
-                DagsIO.CheckOutChannel();
-                if (DagsIO.GameOver) break;
-
-                do
-                {
-                    // Prompt
-                    string input;
-                    UserIO.Output(SystemData.Prompt());
-                    input = UserIO.GetInput();
-                    UserIO.Output(SystemData.AfterPrompt());
-
-                    // Check for meta commands
-                    if (allowMeta && input.StartsWith('#'))
+                    var filename = args[index++];
+                    var grod = IO.OpenFile(filename);
+                    if (grod == null)
                     {
-                        result.Clear();
-                        Metadata.CheckMetaCommand(input, result);
-                        UserIO.Output(result);
-                        DagsIO.CheckOutChannel();
-                        if (DagsIO.GameOver) break;
-                        parseResult.CommandKey = "";
-                        continue;
+                        OutputText($"Error opening file: {filename}\\n\\n");
+                        OutputText(Syntax());
+                        return 2;
                     }
-
-                    // Parse input
-                    parseResult = Parse.ParseInput(input);
-                    UserIO.Output(parseResult.Error, true);
-
-                } while (parseResult.CommandKey == "");
-                if (DagsIO.GameOver) break;
-
-                // Run the script
-                result.Clear();
-                dags.RunScript($"@script({parseResult.CommandKey})", result);
-                UserIO.Output(result);
-                DagsIO.CheckOutChannel();
+                    if (baseGrod == null || baseGrod.Count(false) == 0)
+                    {
+                        baseGrod = grod;
+                    }
+                    else
+                    {
+                        grod.Parent = baseGrod;
+                        baseGrod = grod;
+                    }
+                }
             }
         }
         catch (Exception ex)
         {
-            UserIO.Output(ex.Message);
+            OutputText($"Error processing parameters: {ex.Message}\\n\\n");
         }
-#if DEBUG
-        Console.WriteLine();
-        Console.Write("Press enter to continue...");
-        Console.ReadLine();
-#endif
+        if (baseGrod == null || baseGrod.Count(false) == 0)
+        {
+            OutputText(Syntax());
+            return 1;
+        }
+        return 0;
     }
+
+    /// <summary>
+    /// Handle input event.
+    /// </summary>
+    private static void Input(object sender)
+    {
+        OutputText(((IFGame)sender).Prompt() ?? "");
+        string? input;
+        if (inputQueue.Count > 0)
+        {
+            input = inputQueue.Dequeue();
+            Console.WriteLine(input);
+        }
+        else
+        {
+            input = Console.ReadLine();
+        }
+        if (input != null)
+        {
+            if (uppercaseInput)
+            {
+                input = input.ToUpper();
+            }
+            OutputTextLog(input + Environment.NewLine);
+            var message = new GrifMessage(MessageType.Text, input);
+            ((IFGame)sender).InputMessages.Enqueue(message);
+            OutputText(((IFGame)sender).AfterPrompt() ?? "");
+        }
+    }
+
+    /// <summary>
+    /// Handle output event.
+    /// </summary>
+    private static void Output(object sender, GrifMessage e)
+    {
+        if (e.Type == MessageType.Text)
+        {
+            OutputText(e.Value);
+            return;
+        }
+        if (e.Type == MessageType.Error)
+        {
+            OutputText(NL_CHAR);
+            OutputText("### ERROR: ");
+            OutputText(e.Value);
+            return;
+        }
+        if (e.Value.Equals(OUTCHANNEL_SLEEP, OIC))
+        {
+            if (!long.TryParse(e.ExtraValue, out long value))
+            {
+                throw new Exception($"Invalid sleep duration: {e.ExtraValue}");
+            }
+            Thread.Sleep((int)value);
+            return;
+        }
+    }
+
+    /// <summary>
+    /// Output text with word wrapping and special character handling.
+    /// </summary>
+    private static void OutputText(string text)
+    {
+        if (text.Contains(SPACE_CHAR))
+        {
+            text = text.Replace(SPACE_CHAR, " ");
+        }
+        if (text.Contains('\r') || text.Contains('\n'))
+        {
+            text = text.Replace("\r", "").Replace("\n", NL_CHAR);
+        }
+        if (text.Contains(TAB_CHAR) || text.Contains('\t'))
+        {
+            text = text.Replace(TAB_CHAR, tabChars).Replace("\t", tabChars);
+        }
+        while (text.Contains(NL_CHAR))
+        {
+            var index = text.IndexOf(NL_CHAR);
+            var before = text[..index];
+            text = text[(index + 2)..];
+            var lines = IO.Wordwrap(before, outputCount, maxOutputWidth);
+            foreach (var line in lines)
+            {
+                Console.WriteLine(line);
+                OutputTextLog(line + Environment.NewLine);
+                outputCount = 0;
+            }
+        }
+        if (!string.IsNullOrEmpty(text))
+        {
+            var lines = IO.Wordwrap(text, outputCount, maxOutputWidth);
+            // WriteLine all but last line
+            for (int i = 0; i < lines.Count - 1; i++)
+            {
+                var line = lines[i];
+                Console.WriteLine(line);
+                OutputTextLog(line + Environment.NewLine);
+                outputCount = 0;
+            }
+            // Write last line with no NL
+            if (lines.Count > 0)
+            {
+                var line = lines[^1];
+                Console.Write(line);
+                OutputTextLog(line);
+                outputCount = line.Length;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Output text to log file if specified.
+    /// </summary>
+    private static void OutputTextLog(string text)
+    {
+        if (outputFilename == null)
+        {
+            return;
+        }
+        try
+        {
+            using var outStream = File.AppendText(outputFilename);
+            outStream.Write(text);
+            outStream.Flush();
+        }
+        catch (Exception)
+        {
+            // ignore file write errors
+        }
+    }
+
+    #endregion
 }

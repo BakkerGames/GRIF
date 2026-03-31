@@ -1,0 +1,365 @@
+2025-08-10
+
+- Created GRIF2 version 2.2025.810
+- Created design document for GRIF2.
+- Created design document for GROD2.
+- Created GROD2 classes Grod2, Item, Data, Level.
+- Grod2 contains a list of levels, each with a list of items.
+- Levels can have a parent.
+- If a level has a parent, it inherits items from the parent level unless they are overridden.
+- Added methods to add levels, set items, and get items with inheritance.
+- Created unit tests for Grod2.
+
+2025-08-13
+
+- Changed GROD2 project to just Grod class.
+- Added GrodItem class to represent items in the Grod.
+- Simplified Grod to be a smaller class with the base of a Dictionary.
+- Added methods to set values by key.
+- Added methods to get values by key, optionally recursively.
+- Added methods to remove items by key, optionally recursively.
+- Added methods to clear all items.
+- Added methods to get a list of all keys, sorted and/or recursively.
+- Added methods to get a list of all GrodItems, sorted and/or recursively.
+- Changed to return null if a key is not found instead of throwing an exception.
+- Added unit tests for GrodItem and Grod.
+- Removed GRIF2 project and changed to just Grif.
+- Load test data from a GRIF file.
+
+- Added Dags class and partials.
+- Started on Dags.Process().
+- Copied over SplitTokens() from GRIF.
+- Test of "@write()" works for simple cases.
+- Added @write() and @writeline() with concatenation.
+- Added parameter handling and count checking.
+- Added @get() and @set().
+- Added tests for all new methods.
+
+- Writable values are type 0.
+- Static values are type 1.
+- Script values are type 2.
+
+2025-08-14
+
+- Working on @if logic. Needs to handle nested conditions.
+
+2025-08-16
+
+- Finished @if logic with nesting.
+- Works with multiple conditions and nesting.
+- Added conditionals for @true(), @false(), @null(), @eq(), @ne(), @gt(), @lt(), @ge(), @le().
+- Added unit tests for all @if variations.
+
+2025-08-17
+
+- Added Grod.Count and Grod.CountRecursive.
+- Added simple program game loop.
+- Added GrodRead and GrodWrite methods.
+- Added OutputText method to output text-only values, Type=0.
+- More readable output for script errors.
+- Added @msg() for messages.
+- Cleaned up WriteGrod for script formatting and newlines in text.
+- Adding user defined function support.
+
+2025-08-18
+
+- Handle @udf(x,y,z) and @udf user defined functions.
+- Changed GetCondition() to call ProcessOneCommand() and centralized them all.
+- Added TrueFalse() for returing proper "true" or "false" strings.
+- Added @neg(), @negto(), @getvalue()
+
+2025-08-24
+
+- Fixed nulls. They now can be saved into Grod and read back as null.
+- Null values are output as "null" in files, and converted back to null when read.
+- Setting a value to null hides the parent value.
+- Removing a key allows the parent value to be visible again.
+- Started working on @getinchannel. Should be single value only.
+- Fixed ReadGrif to ignore comments.
+- Added launch settings for working directory and starting filename.
+- Moved Program code to DebugGameFile.
+- Started parser.
+
+2025-08-25
+- Fixed error results
+- Fixed strings surrounded by quotes
+- Parse verbs and nouns using list of synonyms
+
+2025-08-26
+- Added @for, @foreachkey, @foreachlist
+- Added @debug
+- Added NL, TAB, SPACE constants for multichar items
+- LOOK, INV, and directions work!
+- Parser sends the verb and noun as input values.
+
+2025-08-27
+- Started work on OutChannel processing.
+
+2025-09-08
+- More commands, including some list and array processing
+- List/Array empty items saved as "null"
+- Allow commas in list values, using FixListItemIn() and FixListItemOut()
+- Handle gameover outchannel command
+- Added prompt and after prompt with possible variable output
+- Added intro script and background scripts
+- Added output width handling
+- Fixed NL output handling
+
+2025-09-09
+- Added GetValue() (not working yet)
+- Added unit tests from GRIF
+- All TestGrod, TestDags, and UnitTestGrod tests pass
+- Cloak of Darkness works, except for "examine hook"
+- Fixed Grod keys to be case insensitive
+- Fixed Grod to have recursive Clear and Remove
+- Added Grod.ContainsKey and Grod.ContainsKey
+
+2025-09-11
+- Fixed Cloak of Darkness "examine hook".
+- Working on unit tests. Added all from GRIF.
+
+2025-09-12
+- All unit tests working! All required functions added.
+
+2025-09-14
+- Working on RenderOutput, so it can be interleaved.
+- Added WriteOutput. If writing to log file, add that in here.
+- Starting HandleOutchannel(). Only checks for game over.
+
+2025-09-16
+- OutChannel ASK and run script.
+- Moved Prompt and AfterPrompt to their own routines.
+
+2025-09-18
+- Consolidated Grif routines into single class (but separate files)
+
+2025-09-20
+- Added Syntax().
+- Implemented all command-line options.
+- Implemented multiple files, mod files, output log, input lines.
+- Moved some Grif parameters to properties.
+- Added input, output on CloakOfDarkness
+
+2025-09-21
+- Discovered @for is slow, trying variations
+
+2025-09-22
+- Fixed @for to be faster, others may need fixing too
+
+2025-09-23
+- Added system constants
+- Added some OUTCHANNEL logic, more to go.
+
+2025-09-26
+- Added OUTCHANNEL commands for save, restore, enter
+- Allow saving and restoring in GRIF or JSON format
+
+2025-09-29
+- OUTCHANNEL_EXISTS_SAVE and OUTCHANNEL_EXISTS_SAVE_NAME
+- INCHANNEL should be only one value due to unknown order of execution
+- OUTCHANNEL_SLEEP
+- May need async/await?
+- Added sleep to end of CloakOfDarkness before saying lost/won
+- Quietly ignore future OUTCHANNEL enhancements
+
+2025-10-01
+- Fixed problems with grod.Keys by using Union and only sorting once.
+- Added grod.Items to get list of GrodItems by prefix.
+- Use grod.Keys as basis for grod.Count.
+- Save lists of verbs, nouns, and background scripts to avoid reloading them.
+- Speed is fixed!!! Much faster now. :)
+
+2025-10-04
+- New parser that prefills verbs and nouns from grod.
+- Parser handles words out of order, mostly.
+
+2025-10-05
+- Fixed parser to handle multiple nouns and prepositions.
+- Fixed parser to handle directions separately or with verbs.
+- Fixed parser to handle "look at box" and "look in box".
+- Fixed parser to handle "look north" and "go north".
+- Parser handles numeric nouns with "#", like "left #" or "go #".
+- Parser handles any noun with "*", such as "look at *", if specific noun not found.
+- Still to come: articles and adjectives.
+
+2025-10-08
+- Added articles and adjectives to parser.
+- Articles are ignored.
+- Adjectives are not implemented yet.
+- Probably will need to read verb anywhere, then noun/preposition/noun in order.
+- Make sure to handle verb/preposition/noun format, "look in box".
+
+2025-10-11
+- Strings start/end spaces as "//s".
+
+2025-10-12
+- WriteGrif no splitting on "//n".
+- ReadGrif fixes for JSON internal quotes.
+- ReadGrif now uses full JSON logic, not simple logic.
+
+2025-10-13
+- ValidateScript
+
+2025-10-21
+- Finished ValidateScript with all unit tests passing.
+- Validate @and, @or, @not as only being used inside @if.
+- @flipbit, @fromhex, @len, @tohex
+- Added CompareKeys for sorting. Sorts numeric parts numerically.
+
+2025-10-22
+- Trying StandardOutput for output instead of Console.WriteLine.
+
+2025-10-23
+- Starting split out into Game and IO classes.
+- Everything a mess until finished!
+
+2025-10-31
+- Finished splitting into Game and IO classes.
+- RunGame() loop in Game class.
+- Events for output handling by calling program.
+- Queues to hold input and output lines.
+- AdvanceGameState() to process background scripts.
+- Changed Program to use new Game and IO classes and handle output.
+- WIP - not tested yet.
+
+2025-11-03
+- Adding input/output handling to Program.
+- Cloak of Darkness works with new structure.
+- Added event handlers for output lines and prompts.
+- Added input queue to handle automated input for testing.
+- Sleep not working yet.
+
+2025-11-04
+- Fixed sleep.
+- Everything works.
+- Cloak of Darkness works perfectly with new structure.
+- Castlequest works perfectly with new structure.
+- Fixed prompt for TicTacToe, works perfectly now.
+
+2025-11-11
+- Changing inline strings to static tokens.
+
+2025-11-20
+- Added game.Intro() to handle intro script.
+- Bug: @return fails if in @if block. Removed for now.
+- Added IsScript() and removed hard-coded logic.
+- @sleep() and @picture() commands
+
+2025-11-23
+- Error on tokens out of context (@then, @else, etc.)
+- Added ISFALSE2_TOKEN, ISTRUE2_TOKEN, ISNULL2_TOKEN so both versions are allowed.
+- ExtraText for command.verb.?
+- Fixing restore for Cloak of Darkness and TicTacToe.
+- Articles moved to system.articles
+
+2025-12-04
+- Mod and ModTo return positive values only.
+- Added unit tests for Mod and ModTo negative values.
+- Added CheckParmeterCountBetween() for range checking.
+- Allow @substring with 2 or 3 parameters. If 2, goes to end of string.
+- Renamed Message to GrifMessage for clarity and to avoid Microsoft.Message conflicts.
+- Ran for AoC 2025 day 1 parts 1 and 2 successfully. :)
+
+2025-12-06
+- Switching to long values for all math operations.
+- Added --split-input command line option, for comma-separated input values.
+
+2025-12-10
+- Renamed Game to IFGame.
+- Renamed Parser to IFParser, for clarity.
+- Started nounitem xref in parser.
+
+2025-12-14
+- Properly handle grifstack and files in command parameters.
+
+2025-12-15
+- system.uppercase for input
+
+2025-12-20
+- @contains() and @containslist()
+- Added Dags.SplitItems for splitting strings by commas or spaces and fixing values.
+- New ParserItem type for holding key and a list of synonyms.
+- BREAKING CHANGE: adjectives are defined in reverse from GRIF 1.0.
+- Changed adjectives to "adjective.black=cloak" instead of "adjective.cloak=black".
+- Include adjectives in the input sent to the game for further processing. (Which ball?)
+
+2025-12-22
+- Moved opening/writing files/streams to IO class.
+
+2025-12-26
+- Moved OUTCHANNEL_SLEEP to Program.cs for handling there.
+- Ignore unknown OUTCHANNEL commands in IFGame class.
+- Moved @sleep() to be a function in Cloak of Darkness game only.
+
+2025-12-27
+- Added more validation to GROD keys. Added TryValidateKey().
+- Split into GrifLib project for GROD, DAGS, and IFGame classes.
+- Grif project now only has Program.cs to run the game.
+- Parse a single number as input value.
+- Moved Version to GrifLib.Common.
+- Allow multple input files on command line.
+
+2025-12-30
+- New ScriptObj to hold both tokens and index.
+- Changed all commands to use ScriptObj instead of string list and index.
+- ScriptObj has own Grod for local values. Keys starting with "__" are local.
+
+2026-01-06
+- Testing local storage, @return.
+- Use local values in Cloak of Darkness and Tic-tac-toe.
+- Fixed save format to JSON for saving to a named file.
+- Added @while ... @do ... @endwhile commands.
+
+2026-01-13
+- Added @getchar() and @setchar().
+- Added @inlist().
+
+2026-01-22
+- Testing @getchar() and @setchar().
+- Fixing many error return value issues in tests.
+- Added error checking on parameters and in Process.
+- Removed unnecessary "Dags." prefixes.
+- Dags.md documentation file updated.
+
+2026-01-26
+- Added checking for '\r' and '\n' in GetGrifStream().
+- Added checking for '\t' in OutputText().
+- Added BlankGame as a starting point in creating a new game file.
+- Added check for filename missing ".grif" extension and add it when loading.
+
+2026-01-27
+- BlankGame fixes
+
+2026-02-05
+- Added GameOver checks in more places to catch all times it can happen.
+
+2026-02-08
+- Added a long TODO list
+
+2026-02-09
+- Moved Wordwrap into IO for general use.
+- Fixed Wordwrap to preserve multiple spaces in lines.
+
+2026-02-14
+- Added PARAM_CHAR for handling $x parameters in scripts.
+- Added FilePath parameter to Grod.
+- Added Grod.Changed flag to track changes for saving.
+- ParseInit is now private and automatically called.
+- Added Grod.GetGrod(name) to get an ancestor Grod by name.
+- Added OUTCHANNEL_ADD_EXTRA_GROD, OUTCHANNEL_SET_EXTRA_GROD_VALUE.
+- Added @setgrod() for setting values in an extra grod.
+- Extra grods are saved in separate files in the save directory and shared with all saves.
+- Fixed GrifStack to allow directories.
+- Cleaned up Debug output (removed ###, messages could add that).
+
+2026-03-04
+- ValidKey
+
+2026-03-07
+- Make CompareKeys public for outside access
+
+2026-03-08
+- Colorize tokens
+
+2026-03-19
+- Add ParenthesisColor

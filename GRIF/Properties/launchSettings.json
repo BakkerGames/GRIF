@@ -1,15 +1,58 @@
 {
   "profiles": {
-    "GRIF": {
-      "commandName": "Project"
-    },
-    "CloakOfDarkness": {
+    "Grif": {
       "commandName": "Project",
-      "commandLineArgs": "\"..\\..\\..\\..\\CloakOfDarkness\\CloakOfDarkness.grif\" --meta"
+      "workingDirectory": ".."
     },
     "TicTacToe": {
       "commandName": "Project",
-      "commandLineArgs": "\"..\\..\\..\\..\\TicTacToe\\TicTacToe.grif\""
+      "commandLineArgs": "\"TicTacToe\\TicTacToe.grif\"",
+      "workingDirectory": ".."
+    },
+    "Cloak of Darkness Input": {
+      "commandName": "Project",
+      "commandLineArgs": "\"CloakOfDarkness\\CloakOfDarkness.grif\" -i \"CloakOfDarkness\\Input.txt\" -o \"CloakOfDarkness\\Output.txt\"",
+      "workingDirectory": ".."
+    },
+    "Cloak of Darkness": {
+      "commandName": "Project",
+      "commandLineArgs": "\"CloakOfDarkness\\CloakOfDarkness.grif\"",
+      "workingDirectory": ".."
+    },
+    "Castlequest Input": {
+      "commandName": "Project",
+      "commandLineArgs": "\"..\\Castlequest_GRIF\\Castlequest.grif\" -i \"..\\Castlequest_GRIF\\Walkthrough\\happypath.txt\" -m \"..\\Castlequest_GRIF\\Mods\\norandom.grif\" -m \"..\\Castlequest_GRIF\\Mods\\corrections.grif\" -o \"..\\Castlequest_GRIF\\Logs\\Castlequest.log\"",
+      "workingDirectory": ".."
+    },
+    "Castlequest": {
+      "commandName": "Project",
+      "commandLineArgs": "\"..\\Castlequest_GRIF\\Castlequest.grif\" -m \"..\\Castlequest_GRIF\\Mods\\corrections.grif\"",
+      "workingDirectory": ".."
+    },
+    "Adventure": {
+      "commandName": "Project",
+      "commandLineArgs": "\"..\\AdventureToGRIF\\GRIFOutput\\adventure.grifstack\"",
+      "workingDirectory": ".."
+    },
+    "AoC": {
+      "commandName": "Project",
+      "commandLineArgs": "\"..\\aoc2025\\03\\03_1.grif\" -i \"..\\aoc2025\\03\\03_test.txt\" -i \"..\\aoc2025\\03\\end.txt\"",
+      "workingDirectory": ".."
+    },
+    "Crowther Adventure": {
+      "commandName": "Project",
+      "commandLineArgs": "\"..\\CrowtherToGRIF\\AdvCrowther\"",
+      "workingDirectory": ".."
+    },
+    "BlankGame": {
+      "commandName": "Project",
+      "commandLineArgs": "\"BlankGame\\BlankGame\"",
+      "workingDirectory": ".."
+    },
+    "Castlequest Stack": {
+      "commandName": "Project",
+      "commandLineArgs": "\"..\\Castlequest_GRIF\\AllMods.grifstack\"",
+      "workingDirectory": ".."
     }
   }
 }

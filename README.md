@@ -1,29 +1,35 @@
-# GRIF - Game Runner for Interactive Fiction
+# GRIF
 
-> [!NOTE]
-> GRIF is still in active development, so expect some features to change as development continues.
+## Overview
 
-GRIF is a game runner for playing Interactive Fiction games from the console. It is a simple engine which loads and runs game data and logic from external files.
+GRIF is a game runner for interactive fiction games. It is designed to be a simple but extensible engine that can handle various styles of interactive fiction. Version 2 has a completely rewritten engine and adds additional features and improvements.
 
-It is designed to be as flexible as possible while doing as little as possible. GRIF handles player input, text output, file loading and saving, and simple parsing. Everything else is handled by scripts in the game data files.
+GRIF can be integrated into other applications to provide game support such as scripting, in-memory data storage, and save/restore functionality.
 
-The game data may be stored in one or many files. There may even be modification files for adding addtional features to the game. These data and modification files are plain text, either in JSON format or a more readable GRIF format.
+## Features
 
-GRIF uses the DAGS scripting language, which was developed specifically for Interactive Fiction text games.
+- Supports GRIF and JSON game formats
+- Runs games in a terminal with a text-based interface
+- Scripting language for game logic
+- In-memory data storage for static and modified game data
+- Automatic save and load functionality with a top-level overlay
+- Allows for game modifications through separate files
+- Supports localization to other languages using modification files
+- Runs on Windows, Linux, and macOS
 
-GRIF is written in C# .NET 8 in Visual Studio 2022. The full source is available at [GRIF](https://github.com/BakkerGames/GRIF). GRIF compiles to various Windows and Linux executables, which are available at [Releases](https://github.com/BakkerGames/GRIF/releases). It does not require any additional libraries beyond the standard C# System library. The TestGRIFTools project with unit tests does require some NuGet packages but is not necessary to compile or run GRIF.
+## Improvements in Version 2
 
-Source and executables are available at the [Interactive Fiction Archive](https://www.ifarchive.org/indexes/if-archive/programming/grif/). Games using the GRIF interpreter can be found at [Games](https://www.ifarchive.org/indexes/if-archive/games/grif/).
-
-Check out the included "Cloak Of Darkness" and "Tic Tac Toe" demo games to see some of the features of GRIF.
-
-Syntax:
-
-```
-grif <filename.grif | directory>
-     [-i | --input  <filename>]
-     [-o | --output <filename>]
-     [-m | --mod    <filename.grif | directory>]
-
-There may be multiple "-m" or "--mod" parameters.
-```
+- Can return interleaved results including media information
+- Can handle system events such as sleep
+- Can stack multiple GRIF files for modular game design
+- Outchannel support can be customized for different output methods
+- Handles 64-bit integers for larger data values
+- Scripts can have local variables for internal processing
+- @while ... @do ... @endwhile loop structure
+- @return command allows exiting scripts immediately
+- Many new built-in script functions
+- Self-contained GrifLib project (soon to be available as a NuGet package)
+- GrifLib can be included in other front-end applications
+- Optional IFGame and IFParser classes for interactive fiction game management
+- IFGame provides Input and Output event stacks for external handling
+- Improved IFParser with better adjective and preposition support

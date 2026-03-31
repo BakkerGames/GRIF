@@ -1,0 +1,27 @@
+n
+e
+s
+n
+w
+w
+s
+inv
+examine cloak
+examine hook
+drop cloak
+inv
+hang the dark, black, handsome, satin, velvet cloak upon the small, brass hook
+inv
+examine hook
+hang cloak
+inv
+look
+examine hook
+e
+s
+w
+save
+1
+s
+e
+read message

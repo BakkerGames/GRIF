@@ -1,15 +1,13 @@
 // CloakOfDarkness.grif - GRIF format
-@__version
-	Version 2025.07.31
 @addscore(x)
 	@if @ne($x,0) @then
 		@addto(value.score,$x)
 		@if @eq($x,1) @then
-			@set(temp.s,"")
+			@set(__s,"")
 		@else
-			@set(temp.s,"s")
+			@set(__s,"s")
 		@endif
-		@write(@format(@get(message.scoreup),$x,@get(temp.s)))
+		@write(@format(@get(message.scoreup),$x,@get(__s)))
 		@nl
 	@endif
 @carry(x)
@@ -28,22 +26,22 @@
 	@endif
 @godir(x)
 	@debug(@concat("going to room.",@room,".exit.",$x))
-	@set(temp.key,@concat("room.",@room,".exit.",$x))
-	@if @not @exists(@get(temp.key)) @then
+	@set(__key,@concat("room.",@room,".exit.",$x))
+	@if @not @exists(@get(__key)) @then
 		@msg(message.cant_go)
-	@elseif @isscript(@get(temp.key)) @then
-		@script(@get(temp.key))
+	@elseif @isscript(@get(__key)) @then
+		@script(@get(__key))
 	@else
-		@goto(@get(@get(temp.key)))
+		@goto(@get(@get(__key)))
 	@endif
 @goto(x)
 	@debug("goto $x")
 	@if @null(@get(room.$x.longdesc)) @and @null(@get(room.$x.shortdesc)) @then
 		@writeline("Invalid room: $x")
-		@return
+	@else
+		@set(value.room,$x)
+		@look
 	@endif
-	@set(value.room,$x)
-	@look
 @here(x)
 	@if @eq(@getvalue(item.$x.location),@room) @then
 		@write(true)
@@ -57,13 +55,13 @@
 		@write(false)
 	@endif
 @herechild(x)
-	@set(temp.here,false)
+	@set(__here,false)
 	@foreachkey(y,"item.",".location")
 		@if @eq(@getvalue(item.$y.location),@room) @and @eq(@getvalue(item.$x.location),$y) @then
-			@set(temp.here,true)
+			@set(__here,true)
 		@endif
 	@endforeachkey
-	@write(@get(temp.here))
+	@write(@get(__here))
 @inv
 	inventory
 @isroom(x)
@@ -95,19 +93,22 @@
 	@setoutchannel("#GAMEOVER;")
 @room
 	@get(value.room)
-adjective.cloak
-	velvet,handsome,black,dark,satin
-adjective.hook
-	brass,small
-articles
-	a,an,another,the,this
-background.intro
-	@if @false(@get(value.introdone)) @then
-		@msg(message.intro)
-		@set(value.introdone,true)
-		@nl
-		@look
-	@endif
+@sleep(x)
+	@setoutchannel("#SLEEP;",$x)
+adjective.black
+	cloak
+adjective.brass
+	hook
+adjective.dark
+	cloak
+adjective.handsome
+	cloak
+adjective.satin
+	cloak
+adjective.small
+	hook
+adjective.velvet
+	cloak
 command.down
 	@godir(down)
 command.drop
@@ -119,7 +120,7 @@ command.drop.*
 		@else
 			@set(@concat("item.",@get(input.noun),".location"),@room)
 			@msg(message.ok)
-			@exec(@getvalue(@concat("item.",@get(input.noun),".afterdrop")))
+			@script(@concat("item.",@get(input.noun),".afterdrop"))
 		@endif
 	@else
 		@msg(message.dont_have)
@@ -166,17 +167,17 @@ command.hang.cloak.on.hook
 command.help
 	@msg(message.help)
 command.inventory
-	@set(temp.count,0)
+	@set(__count,0)
 	@foreachkey(x,"item.",".location")
 		@if @carry($x) @then
-			@if @eq(@get(temp.count),0) @then
+			@if @eq(@get(__count),0) @then
 				@msg(message.carrying)
 			@endif
-			@addto(temp.count,1)
+			@addto(__count,1)
 			@msg(item.$x.shortdesc)
 		@endif
 	@endforeachkey
-	@if @eq(@get(temp.count),0) @then
+	@if @eq(@get(__count),0) @then
 		@msg(message.inv_empty)
 	@endif
 command.look
@@ -185,9 +186,9 @@ command.look.*
 	@script(@concat("command.examine.",@get(input.noun)))
 command.look.at.*
 	@script(@concat("command.examine.",@get(input.object)))
-command.look.room
-	@lookfull
 command.look.at.room
+	@lookfull
+command.look.room
 	@lookfull
 command.north
 	@godir(north)
@@ -205,14 +206,28 @@ command.read.message
 			@addto(value.scuffed,1)
 		@else
 			@if @lt(@get(value.scuffed),2) @then
-				@msg(message.readable)
+				@write(@get(message.readable))
+				@write(".")
+				@sleep(750)
+				@write(".")
+				@sleep(750)
+				@write(".")
+				@sleep(750)
+				@nl
 				@nl
 				@msg(message.you_won)
 				@nl
 				@addscore(@get(value.messagescore))
 				@set(value.messagescore,0)
 			@else
-				@msg(message.unreadable)
+				@write(@get(message.unreadable))
+				@write(".")
+				@sleep(750)
+				@write(".")
+				@sleep(750)
+				@write(".")
+				@sleep(750)
+				@nl
 				@nl
 				@msg(message.you_lost)
 			@endif
@@ -230,28 +245,25 @@ command.restart
 command.restore
 	@msg(message.save_slot_number)
 	@setoutchannel("#ASK;")
-	@setoutchannel("@script(script.restore_slot)")
+	@setoutchannel("@script(script.restore_slot_get)")
+command.restore.?
+	@msg(message.invalid_save_slot)
 command.restore.#
-	@set(temp.slot,@get(input.nounword))
-	@if @isnumber(@get(temp.slot)) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
-		@setoutchannel("#RESTORENAME;")
-		@setoutchannel(@get(temp.slot))
-		@setoutchannel("@msg(message.restore_complete) @nl")
-		@setoutchannel("@lookfull")
+	@set(value.slot,@get(input.nounword))
+	@if @isnumber(@get(value.slot)) @and @ge(@get(value.slot),1) @and @le(@get(value.slot),5) @then
+		@script(script.restore_slot_check)
 	@else
-		@msg(message.save_slot_number)
-		@setoutchannel("#ASK;")
-		@setoutchannel("@script(script.restore_slot)")
+		@msg(message.invalid_save_slot)
+		@set(value.slot,null)
 	@endif
 command.save
 	@msg(message.save_slot_number)
 	@setoutchannel("#ASK;")
 	@setoutchannel("@script(script.save_slot)")
 command.save.#
-	@set(temp.slot,@get(input.nounword))
-	@if @isnumber(@get(temp.slot)) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
-		@setoutchannel("#SAVENAME;")
-		@setoutchannel(@get(temp.slot))
+	@set(value.slot,@get(input.nounword))
+	@if @isnumber(@get(value.slot)) @and @ge(@get(value.slot),1) @and @le(@get(value.slot),5) @then
+		@setoutchannel("#SAVENAME;",@get(value.slot))
 		@setoutchannel("@msg(message.save_complete)")
 	@else
 		@msg(message.save_slot_number)
@@ -264,13 +276,6 @@ command.south
 	@godir(south)
 command.take
 	@msg(message.take_what)
-command.take.cloak.from.hook
-	@if @here(hook) @and @herechild(cloak) @then
-		@set(item.cloak.location,@inv)
-		@msg(message.ok)
-	@else
-		@msg(message.dont_see)
-	@endif
 command.take.*
 	@if @dark @then
 		@msg(message.too_dark)
@@ -287,14 +292,33 @@ command.take.*
 	@else
 		@msg(message.dont_see)
 	@endif
+command.take.cloak.from.hook
+	@if @here(hook) @and @herechild(cloak) @then
+		@set(item.cloak.location,@inv)
+		@msg(message.ok)
+	@else
+		@msg(message.dont_see)
+	@endif
 command.up
 	@godir(up)
 command.use.hook
 	@script(command.hang.cloak)
 command.version
-	@writeline(@__version)
+	@msg(system.version)
 command.west
 	@godir(west)
+direction.down
+	down,d,descend
+direction.east
+	east,e
+direction.north
+	north,n
+direction.south
+	south,s
+direction.up
+	up,u,climb
+direction.west
+	west,w
 item.cloak.afterdrop
 	@nl
 	@msg(message.dropcloak)
@@ -346,24 +370,16 @@ message.dont_have
 	You don't have that.
 message.dont_see
 	I don't see that here.
-message.drop_what
-	Drop what?
 message.dropcloak
 	This isn't the best place to leave a smart cloak lying around.
+message.drop_what
+	Drop what?
 message.examine_what
 	Examine what?
 message.hang_what
 	Hang what?
 message.help
-	There are just three rooms and three objects.\n
-	\nThe Foyer of the Opera House is where the game begins. This empty room has doors to the south and west, also an unusable exit to the north. There is nobody else around.\n
-	\nThe Bar lies south of the Foyer, and is initially unlit. Trying to do anything other than return northwards results in a warning message about disturbing things in the dark.\n
-	\nOn the wall of the Cloakroom, to the west of the Foyer, is fixed a small brass hook.\n
-	\nTaking an inventory of possessions reveals that the player is wearing a black velvet cloak which, upon examination, is found to be light-absorbent. The player can drop the cloak on the floor of the Cloakroom or, better, put it on the hook.\n
-	\nReturning to the Bar without the cloak reveals that the room is now lit. A message is scratched in the sawdust on the floor.\n
-	\nThe message reads either "You have won" or "You have lost", depending on how much it was disturbed by the player while the room was dark.\n
-	\nThe act of reading the message ends the game.\n
-	\nAnd that's all there is to it...
+	There are just three rooms and three objects.\n\nThe Foyer of the Opera House is where the game begins. This empty room has doors to the south and west, also an unusable exit to the north. There is nobody else around.\n\nThe Bar lies south of the Foyer, and is initially unlit. Trying to do anything other than return northwards results in a warning message about disturbing things in the dark.\n\nOn the wall of the Cloakroom, to the west of the Foyer, is fixed a small brass hook.\n\nTaking an inventory of possessions reveals that the player is wearing a black velvet cloak which, upon examination, is found to be light-absorbent. The player can drop the cloak on the floor of the Cloakroom or, better, put it on the hook.\n\nReturning to the Bar without the cloak reveals that the room is now lit. A message is scratched in the sawdust on the floor.\n\nThe message reads either "You have won" or "You have lost", depending on how much it was disturbed by the player while the room was dark.\n\nThe act of reading the message ends the game.\n\nAnd that's all there is to it...
 message.hook_desc_cloak
 	with a cloak hanging on it.
 message.hook_desc_empty
@@ -373,7 +389,9 @@ message.hook_desc_start
 message.hook_with_cloak
 	There is a handsome cloak hanging on the hook.
 message.intro
-	Cloak of Darkness\n\nA basic IF demonstration.\n\nHurrying through the rainswept November night, you're glad to see the bright lights of the Opera House. It's surprising that there aren't more people about but, hey, what do you expect in a cheap demo game...?
+	A basic IF demonstration.\n\nHurrying through the rainswept November night, you're glad to see the bright lights of the Opera House. It's surprising that there aren't more people about but, hey, what do you expect in a cheap demo game...?
+message.invalid_save_slot
+	Invalid save slot number. Please enter a number from 1 to 5.
 message.inv_empty
 	You aren't carrying anything.
 message.leave_operahouse
@@ -385,11 +403,15 @@ message.ok
 message.otherdark
 	In the dark? You could easily disturb something!
 message.readable
-	The message, neatly marked in the sawdust, reads...
+	The message, neatly marked in the sawdust, reads
 message.read_what
 	Read what?
+message.restarting
+	Restarting the game...
 message.restore_complete
 	Restore complete.
+message.savefile_not_found
+	Cannot find a save file to restore.
 message.save_complete
 	Save complete.
 message.save_slot_number
@@ -403,7 +425,7 @@ message.take_what
 message.too_dark
 	It is completely dark in here. You can't see a thing.
 message.unreadable
-	The message has been carelessly trampled, making it difficult to read. You can just distinguish the words...
+	The message has been carelessly trampled, making it difficult to read. You can just distinguish the words
 message.yorn_error
 	Please enter Yes or No.
 message.you_lost
@@ -485,10 +507,12 @@ script.bar_cant_go
 		@msg(message.cant_go)
 	@endif
 script.restart
-	@set(temp.yorn,@getinchannel)
-	@if @true(@get(temp.yorn)) @then
+	@set(__yorn,@getinchannel)
+	@if @true(@get(__yorn)) @then
 		@setoutchannel("#RESTART;")
-	@elseif @false(@get(temp.yorn)) @then
+		@setoutchannel("@msg(message.restarting) @nl")
+		@setoutchannel("@script(system.intro)")
+	@elseif @false(@get(__yorn)) @then
 		@msg(message.ok)
 	@else
 		@msg(message.yorn_error)
@@ -496,22 +520,42 @@ script.restart
 		@setoutchannel("@script(script.restart))")
 	@endif
 script.restore_slot
-	@set(temp.slot,@getinchannel)
-	@if @isnumber(@get(temp.slot)) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
-		@setoutchannel("#RESTORENAME;")
-		@setoutchannel(@get(temp.slot))
+	@comment("value.slot already has a valid value")
+	@set(__yorn,@getinchannel)
+	@if @true(@get(__yorn)) @then
+		@setoutchannel("#RESTORENAME;",@get(value.slot))
 		@setoutchannel("@msg(message.restore_complete) @nl")
 		@setoutchannel("@lookfull")
 	@else
-		@msg(message.save_slot_number)
+		@msg(message.ok)
+		@set(value.slot,null)
+	@endif
+script.restore_slot_check
+	@comment("value.slot already has slot number")
+	@if @isnumber(@get(value.slot)) @and @ge(@get(value.slot),1) @and @le(@get(value.slot),5) @then
+		@setoutchannel("#EXISTSNAME;",@get(value.slot))
+		@setoutchannel("@script(script.restore_slot_check_file)")
+	@else
+		@msg(message.invalid_save_slot)
+		@set(value.slot,null)
+	@endif
+script.restore_slot_check_file
+	@set(__exists,@getinchannel)
+	@if @true(@get(__exists)) @then
+		@msg(message.askrestore)
 		@setoutchannel("#ASK;")
 		@setoutchannel("@script(script.restore_slot)")
+	@else
+		@set(value.slot,null)
+		@msg(message.savefile_not_found)
 	@endif
+script.restore_slot_get
+	@set(value.slot,@getinchannel)
+	@script(script.restore_slot_check)
 script.save_slot
-	@set(temp.slot,@getinchannel)
-	@if @isnumber(@get(temp.slot)) @and @ge(@get(temp.slot),1) @and @le(@get(temp.slot),5) @then
-		@setoutchannel("#SAVENAME;")
-		@setoutchannel(@get(temp.slot))
+	@set(value.slot,@getinchannel)
+	@if @isnumber(@get(value.slot)) @and @ge(@get(value.slot),1) @and @le(@get(value.slot),5) @then
+		@setoutchannel("#SAVENAME;",@get(value.slot))
 		@setoutchannel("@msg(message.save_complete)")
 	@else
 		@msg(message.save_slot_number)
@@ -520,20 +564,35 @@ script.save_slot
 	@endif
 system.after_prompt
 	\n
-system.do_what_with_noun
-	Do what with the {0}?
+system.articles
+	a,an,another,the,this
 system.dont_understand
 	I don't understand "{0}".
 system.dont_understand_that
 	I don't understand that.
+system.do_what_with_noun
+	Do what with the {0}?
 system.gamename
 	CloakOfDarkness
 system.gametitle
 	Cloak Of Darkness
+system.intro
+	@if @false(@get(value.introdone)) @then
+		@msg(system.gametitle)
+		@nl
+		@writeline("Version ",@get(system.version))
+		@nl
+		@msg(message.intro)
+		@set(value.introdone,true)
+		@nl
+		@look
+	@endif
 system.output_width
 	80
 system.prompt
 	\n>
+system.version
+	2026.01.06
 value.cloakscore
 	1
 value.maxscore
@@ -543,19 +602,17 @@ value.messagescore
 value.room
 	foyer
 value.room.comment
-	/* current player location */
+	current player location
 value.score
 	0
 value.scuffed
 	0
 value.scuffed.comment
-	/* how scuffed is the message? */
-verb.down
-	down,d,descend
+	how scuffed is the message?
 verb.drop
 	drop,throw,remove
-verb.east
-	east,e
+verb.examine
+	x,examine
 verb.go
 	go,walk,run
 verb.hang
@@ -564,12 +621,8 @@ verb.help
 	help,info
 verb.inventory
 	i,inv,inventory
-verb.examine
-	x,examine
 verb.look
 	l,look
-verb.north
-	north,n
 verb.out
 	out
 verb.quit
@@ -584,15 +637,9 @@ verb.save
 	save,suspend
 verb.score
 	score
-verb.south
-	south,s
 verb.take
 	take,t,get,wear
-verb.up
-	up,u,climb
 verb.use
 	use
 verb.version
 	ver,version
-verb.west
-	west,w

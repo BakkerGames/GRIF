@@ -1,20 +1,14 @@
 # DAGS Syntax
 
-DAGS scripts consist of functions starting with "@" with zero or more parameters defined for each. Parameter values can be strings or other functions returning strings. Strings are anything not starting with "@", and don't need quotes around them if they have no spaces or special symbols. Some functions, such as arithmetic functions, expect the string parameters to be numbers or functions returning numbers.
+DAGS is a simple scripting language which is tied directly to a GROD in-memory database. Many of the functions read or write values in the database.
 
-DAGS uses a dictionary of (key, value) pairs. Both the keys and values are strings.
+DAGS scripts consist of functions starting with "@" with zero or more parameters defined. Parameter values can be strings or other functions returning strings. Strings are anything not starting with "@", and don't need quotes around them unless they have spaces or special symbols (including "@"). Some functions, such as arithmetic functions, expect the string parameters to be numbers or functions returning numbers.
 
-Keys cannot be null, "", or contain only whitespace, and should not have leading or trailing spaces. Values which are null or "null" or undefined are returned as "". Integer values which would be "" are returned as "0". Text values containing spaces and some special characters need to be surrounded by double quotes. Quotes within quoted strings must be escaped `\"`.
+Some functions take keys and operate directly on the database, while other take values and operate on those values. Be careful of this! `@true(key)` doesn't check the value but is always false (the string "key" isn't true), while `@true(@get(key))` gets the correct answer from the value stored in `key` in the database.
 
-Keys and values as function parameters can be text values or strings built out of other functions.
+At times it might be necessary to add quotes around values so they don't execute immediately. Quotes are always the double-quote value `"`. The value will need to be surrounded by quotes and internal quotes escaped as `\"`.
 
-Some functions take keys and operate directly on the dictionary, while other take values and operate on those values. Be careful of this! `@true(key)` doesn't check the value but is always false (the string "key" isn't truthy), while `@true(@get(key))` gets the correct answer from the value.
-
-At times it might be necessary to add quotes around script values so they don't execute immediately. `@set(key,value)` is one such situation, when the value is to be stored as a script and not the answer. The value will need to be surrounded by quotes and internal quotes escaped.
-
-Scripts are processed by Dags.RunScript(script, result), with `result` a StringBuilder parameter that will return all output.
-
-There is an "InChannel" queue and an "OutChannel" queue which are used for passing string values between DAGS and the calling program. Strings placed on the queues would be handled by the other end as appropriate.
+Scripts are processed by Dags.Process(grod, script), returning a list of GrifMessage results. These can be displayed to the user if their type = Text or may be commands to the calling program if their type = OutChannel.
 
 
 ## Constants
@@ -54,7 +48,7 @@ false
 
 @set(key,value)
 
->Sets the value for "key" in the dictionary to "value". If "value" is a script, it stores the final result. If "value" is a script but is quoted, the script is stored directly.
+>Sets the value for "key" in the database to "value". If "value" is a script, it stores the final result. If "value" is a script but is quoted, the script is stored directly.
 
 @swap(key1,key2)
 
@@ -62,6 +56,8 @@ false
 
 
 ## Numeric Statements
+
+Numeric statements operate on 64-bit integer values stored in the database.
 
 @addto(key,value)
 
@@ -86,6 +82,7 @@ false
 @negto(key)
 
 >Negates the integer stored in "key". Stores it back into "key".
+
 
 ## Output Statements
 
@@ -130,7 +127,7 @@ false
 
 @get(key)
 
->Returns the value for "key" from the dictionary.
+>Returns the value for "key" from the database.
 
 @getvalue(key)
 
@@ -225,6 +222,7 @@ Any functions which returns truthy or falsey values may be defined and used as "
 >Returns true if "key" exists and the value is not "" or "null".
 
 @false(value)
+@isfalse(value)
 
 >Returns true if "value" is falsey. Returns false if the value is truthy or isn't boolean.
 
@@ -269,6 +267,7 @@ Any functions which returns truthy or falsey values may be defined and used as "
 >Checks if a random integer 0-99 is less than integer "value" 1-100. Shortened version of "@lt(@rnd(100),value)".
 
 @true(value)
+@istrue(value)
 
 >Returns true if "value" is truthy. Returns false if the value is falsey or isn't boolean.
 
@@ -303,7 +302,7 @@ Any functions which returns truthy or falsey values may be defined and used as "
 
 @foreachkey(token,prefix) or @foreachkey(token,prefix,suffix)
 
->Executes the code in the "foreachkey" block multiple times, by replacing "$token" (the token with a leading "$") anywhere in it. It loops through all the keys in the dictionary which start with "prefix" and optionally end with "suffix". The value replaced for "$token" is the remaining part of the key after the prefix and the optional suffix are removed. Tokens can be anything, but should have no spaces or special characters. Nesting is allow if the tokens are different. Note that the order of keys returned is not deterministic.
+>Executes the code in the "foreachkey" block multiple times, by replacing "$token" (the token with a leading "$") anywhere in it. It loops through all the keys in the database which start with "prefix" and optionally end with "suffix". The value replaced for "$token" is the remaining part of the key after the prefix and the optional suffix are removed. Tokens can be anything, but should have no spaces or special characters. Nesting is allow if the tokens are different. Note that the order of keys returned is not deterministic.
 
 @endforeachkey
 
@@ -321,6 +320,19 @@ Any functions which returns truthy or falsey values may be defined and used as "
 @endforeachlist
 
 >Marks the end of the "@foreachlist" loop.
+
+
+## While Loop
+
+@while conditions... @do
+...statements...
+@endwhile
+
+>Executes the code in the "while" block multiple times as long as the condition is true. The condition is checked before each iteration. The "@do" is required.
+
+>The same condition statements as used in "@if" blocks are used here, with @and, @or, and @not.
+
+>Be careful to ensure that the loop will eventually exit, or an infinite loop will occur.
 
 
 ## List Statements/Functions
@@ -358,7 +370,7 @@ These commands allow named lists of values to be stored as a single group instea
 
 ## Array Statements/Functions
 
-These commands allow a two-dimensional array of values to be stored as a group. They are sparse arrays with unspecified values returned as "". Arrays use keys containing the array name, a colon, and the row number, as "name:0". The row values contain zero or more items separated by commas. The rows can be different lengths and rows can be missing.
+These commands allow a two-dimensional array of values to be stored as a group. They are sparse arrays with unspecified values returned as `null`. Arrays use keys containing the array name, a colon, and the row number, as "name:0". The row values contain zero or more items separated by commas. The rows can be different lengths and rows can be sparsely filled.
 
 Note that the array values are referenced by row (y) first and then column (x), both starting at 0. Negative indexes throw an error.
 
@@ -377,9 +389,9 @@ Note that the array values are referenced by row (y) first and then column (x), 
 
 ## InChannel/OutChannel Commands
 
->InChannel and OutChannel commands are a way for the DAGS scripts to communicate with the outside calling program and receive information back. They use queues to stack commands for processing in order. The calling program looks at the In channel, handles all commands, and possibly passes back answers. This allows the calling program to handle file I/O and operating system commands so DAGS doesn't have to.
+>InChannel and OutChannel commands are a way for the DAGS scripts to communicate with the outside calling program and receive information back. The results returned from DAGS include any OutChannel commands, which the calling program would need to process. The calling program may also add messages of type InChannel, which the DAGS script can retrieve.
 
->Any DAGS command can be set in the Out channel, and the calling program would run it by calling DAGS. Typically this is used for running scripts.
+>An OutChannel command can either be one of the special values recognized by the calling program (GRIF), or it can be a DAGS script to be executed by the calling program by sending it back into DAGS. An example of this might be asking the user a question and including a script to handle the answer. (See the Cloak of Darkness example in the GRIF documentation.)
 
 >The list of special values recognized by GRIF are:
 
@@ -402,79 +414,38 @@ command.restart
     @setoutchannel("#ASK;")
     @setoutchannel("@script(script.restart)")
 script.restart
-    @set(temp.yorn,@getinchannel)
-    @if @true(@get(temp.yorn)) @then
-        @setoutchannel("#RESTART;")
-    @elseif @false(@get(temp.yorn)) @then
-        @msg(message.ok)
-    @else
-        @msg(message.yorn_error)
-        @setoutchannel("#ASK;")
-        @setoutchannel("@script(script.restart))")
-    @endif
+	@set(__yorn,@getinchannel)
+	@if @true(@get(__yorn)) @then
+		@setoutchannel("#RESTART;")
+		@setoutchannel("@msg(message.restarting) @nl")
+		@setoutchannel("@script(system.intro)")
+	@elseif @false(@get(__yorn)) @then
+		@msg(message.ok)
+	@else
+		@msg(message.yorn_error)
+		@setoutchannel("#ASK;")
+		@setoutchannel("@script(script.restart))")
+	@endif
 ```
 
 @setoutchannel(value)
 
->Adds the value to the OutChannel queue. The calling program would be looking for these values and know how to process them. Values should be quoted, and if "value" is a DAGS command it must be quoted.
+>Adds the value to the OutChannel queue. The calling program would be looking for these values and know how to process them. Values should be quoted, and if "value" is a DAGS command it must be quoted. The calling program should also gracefully ignore any unknown OutChannel values as they may be for an alternate calling program, or may be added in future versions.
 
 @getinchannel
 
->Gets the next value from the InChannel queue and returns it. The script would use or process that value as appropriate.
-
-
-## Public Interface
-
-new Dags(IDictionary<string, string?> dictionary)
-
->Create a new DAGS object connected to an existing dictionary.
-
-RunScript(string script, StringBuilder result)
-
->Runs the specified script and return any answers in result.
-
-Queue InChannel
-
->Queue for receiving information from the calling program.
-
-Queue OutChannel
-
->Queue for sending information back to the calling program.
-
-bool ValidateDictionary(StringBuilder result)
-
->Checks that the dictionary is valid for use with DAGS. Returns all errors found. Includes checking all scripts with ValidateScript().
-
-bool ValidateScript(string script, StringBuilder result)
-
->Checks that the script has correct syntax. Returns all errors found.
-
-bool ValidateSyntax(string script, StringBuilder result)
-
->Checks that the script has correct syntax, but doesn't check function names. Returns all errors found.
-
-string PrettyScript(string script)
-
->Returns the script with line splitting and indenting for more readable code. Useful for exporting or for an editor program.
-
-string Help()
-
->Returns a syntax listing of all DAGS commands.
-
-string Syntax()
-
->Returns the full DAGS_SYNTAX.md file for DAGS (this file).
+>Gets the value from the InChannel and returns it. The script would use or process that value as appropriate. Currently only one InChannel value can be sent at a time.
 
 
 ## Adding new functions to DAGS
 
-Functions in DAGS are either built-in, such as those above, or are entries in the dictionary having keys starting with "@". You can add as many new functions to DAGS as you need. They are very useful when functionality is needed in several places, instead of repeating the same code each time.
+Functions in DAGS are either built-in, such as those above, or are entries in the database having keys starting with "@". You can add as many new functions to DAGS as you need. They are very useful when functionality is needed in several places, instead of repeating the same code each time.
 
 Function names must be unique. They can't duplicate any of the built-in function names.
 
 A function with no parameters would have a "key" of the desired function name: "@myfunc". The "value" would contain a script to be run whenever that function was called. The "value" can also be a simple text value to be returned whenever the function is called.
 
-A function with parameters would have a "key" with the specified name and would list the parameters in parentheses separated by commas: "@myfunc(x,y,z)". The "value" would be a script with replaceable parameter values such as "$x", "$y", "$z" somewhere in it. Any number of parameters may be specified, but at least one. The parameter names can be anything desired but should have no spaces or special characters, or conflict with other parameters from @for(), @foreachkey(), or @foreachlist() statements within the script.
+A function with parameters would have a "key" with the specified name and would list the parameters in parentheses separated by commas: "@myfunc(x,y,z)". The "value" would be a script with replaceable parameter values such as "$x", "$y", "$z" somewhere in it. Any number of parameters may be specified, but at least one if parenthesis are used. The parameter names can be anything desired but should have no spaces or special characters, or conflict with other parameters from @for(), @foreachkey(), or @foreachlist() statements within the script.
 
 Functions return values by writing them. All output from the function is the returned value.
 
@@ -505,3 +476,28 @@ Examples:
         @write(false)
     @endif
 ```
+
+
+## GrifLib
+
+GrifLib is the code library for GRIF. It contains the DAGS and GROD classes, along with other support classes such as IO.
+
+It contains a class call IFGame, which is a higher-level interactive fiction engine built on top of DAGS and GROD. This class uses DAGS scripts to define the game logic, and GROD to store the game state. It handles loading and saving games, processing user commands, and managing the game flow. It has another class IFParser for parsing user input into commands.
+
+IFGame has event handling for text input and output, allowing the calling program to customize how text is displayed and how user input is received.
+
+Setting up a basic IFGame is as simple as the following code, although Input and Output event handlers will need to be defined and the file name and game name must be specified:
+
+```csharp
+var game = new IFGame();
+var grod = IO.OpenFile("<FileName>");
+game.Initialize(grod, "<GameName>");
+game.InputEvent += Input;
+game.OutputEvent += Output;
+await game.Intro();
+await game.GameLoop();
+```
+
+See the GRIF file `Program.cs` for a complete example of using IFGame to run an interactive fiction game. (This is GRIF itself!)
+
+GrifLib is designed to be reusable in other interactive fiction projects, allowing developers to focus on creating the game content rather than the underlying engine. It can be plugged into any C# application needing scripting and base/overlay game state management. It can include resource files for localization, graphics, sound, and other features as needed.
