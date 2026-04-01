@@ -30,7 +30,7 @@ GRIF version 2 requires the NuGet package [GrifLib](https://www.nuget.org/packag
 - @while ... @do ... @endwhile loop structure
 - @return command allows exiting scripts immediately
 - Many new built-in script functions
-- Self-contained GrifLib project (soon to be available as a NuGet package)
+- Self-contained GrifLib library NuGet package
 - GrifLib can be included in other front-end applications
 - Optional IFGame and IFParser classes for interactive fiction game management
 - IFGame provides Input and Output event stacks for external handling
