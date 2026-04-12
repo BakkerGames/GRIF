@@ -21,12 +21,12 @@
     },
     "Castlequest Input": {
       "commandName": "Project",
-      "commandLineArgs": "\"..\\Castlequest_GRIF\\Castlequest.grif\" -i \"..\\Castlequest_GRIF\\Walkthrough\\happypath.txt\" -m \"..\\Castlequest_GRIF\\Mods\\norandom.grif\" -m \"..\\Castlequest_GRIF\\Mods\\corrections.grif\" -o \"..\\Castlequest_GRIF\\Logs\\Castlequest.log\"",
+      "commandLineArgs": "\"..\\grifgames\\Castlequest\\Castlequest.grif\" -i \"..\\grifgames\\Castlequest\\Walkthrough\\happypath.txt\" -m \"..\\grifgames\\Castlequest\\Mods\\norandom.grif\" -m \"..\\grifgames\\Castlequest\\Mods\\corrections.grif\" -o \"..\\grifgames\\Castlequest\\Logs\\Castlequest.log\"",
       "workingDirectory": ".."
     },
     "Castlequest": {
       "commandName": "Project",
-      "commandLineArgs": "\"..\\Castlequest_GRIF\\Castlequest.grif\" -m \"..\\Castlequest_GRIF\\Mods\\corrections.grif\"",
+      "commandLineArgs": "\"..\\grifgames\\Castlequest\\Castlequest.grif\"",
       "workingDirectory": ".."
     },
     "Adventure": {

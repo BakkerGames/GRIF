@@ -1,6 +1,6 @@
 @echo off
 
-set VER=20260331
+set VER=20260411
 
 del grif-linux-arm-*.tgz
 del grif-linux-arm64-*.tgz
@@ -46,6 +46,15 @@ copy /y ..\TicTacToe\TicTacToe.grif osx-x64
 copy /y ..\TicTacToe\TicTacToe.grif win-arm64
 copy /y ..\TicTacToe\TicTacToe.grif win-x64
 copy /y ..\TicTacToe\TicTacToe.grif win-x86
+
+copy /y ..\BlankGame\BlankGame.grif linux-arm
+copy /y ..\BlankGame\BlankGame.grif linux-arm64
+copy /y ..\BlankGame\BlankGame.grif linux-x64
+copy /y ..\BlankGame\BlankGame.grif osx-arm64
+copy /y ..\BlankGame\BlankGame.grif osx-x64
+copy /y ..\BlankGame\BlankGame.grif win-arm64
+copy /y ..\BlankGame\BlankGame.grif win-x64
+copy /y ..\BlankGame\BlankGame.grif win-x86
 
 7z.exe a -ttar -so -an linux-arm | 7z.exe a -si grif-linux-arm-%VER%.tgz
 7z.exe a -ttar -so -an linux-arm64 | 7z.exe a -si grif-linux-arm64-%VER%.tgz
