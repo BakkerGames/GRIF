@@ -53,6 +53,22 @@
       "commandName": "Project",
       "commandLineArgs": "\"..\\Castlequest_GRIF\\AllMods.grifstack\"",
       "workingDirectory": ".."
+    },
+    "HelpAll": {
+      "commandName": "Project",
+      "commandLineArgs": "--helpall"
+    },
+    "HelpSearch": {
+      "commandName": "Project",
+      "commandLineArgs": "--helpsearch absolute"
+    },
+    "Help": {
+      "commandName": "Project",
+      "commandLineArgs": "-h"
+    },
+    "HelpIndex": {
+      "commandName": "Project",
+      "commandLineArgs": "--helpindex"
     }
   }
 }

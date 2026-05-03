@@ -35,3 +35,4 @@ GRIF version 2 requires the NuGet package [GrifLib](https://www.nuget.org/packag
 - Optional IFGame and IFParser classes for interactive fiction game management
 - IFGame provides Input and Output event stacks for external handling
 - Improved IFParser with better adjective and preposition support
+- Built-in help listing or searching from GrifLib's help information

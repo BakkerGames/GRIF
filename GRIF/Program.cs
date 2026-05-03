@@ -118,6 +118,12 @@ internal class Program
         result.AppendLine("     [-m  | --mod    <filename.grif | directory>]");
         result.AppendLine();
         result.AppendLine("There may be multiple -m/--mod parameters.");
+        result.AppendLine();
+        result.AppendLine("View the GrifLib help information:");
+        result.AppendLine();
+        result.AppendLine("grif --helpindex");
+        result.AppendLine("grif --helpall");
+        result.AppendLine("grif --helpsearch value");
         return result.ToString();
     }
 
@@ -136,6 +142,46 @@ internal class Program
             int index = 0;
             while (index < args.Length)
             {
+                if (args[index].Equals("-h", OIC) ||
+                    args[index].Equals("--help", OIC) ||
+                    args[index].Equals("-?"))
+                {
+                    OutputText(Syntax());
+                    return 1;
+                }
+                if (args[index].Equals("--helpindex", OIC))
+                {
+                    var grod = Dags.Help();
+                    if (grod == null || grod.Count(true) == 0)
+                    {
+                        OutputText("No help found.");
+                    }
+                    else
+                    {
+                        foreach (var item in grod.Items(true, false))
+                        {
+                            OutputText(item.Key + NL_CHAR);
+                        }
+                    }
+                    return 1;
+                }
+                if (args[index].Equals("--helpall", OIC))
+                {
+                    var grod = Dags.Help();
+                    if (grod == null || grod.Count(true) == 0)
+                    {
+                        OutputText("No help found.");
+                    }
+                    else
+                    {
+                        foreach (var item in grod.Items(true, false))
+                        {
+                            OutputText(item.Key + NL_CHAR);
+                            OutputText("    " + (item.Value ?? "") + NL_CHAR);
+                        }
+                    }
+                    return 1;
+                }
                 if (args[index].StartsWith('-'))
                 {
                     if (index + 1 >= args.Length)
@@ -144,14 +190,7 @@ internal class Program
                         OutputText(Syntax());
                         return 2;
                     }
-                    if (args[index].Equals("-h", OIC) ||
-                        args[index].Equals("--help", OIC) ||
-                        args[index].Equals("-?"))
-                    {
-                        OutputText(Syntax());
-                        return 2;
-                    }
-                    else if (args[index].Equals("-i", OIC) ||
+                    if (args[index].Equals("-i", OIC) ||
                         args[index].Equals("--input", OIC))
                     {
                         index++;
@@ -215,6 +254,25 @@ internal class Program
                             grod.Parent = baseGrod;
                             baseGrod = grod;
                         }
+                    }
+                    else if (args[index].Equals("--helpsearch", OIC))
+                    {
+                        index++;
+                        var searchTerm = args[index++];
+                        var grod = Dags.Help(searchTerm);
+                        if (grod == null || grod.Count(true) == 0)
+                        {
+                            OutputText("No help found.");
+                        }
+                        else
+                        {
+                            foreach (var item in grod.Items(true, false))
+                            {
+                                OutputText(item.Key + NL_CHAR);
+                                OutputText("    " + (item.Value ?? "") + NL_CHAR);
+                            }
+                        }
+                        return 1;
                     }
                     else
                     {
