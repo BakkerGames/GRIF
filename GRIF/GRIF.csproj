@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>2.2026.3.30</Version>
+    <Version>2.2026.5.8</Version>
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="griflib" Version="2.2026.4.11" />
+    <PackageReference Include="griflib" Version="2.2026.5.8-rev.1" />
   </ItemGroup>
 
 </Project>
