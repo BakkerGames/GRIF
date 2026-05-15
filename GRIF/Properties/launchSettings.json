@@ -53,6 +53,11 @@
       "commandName": "Project",
       "commandLineArgs": "\"..\\Castlequest_GRIF\\AllMods.grifstack\"",
       "workingDirectory": ".."
+    },
+    "grifgames CQ": {
+      "commandName": "Project",
+      "commandLineArgs": "\"..\\grifgames\\Castlequest\\Castlequest.grif\"",
+      "workingDirectory": ".."
     }
   }
 }
