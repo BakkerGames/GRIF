@@ -19,14 +19,9 @@
       "commandLineArgs": "\"CloakOfDarkness\\CloakOfDarkness.grif\"",
       "workingDirectory": ".."
     },
-    "Castlequest Input": {
-      "commandName": "Project",
-      "commandLineArgs": "\"..\\grifgames\\Castlequest\\Castlequest.grif\" -i \"..\\grifgames\\Castlequest\\Walkthrough\\happypath.txt\" -m \"..\\grifgames\\Castlequest\\Mods\\norandom.grif\" -m \"..\\grifgames\\Castlequest\\Mods\\corrections.grif\" -o \"..\\grifgames\\Castlequest\\Logs\\Castlequest.log\"",
-      "workingDirectory": ".."
-    },
     "Castlequest": {
       "commandName": "Project",
-      "commandLineArgs": "\"..\\grifgames\\Castlequest\\Castlequest.grif\"",
+      "commandLineArgs": "\"..\\Castlequest_GRIF\\Castlequest.grif\"",
       "workingDirectory": ".."
     },
     "Adventure": {
@@ -47,6 +42,16 @@
     "BlankGame": {
       "commandName": "Project",
       "commandLineArgs": "\"BlankGame\\BlankGame\"",
+      "workingDirectory": ".."
+    },
+    "Castlequest happypath": {
+      "commandName": "Project",
+      "commandLineArgs": "\"..\\Castlequest_GRIF\\Castlequest.grif\" -i \"..\\Castlequest_GRIF\\Walkthrough\\happypath.txt\" -m \"..\\Castlequest_GRIF\\Mods\\norandom.grif\" -m \"..\\Castlequest_GRIF\\Mods\\corrections.grif\" -o \"..\\Castlequest_GRIF\\Logs\\happypath.log\"",
+      "workingDirectory": ".."
+    },
+    "Castlequest walkthru": {
+      "commandName": "Project",
+      "commandLineArgs": "\"..\\Castlequest_GRIF\\Castlequest.grif\" -i \"..\\Castlequest_GRIF\\Walkthrough\\walkthru.txt\" -m \"..\\Castlequest_GRIF\\Mods\\norandom.grif\" -m \"..\\Castlequest_GRIF\\Mods\\corrections.grif\" -o \"..\\Castlequest_GRIF\\Logs\\walkthru.log\"",
       "workingDirectory": ".."
     }
   }
