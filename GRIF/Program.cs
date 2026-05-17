@@ -94,7 +94,7 @@ internal class Program
         // start game loop
         game.InputEvent += Input;
         game.OutputEvent += Output;
-        await game.Intro();
+        game.Intro();
         await game.GameLoop();
     }
 

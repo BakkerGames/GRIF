@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="griflib" Version="2.2026.5.15" />
+    <ProjectReference Include="..\..\griflib\griflib\griflib.csproj" />
   </ItemGroup>
 
 </Project>

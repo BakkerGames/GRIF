@@ -48,16 +48,6 @@
       "commandName": "Project",
       "commandLineArgs": "\"BlankGame\\BlankGame\"",
       "workingDirectory": ".."
-    },
-    "Castlequest Stack": {
-      "commandName": "Project",
-      "commandLineArgs": "\"..\\Castlequest_GRIF\\AllMods.grifstack\"",
-      "workingDirectory": ".."
-    },
-    "grifgames CQ": {
-      "commandName": "Project",
-      "commandLineArgs": "\"..\\grifgames\\Castlequest\\Castlequest.grif\"",
-      "workingDirectory": ".."
     }
   }
 }
