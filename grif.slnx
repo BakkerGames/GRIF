@@ -19,6 +19,5 @@
   <Folder Name="/TicTacToe/">
     <File Path="TicTacToe/TicTacToe.grif" />
   </Folder>
-  <Project Path="../griflib/griflib/griflib.csproj" />
   <Project Path="grif/grif.csproj" />
 </Solution>

@@ -1,5 +1,5 @@
-﻿using System.Text;
-using GrifLib;
+﻿using GrifLib;
+using System.Text;
 using static GrifLib.Common;
 
 namespace Grif;
@@ -21,6 +21,8 @@ internal class Program
     private static string? splitInput;
     private static string? outputFilename;
 
+    private static readonly IFGame game = new();
+
     #endregion
 
     internal static async Task Main(string[] args)
@@ -38,7 +40,6 @@ internal class Program
             return;
         }
         // load data
-        var game = new IFGame();
         var gameName = baseGrod.Get(GAMENAME, true);
         if (string.IsNullOrWhiteSpace(gameName))
         {
@@ -95,7 +96,6 @@ internal class Program
         game.InputEvent += Input;
         game.OutputEvent += Output;
         game.Intro();
-        await game.GameLoop();
     }
 
     #region Private Methods
@@ -283,6 +283,7 @@ internal class Program
             var message = new GrifMessage(MessageType.Text, input);
             ((IFGame)sender).InputMessages.Enqueue(message);
             OutputText(((IFGame)sender).AfterPrompt() ?? "");
+            game.GameStep();
         }
     }
 
