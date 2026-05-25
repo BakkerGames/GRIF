@@ -6,7 +6,7 @@ GRIF is a game runner for interactive fiction games. It is designed to be a simp
 
 GRIF can be integrated into other applications to provide game support such as scripting, in-memory data storage, and save/restore functionality.
 
-GRIF version 2 requires the latest NuGet package for [GrifLib](https://www.nuget.org/packages/griflib). The full source and releases for GrifLib can be found on [Github](https://github.com/BakkerGames/griflib).
+Compiling GRIF source requires the latest NuGet package for [GrifLib](https://www.nuget.org/packages/griflib). The full source and releases for GrifLib can be found on [Github](https://github.com/BakkerGames/griflib).
 
 ## Features
 
