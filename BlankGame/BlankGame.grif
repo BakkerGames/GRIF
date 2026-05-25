@@ -28,7 +28,7 @@
 		@endif
 	@endforeachkey
 @room
-	@get(player.location)
+	@get(value.room)
 adjective.blue
 	box
 adjective.red
@@ -62,7 +62,7 @@ command.east
 	@if @isnull(@get(__newroom)) @then
 		@msg(message.cant_go)
 	@else
-		@set(player.location,@get(__newroom))
+		@set(value.room,@get(__newroom))
 		@look
 	@endif
 command.help
@@ -103,7 +103,7 @@ command.north
 	@if @isnull(@get(__newroom)) @then
 		@msg(message.cant_go)
 	@else
-		@set(player.location,@get(__newroom))
+		@set(value.room,@get(__newroom))
 		@look
 	@endif
 command.put.*.in.*
@@ -137,7 +137,7 @@ command.south
 	@if @isnull(@get(__newroom)) @then
 		@msg(message.cant_go)
 	@else
-		@set(player.location,@get(__newroom))
+		@set(value.room,@get(__newroom))
 		@look
 	@endif
 command.take.*
@@ -190,7 +190,7 @@ command.west
 	@if @isnull(@get(__newroom)) @then
 		@msg(message.cant_go)
 	@else
-		@set(player.location,@get(__newroom))
+		@set(value.room,@get(__newroom))
 		@look
 	@endif
 direction.east
@@ -331,7 +331,7 @@ system.prompt
 system.tab_length
 	4
 system.version
-	2026.05.15
+	2026.05.25
 value.intro
 	false
 value.room

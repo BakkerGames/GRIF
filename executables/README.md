@@ -1,6 +1,6 @@
 # GRIF Executables
 
-GRIF version 2 was created in C# .NET 10 on the Visual Studio 2026 Community (free) edition using Windows 10 64-bit.
+GRIF version 2 was created in C# .NET 10 on the Visual Studio 2026 Community (free) edition using Windows 11 64-bit.
 
 To compile GRIF, open the "grif.slnx" file in VS2026 and select "Build". It will create a debug version in "GRIF\bin\Debug\net10.0\grif.exe" plus other supporting files. This version will run on any Windows 64-bit computer with .NET 10 or higher installed. All together it is approximately 290 kilobytes in size.
 
