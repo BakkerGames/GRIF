@@ -1,4 +1,4 @@
-// blankgame.grif - GRIF format
+// BlankGame.grif - GRIF format
 @inv
 	player
 @look
@@ -263,8 +263,6 @@ noun.ball
 	ball
 noun.box
 	box
-player.location
-	first
 preposition.in
 	in,into,within,inside
 room.first.exit.north
@@ -296,16 +294,48 @@ system.intro
 	@script(script.intro)
 system.output_width
 	80
+system.pattern.item.location
+	{itemprefix}.{item}.location
+system.pattern.item.longdesc
+	{itemprefix}.{item}.longdesc
+system.pattern.item.shortdesc
+	{itemprefix}.{item}.shortdesc
+system.pattern.room.exit
+	{roomprefix}.{room}.exit.{direction}
+system.pattern.room.longdesc
+	{roomprefix}.{room}.longdesc
+system.pattern.room.shortdesc
+	{roomprefix}.{room}.shortdesc
 system.player.location
-	player.location
+	value.room
+system.prefix.command
+	command
+system.prefix.direction
+	direction
+system.prefix.item
+	item
+system.prefix.message
+	message,modmsg
+system.prefix.room
+	room
+system.prefix.script
+	script,background
+system.prefix.system
+	system
+system.prefix.value
+	value
+system.prefix.vocabulary
+	verb,noun,adjective,preposition,article
 system.prompt
 	\n>\s
 system.tab_length
 	4
 system.version
-	2026.03.25
+	2026.05.15
 value.intro
 	false
+value.room
+	first
 verb.drop
 	drop,throw
 verb.help

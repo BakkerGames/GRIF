@@ -454,6 +454,8 @@ noun.up
 	up,u,climb
 noun.west
 	west,w
+player.location
+	foyer
 preposition.at
 	at
 preposition.from
@@ -592,23 +594,27 @@ system.output_width
 system.prompt
 	\n>
 system.version
-	2026.01.06
+	2026.05.15
 value.cloakscore
 	1
+value.cloakscore.comment
+	How many points for hanging the cloak? Reset to 0 after first time.
 value.maxscore
 	2
 value.messagescore
 	1
+value.messagescore.comment
+	How many points for reading the message?
 value.room
 	foyer
 value.room.comment
-	current player location
+	Current player location
 value.score
 	0
 value.scuffed
 	0
 value.scuffed.comment
-	how scuffed is the message?
+	How scuffed is the message?
 verb.drop
 	drop,throw,remove
 verb.examine
