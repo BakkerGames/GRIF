@@ -34,13 +34,13 @@ false
 
 >Executes the script specified by "script". "script" should be quoted.
 
-@golabel(value)
+@goto(value)
 
 >Moves the script pointer to the statement after @label(value).
 
 @label(value)
 
->Value to be used by @golabel(value) statement.
+>Value to be used by @goto(value) statement.
 
 @script(key)
 
