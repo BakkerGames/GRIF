@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="griflib" Version="2.2026.711.1" />
+    <PackageReference Include="griflib" Version="2.2026.711.2" />
   </ItemGroup>
 
 </Project>

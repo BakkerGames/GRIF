@@ -27,7 +27,7 @@
 @godir(x)
 	@debug(@concat("going to room.",@room,".exit.",$x))
 	@set(__key,@concat("room.",@room,".exit.",$x))
-	@if @not @exists(@get(__key)) @then
+	@if @isnull(@get(__key)) @then
 		@msg(message.cant_go)
 	@elseif @isscript(@get(__key)) @then
 		@script(@get(__key))
