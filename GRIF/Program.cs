@@ -86,12 +86,14 @@ internal class Program
             return;
         }
         // get settings
-        maxOutputWidth = (int)(baseGrod.GetNumber(OUTPUT_WIDTH, true) ?? 0);
-        if ((baseGrod.GetNumber(OUTPUT_TAB_LENGTH, true) ?? 0) > 0)
+        maxOutputWidth = (int)(baseGrod.GetNumber(OUTPUT_WIDTH, true));
+        if ((baseGrod.GetNumber(OUTPUT_TAB_LENGTH, true)) > 0)
         {
-            tabChars = new string(' ', (int)(baseGrod.GetNumber(OUTPUT_TAB_LENGTH, true) ?? 4));
+            var tabLength = (int)baseGrod.GetNumber(OUTPUT_TAB_LENGTH, true);
+            if (tabLength <= 0) tabLength = 4;
+            tabChars = new string(' ', tabLength);
         }
-        uppercaseInput = baseGrod.GetBool(UPPERCASE, true) ?? false;
+        uppercaseInput = baseGrod.GetBool(UPPERCASE, true);
         // start game loop
         game.InputEvent += Input;
         game.OutputEvent += Output;

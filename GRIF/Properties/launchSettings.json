@@ -21,7 +21,7 @@
     },
     "Castlequest": {
       "commandName": "Project",
-      "commandLineArgs": "\"..\\Castlequest_GRIF\\Castlequest.grif\"",
+      "commandLineArgs": "\"..\\grifgames\\Castlequest\\Castlequest.grif\"",
       "workingDirectory": ".."
     },
     "Adventure": {
@@ -46,12 +46,12 @@
     },
     "Castlequest happypath": {
       "commandName": "Project",
-      "commandLineArgs": "\"..\\Castlequest_GRIF\\Castlequest.grif\" -i \"..\\Castlequest_GRIF\\Walkthrough\\happypath.txt\" -m \"..\\Castlequest_GRIF\\Mods\\norandom.grif\" -m \"..\\Castlequest_GRIF\\Mods\\corrections.grif\" -o \"..\\Castlequest_GRIF\\Logs\\happypath.log\"",
+      "commandLineArgs": "\"..\\grifgames\\Castlequest\\Castlequest.grif\" -i \"..\\grifgames\\Castlequest\\walkthrough\\happypath.txt\" -m \"..\\grifgames\\Castlequest\\mods\\norandom.grif\" -m \"..\\grifgames\\Castlequest\\mods\\corrections.grif\" -o \"..\\grifgames\\Castlequest\\logs\\happypath.log\"",
       "workingDirectory": ".."
     },
     "Castlequest walkthru": {
       "commandName": "Project",
-      "commandLineArgs": "\"..\\Castlequest_GRIF\\Castlequest.grif\" -i \"..\\Castlequest_GRIF\\Walkthrough\\walkthru.txt\" -m \"..\\Castlequest_GRIF\\Mods\\norandom.grif\" -m \"..\\Castlequest_GRIF\\Mods\\corrections.grif\" -o \"..\\Castlequest_GRIF\\Logs\\walkthru.log\"",
+      "commandLineArgs": "\"..\\grifgames\\Castlequest\\Castlequest.grif\" -i \"..\\grifgames\\Castlequest\\walkthrough\\walkthru.txt\" -m \"..\\grifgames\\Castlequest\\mods\\norandom.grif\" -m \"..\\grifgames\\Castlequest\\mods\\corrections.grif\" -o \"..\\Castlequest_GRIF\\logs\\walkthru.log\"",
       "workingDirectory": ".."
     },
     "CQ grifgames": {
