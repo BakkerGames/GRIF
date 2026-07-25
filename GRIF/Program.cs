@@ -1,5 +1,5 @@
-﻿using GrifLib;
-using System.Text;
+﻿using System.Text;
+using GrifLib;
 using static GrifLib.Common;
 
 namespace Grif;
@@ -16,6 +16,7 @@ internal class Program
     private static int maxOutputWidth = 0;
     private static string tabChars = "    ";
     private static bool uppercaseInput = false;
+    private static bool debugFlag = false;
 
     private static readonly List<string> inputFilenames = [];
     private static string? splitInput;
@@ -48,6 +49,10 @@ internal class Program
             return;
         }
         game.Initialize(baseGrod, gameName, null);
+        if (debugFlag)
+        {
+            baseGrod.Set("system.debug", "true");
+        }
         string inputFilename = "";
         try
         {
@@ -140,12 +145,8 @@ internal class Program
             {
                 if (args[index].StartsWith('-'))
                 {
-                    if (index + 1 >= args.Length)
-                    {
-                        OutputText($"Argument must have a value: {args[index]}\\n\\n");
-                        OutputText(Syntax());
-                        return 2;
-                    }
+                    // parameters with no arguments
+
                     if (args[index].Equals("-h", OIC) ||
                         args[index].Equals("--help", OIC) ||
                         args[index].Equals("-?"))
@@ -153,7 +154,24 @@ internal class Program
                         OutputText(Syntax());
                         return 2;
                     }
-                    else if (args[index].Equals("-i", OIC) ||
+
+                    if (args[index].Equals("--debug", OIC))
+                    {
+                        debugFlag = true;
+                        index++;
+                        continue;
+                    }
+
+                    // parameters with arguments
+
+                    if (index + 1 >= args.Length)
+                    {
+                        OutputText($"Argument must have a value: {args[index]}\\n\\n");
+                        OutputText(Syntax());
+                        return 2;
+                    }
+
+                    if (args[index].Equals("-i", OIC) ||
                         args[index].Equals("--input", OIC))
                     {
                         index++;
@@ -165,14 +183,18 @@ internal class Program
                             return 2;
                         }
                         inputFilenames.Add(inputFilename);
+                        continue;
                     }
-                    else if (args[index].Equals("-si", OIC) ||
+
+                    if (args[index].Equals("-si", OIC) ||
                         args[index].Equals("--split-input", OIC))
                     {
                         index++;
                         splitInput = args[index++];
+                        continue;
                     }
-                    else if (args[index].Equals("-o", OIC) ||
+
+                    if (args[index].Equals("-o", OIC) ||
                         args[index].Equals("--output", OIC))
                     {
                         index++;
@@ -195,14 +217,16 @@ internal class Program
                             OutputText(Syntax());
                             return 2;
                         }
+                        continue;
                     }
-                    else if (args[index].Equals("-m", OIC) ||
+
+                    if (args[index].Equals("-m", OIC) ||
                         args[index].Equals("--mod", OIC))
                     {
                         index++;
                         var modFilename = args[index++];
-                        var grod = IO.OpenFile(modFilename); // to check if valid
-                        if (grod == null)
+                        var modGrod = IO.OpenFile(modFilename); // to check if valid
+                        if (modGrod == null)
                         {
                             OutputText($"Error opening mod file: {modFilename}\\n\\n");
                             OutputText(Syntax());
@@ -210,40 +234,37 @@ internal class Program
                         }
                         if (baseGrod == null || baseGrod.Count(false) == 0)
                         {
-                            baseGrod = grod;
+                            baseGrod = modGrod;
                         }
                         else
                         {
-                            grod.Parent = baseGrod;
-                            baseGrod = grod;
+                            modGrod.Parent = baseGrod;
+                            baseGrod = modGrod;
                         }
+                        continue;
                     }
-                    else
-                    {
-                        OutputText($"Unknown argument: {args[index++]}\\n\\n");
-                        OutputText(Syntax());
-                        return 2;
-                    }
+
+                    OutputText($"Unknown argument: {args[index++]}\\n\\n");
+                    OutputText(Syntax());
+                    return 2;
+                }
+
+                var filename = args[index++];
+                var grod = IO.OpenFile(filename);
+                if (grod == null)
+                {
+                    OutputText($"Error opening file: {filename}\\n\\n");
+                    OutputText(Syntax());
+                    return 2;
+                }
+                if (baseGrod == null || baseGrod.Count(false) == 0)
+                {
+                    baseGrod = grod;
                 }
                 else
                 {
-                    var filename = args[index++];
-                    var grod = IO.OpenFile(filename);
-                    if (grod == null)
-                    {
-                        OutputText($"Error opening file: {filename}\\n\\n");
-                        OutputText(Syntax());
-                        return 2;
-                    }
-                    if (baseGrod == null || baseGrod.Count(false) == 0)
-                    {
-                        baseGrod = grod;
-                    }
-                    else
-                    {
-                        grod.Parent = baseGrod;
-                        baseGrod = grod;
-                    }
+                    grod.Parent = baseGrod;
+                    baseGrod = grod;
                 }
             }
         }

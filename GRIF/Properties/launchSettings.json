@@ -11,7 +11,7 @@
     },
     "Cloak of Darkness Input": {
       "commandName": "Project",
-      "commandLineArgs": "\"CloakOfDarkness\\CloakOfDarkness.grif\" -i \"CloakOfDarkness\\Input.txt\" -o \"CloakOfDarkness\\Output.txt\"",
+      "commandLineArgs": "\"CloakOfDarkness\\CloakOfDarkness.grif\" -i \"CloakOfDarkness\\Input.txt\" -o \"CloakOfDarkness\\Output.txt\" --debug",
       "workingDirectory": ".."
     },
     "Cloak of Darkness": {
