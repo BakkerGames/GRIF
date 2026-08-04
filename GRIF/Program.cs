@@ -48,11 +48,14 @@ internal class Program
             Environment.Exit(1);
             return;
         }
-        game.Initialize(baseGrod, gameName, null);
         if (debugFlag)
         {
-            baseGrod.Set("system.debug", "true");
+            var debugGrod = new Grod("debug");
+            debugGrod.Set("system.debug", "true");
+            debugGrod.Parent = baseGrod;
+            baseGrod = debugGrod;
         }
+        game.Initialize(baseGrod, gameName, null);
         string inputFilename = "";
         try
         {
@@ -100,8 +103,9 @@ internal class Program
         }
         uppercaseInput = baseGrod.GetBool(UPPERCASE, true);
         // start game loop
-        game.InputEvent += Input;
-        game.OutputEvent += Output;
+        game.InputEvent += HandleInput;
+        game.OutputEvent += HandleOutput;
+        game.OutChannelEvent += HandleOutChannel;
         game.Intro();
     }
 
@@ -283,9 +287,13 @@ internal class Program
     /// <summary>
     /// Handle input event.
     /// </summary>
-    private static void Input(object sender)
+    private static void HandleInput(object sender)
     {
-        OutputText(((IFGame)sender).Prompt() ?? "");
+        var promptList = ((IFGame)sender).Prompt();
+        foreach (var item in promptList)
+        {
+            game.ProcessOutputMessage(item);
+        }
         string? input;
         if (inputQueue.Count > 0)
         {
@@ -305,7 +313,11 @@ internal class Program
             OutputTextLog(input + Environment.NewLine);
             var message = new GrifMessage(MessageType.Text, input);
             ((IFGame)sender).InputMessages.Enqueue(message);
-            OutputText(((IFGame)sender).AfterPrompt() ?? "");
+            var afterPromptList = ((IFGame)sender).AfterPrompt();
+            foreach (var item in afterPromptList)
+            {
+                game.ProcessOutputMessage(item);
+            }
             game.GameStep();
         }
     }
@@ -313,7 +325,7 @@ internal class Program
     /// <summary>
     /// Handle output event.
     /// </summary>
-    private static void Output(object sender, GrifMessage e)
+    private static void HandleOutput(object sender, GrifMessage e)
     {
         if (e.Type == MessageType.Text)
         {
@@ -325,6 +337,24 @@ internal class Program
             OutputText(NL_CHAR);
             OutputText("### ERROR: ");
             OutputText(e.Value);
+            return;
+        }
+        if (e.Type == MessageType.Debug)
+        {
+            OutputText("### DEBUG: ");
+            OutputText(e.Value);
+            OutputText(NL_CHAR);
+            return;
+        }
+    }
+
+    /// <summary>
+    /// Handle any OutChannel events specific to this implementation.
+    /// </summary>
+    private static void HandleOutChannel(object sender, GrifMessage e)
+    {
+        if (e.Type != MessageType.OutChannel)
+        {
             return;
         }
         if (e.Value.Equals(OUTCHANNEL_SLEEP, OIC))

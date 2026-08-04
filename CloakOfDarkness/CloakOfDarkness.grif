@@ -3,11 +3,11 @@
 	@if @ne($x,0) @then
 		@addto(value.score,$x)
 		@if @eq($x,1) @then
-			@set(__s,"")
+			@set(_s,"")
 		@else
-			@set(__s,"s")
+			@set(_s,"s")
 		@endif
-		@write(@format(@get(message.scoreup),$x,@get(__s)))
+		@write(@format(@get(message.scoreup),$x,@get(_s)))
 		@nl
 	@endif
 @carry(x)
@@ -26,13 +26,14 @@
 	@endif
 @godir(x)
 	@debug(@concat("going to room.",@room,".exit.",$x))
-	@set(__key,@concat("room.",@room,".exit.",$x))
-	@if @isnull(@get(__key)) @then
+	@set(_key,@concat("room.",@room,".exit.",$x))
+	@set(_newroom,@get(@get(_key)))
+	@if @isnull(@get(_newroom)) @then
 		@msg(message.cant_go)
-	@elseif @isscript(@get(__key)) @then
-		@script(@get(__key))
+	@elseif @isscript(_newroom) @then
+		@script(_newroom)
 	@else
-		@goto(@get(@get(__key)))
+		@goto(@get(_newroom))
 	@endif
 @goto(x)
 	@debug("goto $x")
@@ -55,13 +56,13 @@
 		@write(false)
 	@endif
 @herechild(x)
-	@set(__here,false)
+	@set(_here,false)
 	@foreachkey(y,"item.",".location")
 		@if @eq(@getvalue(item.$y.location),@room) @and @eq(@getvalue(item.$x.location),$y) @then
-			@set(__here,true)
+			@set(_here,true)
 		@endif
 	@endforeachkey
-	@write(@get(__here))
+	@write(@get(_here))
 @inv
 	inventory
 @isroom(x)
@@ -167,17 +168,17 @@ command.hang.cloak.on.hook
 command.help
 	@msg(message.help)
 command.inventory
-	@set(__count,0)
+	@set(_count,0)
 	@foreachkey(x,"item.",".location")
 		@if @carry($x) @then
-			@if @eq(@get(__count),0) @then
+			@if @eq(@get(_count),0) @then
 				@msg(message.carrying)
 			@endif
-			@addto(__count,1)
+			@addto(_count,1)
 			@msg(item.$x.shortdesc)
 		@endif
 	@endforeachkey
-	@if @eq(@get(__count),0) @then
+	@if @eq(@get(_count),0) @then
 		@msg(message.inv_empty)
 	@endif
 command.look
@@ -208,11 +209,11 @@ command.read.message
 			@if @lt(@get(value.scuffed),2) @then
 				@write(@get(message.readable))
 				@write(".")
-				@sleep(750)
+				@sleep(500)
 				@write(".")
-				@sleep(750)
+				@sleep(500)
 				@write(".")
-				@sleep(750)
+				@sleep(500)
 				@nl
 				@nl
 				@msg(message.you_won)
@@ -222,11 +223,11 @@ command.read.message
 			@else
 				@write(@get(message.unreadable))
 				@write(".")
-				@sleep(750)
+				@sleep(500)
 				@write(".")
-				@sleep(750)
+				@sleep(500)
 				@write(".")
-				@sleep(750)
+				@sleep(500)
 				@nl
 				@nl
 				@msg(message.you_lost)
@@ -346,10 +347,14 @@ item.hook.location
 	cloakroom
 item.hook.scenery
 	true
+item.hook.shortdesc
+	hook
 item.message.location
 	bar
 item.message.scenery
 	true
+item.message.shortdesc
+	message
 message.already_carrying
 	You are already carrying that.
 message.already_hanging
@@ -454,8 +459,6 @@ noun.up
 	up,u,climb
 noun.west
 	west,w
-player.location
-	foyer
 preposition.at
 	at
 preposition.from
@@ -509,12 +512,12 @@ script.bar_cant_go
 		@msg(message.cant_go)
 	@endif
 script.restart
-	@set(__yorn,@getinchannel)
-	@if @true(@get(__yorn)) @then
+	@set(_yorn,@getinchannel)
+	@if @true(@get(_yorn)) @then
 		@setoutchannel("#RESTART;")
 		@setoutchannel("@msg(message.restarting) @nl")
 		@setoutchannel("@script(system.intro)")
-	@elseif @false(@get(__yorn)) @then
+	@elseif @false(@get(_yorn)) @then
 		@msg(message.ok)
 	@else
 		@msg(message.yorn_error)
@@ -523,8 +526,8 @@ script.restart
 	@endif
 script.restore_slot
 	@comment("value.slot already has a valid value")
-	@set(__yorn,@getinchannel)
-	@if @true(@get(__yorn)) @then
+	@set(_yorn,@getinchannel)
+	@if @true(@get(_yorn)) @then
 		@setoutchannel("#RESTORENAME;",@get(value.slot))
 		@setoutchannel("@msg(message.restore_complete) @nl")
 		@setoutchannel("@lookfull")
@@ -542,8 +545,8 @@ script.restore_slot_check
 		@set(value.slot,null)
 	@endif
 script.restore_slot_check_file
-	@set(__exists,@getinchannel)
-	@if @true(@get(__exists)) @then
+	@set(_exists,@getinchannel)
+	@if @true(@get(_exists)) @then
 		@msg(message.askrestore)
 		@setoutchannel("#ASK;")
 		@setoutchannel("@script(script.restore_slot)")
@@ -591,10 +594,42 @@ system.intro
 	@endif
 system.output_width
 	80
+system.pattern.item.location
+	{itemprefix}.{item}.location
+system.pattern.item.longdesc
+	{itemprefix}.{item}.longdesc
+system.pattern.item.shortdesc
+	{itemprefix}.{item}.shortdesc
+system.pattern.room.exit
+	{roomprefix}.{room}.exit.{direction}
+system.pattern.room.longdesc
+	{roomprefix}.{room}.longdesc
+system.pattern.room.shortdesc
+	{roomprefix}.{room}.shortdesc
+system.player.location
+	value.room
+system.prefix.command
+	command
+system.prefix.direction
+	direction
+system.prefix.item
+	item
+system.prefix.message
+	message,modmsg
+system.prefix.room
+	room
+system.prefix.script
+	script,background
+system.prefix.system
+	system
+system.prefix.value
+	value
+system.prefix.vocabulary
+	verb,noun,adjective,preposition,article
 system.prompt
 	\n>
 system.version
-	2026.05.15
+	2026.8.3
 value.cloakscore
 	1
 value.cloakscore.comment
