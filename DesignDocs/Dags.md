@@ -221,7 +221,6 @@ Any functions which returns truthy or falsey values may be defined and used as "
 
 >Returns true if "key" exists and the value is not "" or "null".
 
-@false(value)
 @isfalse(value)
 
 >Returns true if "value" is falsey. Returns false if the value is truthy or isn't boolean.
@@ -258,7 +257,7 @@ Any functions which returns truthy or falsey values may be defined and used as "
 
 >Checks if the two values are not equal. Compares as integers if both convert to integers, otherwise compares as strings (ignoring case).
 
-@null(value)
+@isnull(value)
 
 >Returns true if "value" is "" or "null".
 
@@ -266,7 +265,6 @@ Any functions which returns truthy or falsey values may be defined and used as "
 
 >Checks if a random integer 0-99 is less than integer "value" 1-100. Shortened version of "@lt(@rnd(100),value)".
 
-@true(value)
 @istrue(value)
 
 >Returns true if "value" is truthy. Returns false if the value is falsey or isn't boolean.
@@ -419,7 +417,7 @@ script.restart
 		@setoutchannel("#RESTART;")
 		@setoutchannel("@msg(message.restarting) @nl")
 		@setoutchannel("@script(system.intro)")
-	@elseif @false(@get(__yorn)) @then
+	@elseif @isfalse(@get(__yorn)) @then
 		@msg(message.ok)
 	@else
 		@msg(message.yorn_error)
@@ -464,7 +462,7 @@ Examples:
 
 @moveto(x,y)
     @comment("moves the item to a location")
-    @set(item.$x.location,$y)
+    @set(@concat("item.",$x,".location"),$y)
 
 @unknown(x)
     @write("I don't understand ",$x,".\n")

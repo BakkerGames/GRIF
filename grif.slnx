@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/BlankGame/">
+    <File Path="BlankGame/BlankGame.grif" />
+  </Folder>
   <Folder Name="/CloakOfDarkness/">
     <File Path="CloakOfDarkness/CloakOfDarkness.grif" />
     <File Path="CloakOfDarkness/Input.txt" />

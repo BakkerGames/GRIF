@@ -11,7 +11,7 @@
 		@nl
 	@endif
 @carry(x)
-	@if @eq(@getvalue(item.$x.location),@inv) @then
+	@if @eq(@loc($x),@inv) @then
 		@write(true)
 	@else
 		@write(false)
@@ -36,15 +36,15 @@
 		@goto(@get(_newroom))
 	@endif
 @goto(x)
-	@debug("goto $x")
-	@if @null(@get(room.$x.longdesc)) @and @null(@get(room.$x.shortdesc)) @then
-		@writeline("Invalid room: $x")
+	@debug("goto ",$x)
+	@if @isnull(@get(@concat("room.",$x,".longdesc"))) @and @isnull(@get(@concat("room.",$x,".shortdesc"))) @then
+		@writeline("Invalid room: ",$x)
 	@else
 		@set(value.room,$x)
 		@look
 	@endif
 @here(x)
-	@if @eq(@getvalue(item.$x.location),@room) @then
+	@if @eq(@loc($x),@room) @then
 		@write(true)
 	@else
 		@write(false)
@@ -58,7 +58,7 @@
 @herechild(x)
 	@set(_here,false)
 	@foreachkey(y,"item.",".location")
-		@if @eq(@getvalue(item.$y.location),@room) @and @eq(@getvalue(item.$x.location),$y) @then
+		@if @eq(@loc($y),@room) @and @eq(@loc($x),$y) @then
 			@set(_here,true)
 		@endif
 	@endforeachkey
@@ -67,13 +67,15 @@
 	inventory
 @isroom(x)
 	@eq(@room,$x)
+@loc(x)
+	@getvalue(@concat("item.",$x,".location"))
 @look
 	@if @dark @then
 		@msg(message.too_dark)
 	@else
 		@script(@concat("room.",@room,".beforelook"))
 		@msg(@concat("room.",@room,".shortdesc"))
-		@if @false(@get(@concat("room.",@room,".visited"))) @or @true(@get(value.fulllook)) @then
+		@if @isfalse(@get(@concat("room.",@room,".visited"))) @or @istrue(@get(value.fulllook)) @then
 			@nl
 			@msg(@concat("room.",@room,".longdesc"))
 		@endif
@@ -81,9 +83,9 @@
 		@set(value.fulllook,false)
 		@script(@concat("room.",@room,".afterlook"))
 		@foreachkey(x,"item.",".location")
-			@if @here($x) @and @not @true(@get(item.$x.scenery)) @then
+			@if @here($x) @and @not @istrue(@get(@concat("item.",$x,".scenery"))) @then
 				@nl
-				@msg(item.$x.longdesc)
+				@msg(@concat("item.",$x,".longdesc"))
 			@endif
 		@endforeachkey
 	@endif
@@ -142,7 +144,7 @@ command.examine.hook
 command.examine.message
 	@script(command.read.message)
 command.go.*
-	@if @null(@get(input.noun)) @then
+	@if @isnull(@get(input.noun)) @then
 		@msg(system.dont_understand_that)
 	@else
 		@godir(@get(input.noun))
@@ -170,12 +172,13 @@ command.help
 command.inventory
 	@set(_count,0)
 	@foreachkey(x,"item.",".location")
+		@debug($x," - ",@loc($x))
 		@if @carry($x) @then
 			@if @eq(@get(_count),0) @then
 				@msg(message.carrying)
 			@endif
 			@addto(_count,1)
-			@msg(item.$x.shortdesc)
+			@msg(@concat("item.",$x,".shortdesc"))
 		@endif
 	@endforeachkey
 	@if @eq(@get(_count),0) @then
@@ -281,7 +284,7 @@ command.take.*
 	@if @dark @then
 		@msg(message.too_dark)
 	@elseif @here(@get(input.noun)) @or @herechild(@get(input.noun)) @then
-		@if @true(@get(@concat("item.",@get(input.noun),".scenery"))) @then
+		@if @istrue(@get(@concat("item.",@get(input.noun),".scenery"))) @then
 			@msg(message.cant_take)
 		@else
 			@set(@concat("item.",@get(input.noun),".location"),@inv)
@@ -513,11 +516,11 @@ script.bar_cant_go
 	@endif
 script.restart
 	@set(_yorn,@getinchannel)
-	@if @true(@get(_yorn)) @then
+	@if @istrue(@get(_yorn)) @then
 		@setoutchannel("#RESTART;")
 		@setoutchannel("@msg(message.restarting) @nl")
 		@setoutchannel("@script(system.intro)")
-	@elseif @false(@get(_yorn)) @then
+	@elseif @isfalse(@get(_yorn)) @then
 		@msg(message.ok)
 	@else
 		@msg(message.yorn_error)
@@ -527,7 +530,7 @@ script.restart
 script.restore_slot
 	@comment("value.slot already has a valid value")
 	@set(_yorn,@getinchannel)
-	@if @true(@get(_yorn)) @then
+	@if @istrue(@get(_yorn)) @then
 		@setoutchannel("#RESTORENAME;",@get(value.slot))
 		@setoutchannel("@msg(message.restore_complete) @nl")
 		@setoutchannel("@lookfull")
@@ -546,7 +549,7 @@ script.restore_slot_check
 	@endif
 script.restore_slot_check_file
 	@set(_exists,@getinchannel)
-	@if @true(@get(_exists)) @then
+	@if @istrue(@get(_exists)) @then
 		@msg(message.askrestore)
 		@setoutchannel("#ASK;")
 		@setoutchannel("@script(script.restore_slot)")
@@ -582,7 +585,7 @@ system.gamename
 system.gametitle
 	Cloak Of Darkness
 system.intro
-	@if @false(@get(value.introdone)) @then
+	@if @isfalse(@get(value.introdone)) @then
 		@msg(system.gametitle)
 		@nl
 		@writeline("Version ",@get(system.version))
@@ -629,7 +632,7 @@ system.prefix.vocabulary
 system.prompt
 	\n>
 system.version
-	2026.8.3
+	2026.8.9
 value.cloakscore
 	1
 value.cloakscore.comment

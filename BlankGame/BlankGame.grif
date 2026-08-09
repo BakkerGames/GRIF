@@ -1,34 +1,41 @@
 // BlankGame.grif - GRIF format
 @inv
 	player
+@loc(x)
+	@getvalue(@concat("item.",$x,".location"))
 @look
-	@comment("look")
-	@if @false(@get(@concat("room.",@room,".visited"))) @then
+	@debug("look")
+	@if @isfalse(@get(@concat("room.",@room,".visited"))) @then
 		@msg(@concat("room.",@room,".longdesc"))
 		@set(@concat("room.",@room,".visited"),true)
 	@else
 		@msg(@concat("room.",@room,".shortdesc"))
 	@endif
+	@debug("items:")
 	@foreachkey(x,"item.",".location")
-		@if @eq(@get(item.$x.location),@room) @then
-			@msg(item.$x.longdesc)
-			@if @true(@get(item.$x.container)) @then
-				@set(__inmsg,false)
+		@if @eq(@loc($x),@room) @then
+			@msg(@concat("item.",$x,".longdesc"))
+			@if @istrue(@get(@concat("item.",$x,".container"))) @then
+				@debug("is container")
+				@set(_inmsg,false)
 				@foreachkey(y,"item.",".location")
-					@if @eq(@get(item.$y.location),$x) @then
-						@if @false(@get(__inmsg)) @then
+					@if @eq(@loc($y),$x) @then
+						@if @isfalse(@get(_inmsg)) @then
 							@writeline(@format(@get(message.item_contains),$x))
-							@set(__inmsg,true)
+							@set(_inmsg,true)
 						@endif
 						@write("\t")
-						@msg(item.$y.shortdesc)
+						@msg(@concat("item.",$y,".shortdesc"))
 					@endif
 				@endforeachkey
 			@endif
 		@endif
 	@endforeachkey
+	@debug("end look")
 @room
 	@get(value.room)
+@sendto(x,y)
+	@set(@concat("item.",$x,".location"),$y)
 adjective.blue
 	box
 adjective.red
@@ -43,55 +50,55 @@ command.drop.*
 		@msg(message.not_carrying)
 	@endif
 command.drop.all
-	@set(__found,false)
+	@set(_found,false)
 	@foreachkey(x,"item.",".location")
-		@if @eq(@get(item.$x.location),@inv) @then
-			@if @false(@get(__found)) @then
-				@set(__found,true)
+		@if @eq(@loc($x),@inv) @then
+			@if @isfalse(@get(_found)) @then
+				@set(_found,true)
 				@msg(message.dropping)
 			@endif
-			@msg(item.$x.shortdesc)
-			@set(item.$x.location,@room)
+			@msg(@concat("item.",$x,".shortdesc"))
+			@sendto($x,@room)
 		@endif
 	@endforeachkey
-	@if @false(@get(__found)) @then
+	@if @isfalse(@get(_found)) @then
 		@msg(message.inv_empty)
 	@endif
 command.east
-	@set(__newroom,@get(@concat("room.",@room,".exit.east")))
-	@if @isnull(@get(__newroom)) @then
+	@set(_newroom,@get(@concat("room.",@room,".exit.east")))
+	@if @isnull(@get(_newroom)) @then
 		@msg(message.cant_go)
 	@else
-		@set(value.room,@get(__newroom))
+		@set(value.room,@get(_newroom))
 		@look
 	@endif
 command.help
 	@msg(message.help)
 command.inventory
-	@set(__found,false)
+	@set(_found,false)
 	@foreachkey(x,"item.",".location")
-		@if @eq(@get(item.$x.location),@inv) @then
-			@if @false(@get(__found)) @then
-				@set(__found,true)
+		@if @eq(@loc($x),@inv) @then
+			@if @isfalse(@get(_found)) @then
+				@set(_found,true)
 				@msg(message.carrying)
 			@endif
-			@msg(item.$x.shortdesc)
-			@if @true(@get(item.$x.container)) @then
-				@set(__inmsg,false)
+			@msg(@concat("item.",$x,".shortdesc"))
+			@if @istrue(@get(@concat("item.",$x,".container"))) @then
+				@set(_inmsg,false)
 				@foreachkey(y,"item.",".location")
-					@if @eq(@get(item.$y.location),$x) @then
-						@if @false(@get(__inmsg)) @then
+					@if @eq(@loc($y),$x) @then
+						@if @isfalse(@get(_inmsg)) @then
 							@writeline(@format(@get(message.item_contains),$x))
-							@set(__inmsg,true)
+							@set(_inmsg,true)
 						@endif
 						@write("\t")
-						@msg(item.$y.shortdesc)
+						@msg(@concat("item.",$y,".shortdesc"))
 					@endif
 				@endforeachkey
 			@endif
 		@endif
 	@endforeachkey
-	@if @false(@get(__found)) @then
+	@if @isfalse(@get(_found)) @then
 		@msg(message.inv_empty)
 	@endif
 command.look
@@ -99,11 +106,11 @@ command.look
 	@set(@concat("room.",@room,".visited"),false)
 	@look
 command.north
-	@set(__newroom,@get(@concat("room.",@room,".exit.north")))
-	@if @isnull(@get(__newroom)) @then
+	@set(_newroom,@get(@concat("room.",@room,".exit.north")))
+	@if @isnull(@get(_newroom)) @then
 		@msg(message.cant_go)
 	@else
-		@set(value.room,@get(__newroom))
+		@set(value.room,@get(_newroom))
 		@look
 	@endif
 command.put.*.in.*
@@ -111,7 +118,7 @@ command.put.*.in.*
 		@writeline(@get(input.nounword),": ",@get(message.not_here))
 	@elseif @ne(@get(@concat("item.",@get(input.indirectnoun),".location")),@room) @and @ne(@get(@concat("item.",@get(input.indirectnoun),".location")),@inv) @then
 		@writeline(@get(input.indirectnounword),": ",@get(message.not_here))
-	@elseif @false(@get(@concat("item.",@get(input.indirectnoun),".container"))) @then
+	@elseif @isfalse(@get(@concat("item.",@get(input.indirectnoun),".container"))) @then
 		@msg(message.cant_do_that)
 	@elseif @eq(@get(input.noun),@get(input.indirectnoun)) @then
 		@msg(message.cant_do_that)
@@ -133,11 +140,11 @@ command.save
 	@setoutchannel("#SAVE;")
 	@setoutchannel("@msg(message.save_complete)")
 command.south
-	@set(__newroom,@get(@concat("room.",@room,".exit.south")))
-	@if @isnull(@get(__newroom)) @then
+	@set(_newroom,@get(@concat("room.",@room,".exit.south")))
+	@if @isnull(@get(_newroom)) @then
 		@msg(message.cant_go)
 	@else
-		@set(value.room,@get(__newroom))
+		@set(value.room,@get(_newroom))
 		@look
 	@endif
 command.take.*
@@ -150,47 +157,47 @@ command.take.*
 		@writeline(".")
 	@else
 		@comment("check inside containers")
-		@set(__found,false)
+		@set(_found,false)
 		@foreachkey(x,"item.",".location")
-			@if @false(@get(__found)) @then
-				@if @eq(@get(item.$x.location),@room) @or @eq(@get(item.$x.location),@inv) @then
-					@if @true(@get(item.$x.container)) @then
+			@if @isfalse(@get(_found)) @then
+				@if @eq(@loc($x),@room) @or @eq(@loc($x),@inv) @then
+					@if @istrue(@get(@concat("item.",$x,".container"))) @then
 						@if @eq(@get(@concat("item.",@get(input.noun),".location")),$x) @then
 							@set(@concat("item.",@get(input.noun),".location"),@inv)
 							@write(@get(message.take_one)," ")
 							@write(@get(@concat("item.",@get(input.noun),".shortdesc")))
 							@writeline(".")
-							@set(__found,true)
+							@set(_found,true)
 						@endif
 					@endif
 				@endif
 			@endif
 		@endforeachkey
-		@if @false(@get(__found)) @then
+		@if @isfalse(@get(_found)) @then
 			@msg(message.not_here)
 		@endif
 	@endif
 command.take.all
-	@set(__found,false)
+	@set(_found,false)
 	@foreachkey(x,"item.",".location")
-		@if @eq(@get(item.$x.location),@room) @then
-			@if @false(@get(__found)) @then
-				@set(__found,true)
+		@if @eq(@loc($x),@room) @then
+			@if @isfalse(@get(_found)) @then
+				@set(_found,true)
 				@msg(message.taking)
 			@endif
-			@msg(item.$x.shortdesc)
-			@set(item.$x.location,@inv)
+			@msg(@concat("item.",$x,".shortdesc"))
+			@sendto($x,@inv)
 		@endif
 	@endforeachkey
-	@if @false(@get(__found)) @then
+	@if @isfalse(@get(_found)) @then
 		@msg(message.nothing_here)
 	@endif
 command.west
-	@set(__newroom,@get(@concat("room.",@room,".exit.west")))
-	@if @isnull(@get(__newroom)) @then
+	@set(_newroom,@get(@concat("room.",@room,".exit.west")))
+	@if @isnull(@get(_newroom)) @then
 		@msg(message.cant_go)
 	@else
-		@set(value.room,@get(__newroom))
+		@set(value.room,@get(_newroom))
 		@look
 	@endif
 direction.east
@@ -268,17 +275,17 @@ preposition.in
 room.first.exit.north
 	second
 room.first.longdesc
-	You are in the first room.
+	You are in the first room. There is an exit to the north.
 room.first.shortdesc
 	First Room
 room.second.exit.south
 	first
 room.second.longdesc
-	This is the second room.
+	This is the second room. There is an exit to the south.
 room.second.shortdesc
 	Second Room
 script.intro
-	@if @false(@get(value.intro)) @then
+	@if @isfalse(@get(value.intro)) @then
 		@set(value.intro,true)
 		@msg(message.intro)
 		@nl
@@ -331,7 +338,7 @@ system.prompt
 system.tab_length
 	4
 system.version
-	2026.05.25
+	2026.8.9
 value.intro
 	false
 value.room

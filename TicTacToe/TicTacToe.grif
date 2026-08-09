@@ -20,14 +20,14 @@
 		@setoutchannel("@script(script.playagain)")
 	@endif
 @checkwin(x,y,z)
-	@set(__count,0)
-	@addto(__count,@getlist(ttt,$x))
-	@addto(__count,@getlist(ttt,$y))
-	@addto(__count,@getlist(ttt,$z))
-	@if @eq(@get(__count),-3) @then
+	@set(_count,0)
+	@addto(_count,@getlist(ttt,$x))
+	@addto(_count,@getlist(ttt,$y))
+	@addto(_count,@getlist(ttt,$z))
+	@if @eq(@get(_count),-3) @then
 		@set(value.winner,@get(message.x_won))
 		@write(true)
-	@elseif @eq(@get(__count),3) @then
+	@elseif @eq(@get(_count),3) @then
 		@set(value.winner,@get(message.o_won))
 		@write(true)
 	@else
@@ -143,8 +143,8 @@ message.x_won
 message.yorn_error
 	Please answer YES or NO.
 script.checksavefile
-	@set(__yorn,@getinchannel)
-	@if @true(@get(__yorn)) @then
+	@set(_yorn,@getinchannel)
+	@if @istrue(@get(_yorn)) @then
 		@msg(message.ask_restore)
 		@set(value.askflag,true)
 		@setoutchannel("#ASK;")
@@ -153,10 +153,10 @@ script.checksavefile
 		@msg(message.savefile_not_found)
 	@endif
 script.playagain
-	@set(__yorn,@getinchannel)
-	@if @true(@get(__yorn)) @then
+	@set(_yorn,@getinchannel)
+	@if @istrue(@get(_yorn)) @then
 		@restart
-	@elseif @false(@get(__yorn)) @then
+	@elseif @isfalse(@get(_yorn)) @then
 		@quit
 	@else
 		@msg(message.yorn_error)
@@ -165,10 +165,10 @@ script.playagain
 		@setoutchannel("@script(script.playagain)")
 	@endif
 script.restart
-	@set(__yorn,@getinchannel)
-	@if @true(@get(__yorn)) @then
+	@set(_yorn,@getinchannel)
+	@if @istrue(@get(_yorn)) @then
 		@restart
-	@elseif @false(@get(__yorn)) @then
+	@elseif @isfalse(@get(_yorn)) @then
 		@msg(message.ok)
 		@nl
 		@showboard
@@ -179,10 +179,10 @@ script.restart
 		@setoutchannel("@script(script.restart)")
 	@endif
 script.restore
-	@set(__yorn,@getinchannel)
-	@if @true(@get(__yorn)) @then
+	@set(_yorn,@getinchannel)
+	@if @istrue(@get(_yorn)) @then
 		@restore
-	@elseif @false(@get(__yorn)) @then
+	@elseif @isfalse(@get(_yorn)) @then
 		@msg(message.ok)
 		@nl
 		@showboard
@@ -201,7 +201,7 @@ system.gamename
 system.gametitle
 	Tic-Tac-Toe
 system.intro
-	@if @false(@get(value.intro)) @then
+	@if @isfalse(@get(value.intro)) @then
 		@set(value.intro,true)
 		@comment("script run at the beginning of the game")
 		@msg(system.gametitle)
@@ -217,14 +217,14 @@ system.intro
 		@showboard
 	@endif
 system.prompt
-	@if @true(@get(value.askflag)) @then
+	@if @istrue(@get(value.askflag)) @then
 		@set(value.askflag,null)
 		@write(@nl,">")
 	@else
 		@write(@nl,@piece(@get(value.player)),"'s turn>")
 	@endif
 system.version
-	2026.01.06
+	2026.8.9
 value.intro
 	false
 value.moves
