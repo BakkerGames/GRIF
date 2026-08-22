@@ -56,7 +56,7 @@
     },
     "Crowther Adventure": {
       "commandName": "Project",
-      "commandLineArgs": "\"..\\CrowtherToGRIF\\AdvCrowther\"",
+      "commandLineArgs": "\"..\\CrowtherToGRIF\\GrifOutput\\Crowther.grifstack\"",
       "workingDirectory": ".."
     }
   }
