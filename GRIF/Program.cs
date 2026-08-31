@@ -334,6 +334,11 @@ internal class Program
         }
         if (e.Type == MessageType.Error)
         {
+            if (!string.IsNullOrWhiteSpace(e.ExtraValue))
+            {
+                OutputText(NL_CHAR);
+                OutputText(e.ExtraValue);
+            }
             OutputText(NL_CHAR);
             OutputText("### ERROR: ");
             OutputText(e.Value);
@@ -344,6 +349,11 @@ internal class Program
             OutputText("### DEBUG: ");
             OutputText(e.Value);
             OutputText(NL_CHAR);
+            if (!string.IsNullOrWhiteSpace(e.ExtraValue))
+            {
+                OutputText(NL_CHAR);
+                OutputText(e.ExtraValue);
+            }
             return;
         }
     }
