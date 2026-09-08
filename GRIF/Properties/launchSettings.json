@@ -36,7 +36,7 @@
     },
     "Castlequest walkthru": {
       "commandName": "Project",
-      "commandLineArgs": "\"..\\grifgames\\Castlequest\\Castlequest.grif\" -i \"..\\grifgames\\Castlequest\\walkthrough\\walkthru.txt\" -m \"..\\grifgames\\Castlequest\\mods\\norandom.grif\" -m \"..\\grifgames\\Castlequest\\mods\\corrections.grif\" -o \"..\\Castlequest_GRIF\\logs\\walkthru.log\"",
+      "commandLineArgs": "\"..\\grifgames\\Castlequest\\Castlequest.grif\" -i \"..\\grifgames\\Castlequest\\walkthrough\\walkthru.txt\" -m \"..\\grifgames\\Castlequest\\mods\\norandom.grif\" -m \"..\\grifgames\\Castlequest\\mods\\corrections.grif\" -o \"..\\grifgames\\Castlequest\\logs\\walkthru.log\"",
       "workingDirectory": ".."
     },
     "Pirate1980": {
