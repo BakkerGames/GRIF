@@ -58,6 +58,11 @@
       "commandName": "Project",
       "commandLineArgs": "\"..\\CrowtherToGRIF\\GrifOutput\\Crowther.grifstack\"",
       "workingDirectory": ".."
+    },
+    "test": {
+      "commandName": "Project",
+      "commandLineArgs": "\"..\\grifgames\\advgames\\adv02.grifstack\"",
+      "workingDirectory": ".."
     }
   }
 }
