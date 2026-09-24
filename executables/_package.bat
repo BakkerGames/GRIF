@@ -1,6 +1,6 @@
 @echo off
 
-set VER=20260525
+set VER=20260923
 
 del grif-linux-arm-*.tgz
 del grif-linux-arm64-*.tgz
@@ -37,6 +37,15 @@ copy /y ..\CloakOfDarkness\CloakOfDarkness.grif osx-x64
 copy /y ..\CloakOfDarkness\CloakOfDarkness.grif win-arm64
 copy /y ..\CloakOfDarkness\CloakOfDarkness.grif win-x64
 copy /y ..\CloakOfDarkness\CloakOfDarkness.grif win-x86
+
+copy /y ..\CloakOfDarkness\Specification.txt linux-arm
+copy /y ..\CloakOfDarkness\Specification.txt linux-arm64
+copy /y ..\CloakOfDarkness\Specification.txt linux-x64
+copy /y ..\CloakOfDarkness\Specification.txt osx-arm64
+copy /y ..\CloakOfDarkness\Specification.txt osx-x64
+copy /y ..\CloakOfDarkness\Specification.txt win-arm64
+copy /y ..\CloakOfDarkness\Specification.txt win-x64
+copy /y ..\CloakOfDarkness\Specification.txt win-x86
 
 copy /y ..\TicTacToe\TicTacToe.grif linux-arm
 copy /y ..\TicTacToe\TicTacToe.grif linux-arm64

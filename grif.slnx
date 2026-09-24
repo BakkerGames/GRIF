@@ -4,8 +4,6 @@
   </Folder>
   <Folder Name="/CloakOfDarkness/">
     <File Path="CloakOfDarkness/CloakOfDarkness.grif" />
-    <File Path="CloakOfDarkness/Input.txt" />
-    <File Path="CloakOfDarkness/Output.txt" />
     <File Path="CloakOfDarkness/Specification.txt" />
   </Folder>
   <Folder Name="/DesignDocs/">
