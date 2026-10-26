@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using griflib.Models;
 using GrifLib;
 using static GrifLib.Common;
 
@@ -334,10 +335,10 @@ internal class Program
         }
         if (e.Type == MessageType.Error)
         {
-            if (!string.IsNullOrWhiteSpace(e.ExtraValue))
+            if (e.ExtraValue != null && (string)e.ExtraValue != "")
             {
                 OutputText(NL_CHAR);
-                OutputText(e.ExtraValue);
+                OutputText((string)e.ExtraValue);
             }
             OutputText(NL_CHAR);
             OutputText("### ERROR: ");
@@ -349,10 +350,10 @@ internal class Program
             OutputText("### DEBUG: ");
             OutputText(e.Value);
             OutputText(NL_CHAR);
-            if (!string.IsNullOrWhiteSpace(e.ExtraValue))
+            if (e.ExtraValue != null && (string)e.ExtraValue != "")
             {
                 OutputText(NL_CHAR);
-                OutputText(e.ExtraValue);
+                OutputText((string)e.ExtraValue);
             }
             return;
         }
@@ -369,7 +370,7 @@ internal class Program
         }
         if (e.Value.Equals(OUTCHANNEL_SLEEP, OIC))
         {
-            if (!long.TryParse(e.ExtraValue, out long value))
+            if (e.ExtraValue == null || !long.TryParse((string)e.ExtraValue, out long value))
             {
                 throw new Exception($"Invalid sleep duration: {e.ExtraValue}");
             }
