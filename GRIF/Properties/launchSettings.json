@@ -46,7 +46,7 @@
     },
     "Adventure": {
       "commandName": "Project",
-      "commandLineArgs": "\"..\\AdventureToGRIF\\GRIFOutput\\adventure.grifstack\"",
+      "commandLineArgs": "\"..\\AdventureToGRIF\\GRIFOutput\\advent.grifstack\"",
       "workingDirectory": ".."
     },
     "AoC": {
